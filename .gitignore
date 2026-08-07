@@ -1,1 +1,26 @@
+# macOS
 .DS_Store
+._*
+
+# Secrets et config machine — ce repo est sur GitHub
+.credentials.json
+.env
+.env.*
+*.local.json
+
+# État runtime de Claude Code, si un jour un dossier de ~/.claude atterrit ici
+*.log
+*.jsonl
+cache/
+file-history/
+paste-cache/
+session-env/
+sessions/
+shell-snapshots/
+statsig/
+todos/
+
+# Éditeurs
+# (claude.code-workspace est versionné volontairement — ne pas ignorer *.code-workspace)
+.vscode/
+.idea/
