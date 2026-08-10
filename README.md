@@ -13,10 +13,15 @@ ne contient donc que le premier, et `~/.claude` pointe dessus par symlink.
 | `skills/slash-process-ticket/` | Parcours de traitement d'un ticket Linear, du worktree déjà créé jusqu'à la PR ouverte. Orchestre les deux skills ci-dessous. |
 | `skills/slash-redaction/` | Cadre de rédaction des écrits lus par un humain : descriptions de PR, commentaires de review, messages de commit. |
 | `skills/slash-recette-dataset/` | Fabrication d'un jeu de données de recette scopé à un ticket SLI, pour constater un bug avant correction puis prouver sa résolution. |
+| `skills/slash-chrome-ancrage/` | Ancrage des onglets Chrome sur la session, pour que plusieurs sessions parallèles ne se marchent pas dessus dans le navigateur. |
 
-`skills/slash-redaction/AMORCE.md` est chargé au démarrage de chaque session via un
+Deux skills portent un `AMORCE.md`, chargé au démarrage de chaque session via un
 `@import` dans `~/.claude/CLAUDE.md` — qui, lui, n'est pas versionné ici. Si le
 symlink casse, l'import casse avec.
+
+L'amorce sert quand le déclenchement spontané n'est pas fiable : au moment de
+rédiger une PR ou d'ouvrir un onglet, l'attention est ailleurs. Une trentaine de
+tokens par session, et la règle arrive à l'heure.
 
 ## Installation sur une nouvelle machine
 
@@ -39,6 +44,7 @@ Puis ajouter dans `~/.claude/CLAUDE.md` :
 
 ```
 @skills/slash-redaction/AMORCE.md
+@skills/slash-chrome-ancrage/AMORCE.md
 ```
 
 ## Ajouter un skill
