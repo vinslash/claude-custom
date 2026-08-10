@@ -20,10 +20,18 @@ symlink casse, l'import casse avec.
 ## Installation sur une nouvelle machine
 
 ```bash
-git clone git@github.com:vinslash/claude-custom.git ~/Development/claude
-for skill in ~/Development/claude/skills/*/; do
-  ln -s "$skill" ~/.claude/skills/"$(basename "$skill")"
+git clone git@github.com:vinslash/claude-custom.git ~/Development/claude-custom
+for skill in ~/Development/claude-custom/skills/*/; do
+  ln -s "${skill%/}" ~/.claude/skills/"$(basename "$skill")"
 done
+```
+
+Les symlinks portent le chemin **en dur** : renommer ou déplacer le clone les casse
+tous d'un coup, et un skill dont le lien est cassé disparaît sans erreur — il
+n'apparaît simplement plus dans la liste des skills. Après tout déplacement, vérifier :
+
+```bash
+ls -L ~/.claude/skills/*/SKILL.md
 ```
 
 Puis ajouter dans `~/.claude/CLAUDE.md` :
@@ -38,7 +46,7 @@ Le créer **dans ce repo**, puis le symlinker — jamais l'inverse : un skill cr
 directement dans `~/.claude/skills/` échappe au versionnement sans prévenir.
 
 ```bash
-ln -s ~/Development/claude/skills/mon-skill ~/.claude/skills/mon-skill
+ln -s ~/Development/claude-custom/skills/mon-skill ~/.claude/skills/mon-skill
 ```
 
 ## Ne pas versionner ici
