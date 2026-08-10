@@ -10,6 +10,7 @@ ne contient donc que le premier, et `~/.claude` pointe dessus par symlink.
 
 | Chemin | Rôle |
 | --- | --- |
+| `skills/slash-process-ticket/` | Parcours de traitement d'un ticket Linear, du worktree déjà créé jusqu'à la PR ouverte. Orchestre les deux skills ci-dessous. |
 | `skills/slash-redaction/` | Cadre de rédaction des écrits lus par un humain : descriptions de PR, commentaires de review, messages de commit. |
 | `skills/slash-recette-dataset/` | Fabrication d'un jeu de données de recette scopé à un ticket SLI, pour constater un bug avant correction puis prouver sa résolution. |
 
