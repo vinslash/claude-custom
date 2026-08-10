@@ -20,6 +20,13 @@ shell-snapshots/
 statsig/
 todos/
 
+# Montage local : CLAUDE.md à la racine est un symlink *sortant* vers
+# ~/.claude/CLAUDE.md, qui ne porterait qu'un chemin absolu inutile ailleurs
+/CLAUDE.md
+
+# Brouillons et handoffs de session, propres à cette machine
+drafts/
+
 # Éditeurs
 # (claude.code-workspace est versionné volontairement — ne pas ignorer *.code-workspace)
 .vscode/
