@@ -7,8 +7,9 @@ description: >
   navigateur avant d'écrire une ligne, faire arbitrer le plan, implémenter,
   faire constater la résolution, puis committer. Deux points d'arrêt bloquants
   où Vince valide explicitement — la validation du plan et la validation de la
-  résolution. Délègue le jeu de données à `slash-recette-dataset` et la rédaction
-  des écrits GitHub à `slash-redaction`.
+  résolution. Délègue le jeu de données à `slash-recette-dataset`, les commits et
+  la création de la PR aux skills du dépôt slash-interim (`slash-commit`,
+  `slash-create-pr`), et le contenu rédigé des écrits GitHub à `slash-redaction`.
   Use when the user says « mission : traiter ce ticket », « traite le ticket »,
   « on attaque SLI-XXXX », « je viens de créer le worktree », or
   `/slash-process-ticket SLI-XXXX`; and at the start of any session whose cwd is
@@ -148,13 +149,30 @@ committer** — même règle qu'à l'étape 3 sur ce qui compte comme validation
 
 Découper les commits **par intention** : le correctif d'un côté, un renommage ou
 un déplacement de l'autre. Un commit qui mélange les deux est illisible en
-`git blame`. Reprendre la convention du dépôt.
+`git blame`.
 
-Charger **`slash-redaction` avant** d'écrire les messages de commit et la
-description de PR — avant, pas après avoir rédigé.
+**Dans slash-interim, passer par les skills du dépôt** — ils portent la mécanique
+et les conventions maison, et on ne les court-circuite pas :
+
+- les commits via **`slash-commit`** : gitmoji, référence SLI, mode découpage, et
+  il ne stage jamais rien sans demander. Il impose un **titre seul, sans corps** —
+  `slash-redaction` ne s'applique donc pas aux messages de commit de ce dépôt ;
+- la PR via **`slash-create-pr`**, jamais un `gh pr create` monté à la main. Il
+  extrait le SLI de la branche, remplit le template du projet, choisit le magic
+  word Linear (`Close`, `Part of`, `Ref`), pousse et ouvre la PR en draft.
+
+**`slash-redaction` régit le contenu rédigé** de la description : la prose, sa
+longueur, ce qui mérite d'y figurer et ce qui n'est que du bruit. Là où les deux
+se croisent, `slash-create-pr` donne la structure et la mécanique,
+`slash-redaction` la façon d'écrire — une description qui remplit consciencieusement
+le template en recopiant le diff n'est pas conforme pour autant. Le charger
+**avant** de rédiger, pas après.
+
+Dans slash-web, qui n'a pas ces skills de dépôt, la PR se crée à la main et
+`slash-redaction` gouverne seul.
 
 Ne pas committer les artefacts de recette : scripts de seed jetables, captures,
 fichiers du scratchpad.
 
-Pousser, ouvrir la PR, et vérifier que le lien Linear y figure bien
-(`Closes SLI-XXXX`) — c'est ce qui referme le ticket.
+Enfin, vérifier que la référence Linear figure bien dans la description — c'est ce
+qui referme le ticket.
