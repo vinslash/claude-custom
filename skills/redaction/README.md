@@ -15,21 +15,23 @@ Un principe : **le relecteur a trente secondes et il a déjà le diff.**
 
 ## Installation
 
-1. Copier ce dossier dans `~/.claude/skills/redaction/` (portée
-   personnelle, tous projets) **ou** dans `<dépôt>/.claude/skills/` (portée
-   dépôt, versionné avec le code).
+Rien à faire séparément : ce skill fait partie du plugin `slash`, monté par
+`install.sh` à la racine du dépôt. Il s'invoque `/slash:redaction`.
 
-2. Ajouter l'import de l'amorce dans son `CLAUDE.md`, à côté des autres :
+L'import de l'amorce dans `CLAUDE.md` est en revanche essentiel, et
+`install.sh` vérifie qu'il résout :
 
-   ```
-   @skills/redaction/AMORCE.md
-   ```
+```
+@~/.claude/skills/slash/skills/redaction/AMORCE.md
+```
 
-   L'étape 2 n'est pas cosmétique. Sans elle, le skill ne se déclenche que si le
-   modèle pense spontanément à aller le chercher — or le moment d'écrire une
-   description de PR arrive en fin de tâche, quand il est occupé ailleurs.
-   L'amorce coûte une trentaine de tokens par session et rend le déclenchement
-   fiable.
+Il n'est pas cosmétique. Sans lui, le skill ne se déclenche que si le modèle
+pense spontanément à aller le chercher — or le moment d'écrire une description de
+PR arrive en fin de tâche, quand il est occupé ailleurs. L'amorce coûte une
+trentaine de tokens par session et rend le déclenchement fiable.
+
+Le chemin doit rester **ancré sur `~`** : un import relatif résout depuis le
+répertoire courant de la session, donc échoue partout ailleurs, en silence.
 
 ## Faire évoluer le cadre
 
