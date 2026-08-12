@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "chrome": {
+      "command": "sh",
+      "args": [
+        "-c",
+        "root=$(git rev-parse --show-toplevel 2>/dev/null || pwd); exec npx -y chrome-devtools-mcp@latest --userDataDir=\"$HOME/.cache/chrome-mcp/$(basename \"$root\")\" --viewport 1440x820"
+      ]
+    }
+  }
+}
