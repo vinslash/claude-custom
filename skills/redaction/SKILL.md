@@ -1,5 +1,5 @@
 ---
-name: slash-redaction
+name: redaction
 description: >
   Cadre de rédaction des écrits destinés à un relecteur humain : descriptions de
   pull request, commentaires de code review, messages de commit. Impose une

@@ -1,4 +1,4 @@
-# slash-redaction
+# slash:redaction
 
 Cadre de rédaction des écrits destinés à un relecteur humain : descriptions de
 pull request, commentaires de code review, messages de commit.
@@ -15,14 +15,14 @@ Un principe : **le relecteur a trente secondes et il a déjà le diff.**
 
 ## Installation
 
-1. Copier ce dossier dans `~/.claude/skills/slash-redaction/` (portée
+1. Copier ce dossier dans `~/.claude/skills/redaction/` (portée
    personnelle, tous projets) **ou** dans `<dépôt>/.claude/skills/` (portée
    dépôt, versionné avec le code).
 
 2. Ajouter l'import de l'amorce dans son `CLAUDE.md`, à côté des autres :
 
    ```
-   @skills/slash-redaction/AMORCE.md
+   @skills/redaction/AMORCE.md
    ```
 
    L'étape 2 n'est pas cosmétique. Sans elle, le skill ne se déclenche que si le

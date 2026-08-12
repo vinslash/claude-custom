@@ -1,5 +1,5 @@
 ---
-name: slash-chrome-ancrage
+name: chrome-ancrage
 description: >
   Ancre les onglets Chrome pilotés par une session sur cette session, pour que
   plusieurs sessions Claude en parallèle — typiquement un worktree par ticket — ne
@@ -54,7 +54,7 @@ précisément écraser l'onglet de quelqu'un d'autre.
 
 **Ne touche qu'à ce que tu as ouvert.** Jamais fermer, jamais naviguer un onglet
 dont on n'est pas l'auteur. À la fin, laisser le sien ouvert si Vince doit
-constater lui-même — c'est ce que demande `slash-process-ticket` à ses étapes 2 et
+constater lui-même — c'est ce que demande `slash:process-ticket` à ses étapes 2 et
 4 — sinon fermer le sien, et lui seul.
 
 **Annonce ton ancrage.** En ouvrant l'onglet, dire en une ligne lequel est le tien

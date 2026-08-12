@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Garde-fou du skill slash-recette-dataset.
+# Garde-fou du skill slash:recette-dataset.
 #
 # Refuse de laisser écrire en base si on n'est pas dans un worktree à stack
 # Docker isolée (base Postgres copiée). Sans ce contrôle, le skill mute la base

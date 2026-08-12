@@ -1,5 +1,5 @@
 ---
-name: slash-recette-dataset
+name: recette-dataset
 description: >
   Fabrique un jeu de données de recette scopé à un ticket SLI dans un worktree
   slash-interim, pour pouvoir CONSTATER le problème avant implémentation puis
@@ -13,7 +13,7 @@ description: >
   Use when the user says « jeu de données », « dataset de recette », « fixture »,
   « prépare la recette de SLI-XXXX », « je veux constater le bug avant de le
   corriger », « peuple la base pour ce ticket », « baseline avant implémentation »,
-  or `/slash-recette-dataset SLI-XXXX`. À proposer aussi de manière proactive au
+  or `/slash:recette-dataset SLI-XXXX`. À proposer aussi de manière proactive au
   démarrage d'un ticket dont la recette dépend de données absentes de la base
   clonée. Ne PAS utiliser pour écrire des tests automatisés (→ `slash-e2e-generate`,
   tests Jest) ni pour rédiger des scénarios de test fonctionnels (→
@@ -62,7 +62,7 @@ bash <base-dir-du-skill>/scripts/check-worktree-isolation.sh
 ```
 
 (`<base-dir-du-skill>` est annoncé au chargement du skill — aujourd'hui
-`~/.claude/skills/slash-recette-dataset`, demain `.claude/skills/…` après
+`~/.claude/skills/recette-dataset`, demain `.claude/skills/…` après
 promotion dans le dépôt. Ne pas coder ce chemin en dur ailleurs.)
 
 Il vérifie que le worktree git est **lié** (et non le checkout principal), que

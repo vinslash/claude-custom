@@ -1,5 +1,5 @@
 ---
-name: slash-process-ticket
+name: process-ticket
 description: >
   Parcours complet de traitement d'un ticket Linear SLI dans un worktree
   slash-interim ou slash-web, du worktree déjà créé jusqu'à la PR ouverte. Impose
@@ -7,14 +7,14 @@ description: >
   navigateur avant d'écrire une ligne, faire arbitrer le plan, implémenter,
   faire constater la résolution, puis committer. Deux points d'arrêt bloquants
   où Vince valide explicitement — la validation du plan et la validation de la
-  résolution. Délègue le jeu de données à `slash-recette-dataset`, les commits et
+  résolution. Délègue le jeu de données à `slash:recette-dataset`, les commits et
   la création de la PR aux skills du dépôt slash-interim (`slash-commit`,
-  `slash-create-pr`), et le contenu rédigé des écrits GitHub à `slash-redaction`.
+  `slash-create-pr`), et le contenu rédigé des écrits GitHub à `slash:redaction`.
   Use when the user says « mission : traiter ce ticket », « traite le ticket »,
   « on attaque SLI-XXXX », « je viens de créer le worktree », or
-  `/slash-process-ticket SLI-XXXX`; and at the start of any session whose cwd is
+  `/slash:process-ticket SLI-XXXX`; and at the start of any session whose cwd is
   un worktree `sli-XXXX-*`. Ne PAS utiliser pour reprendre une PR déjà ouverte
-  (→ `slash-redaction`), pour une review, ni pour un travail sans ticket
+  (→ `slash:redaction`), pour une review, ni pour un travail sans ticket
   Linear — exploration, question, correctif ponctuel demandé dans le chat.
 ---
 
@@ -51,7 +51,7 @@ Pas de tableau, pas de recopie du diff, pas de liste de fichiers touchés, pas d
 récapitulatif de ce que je viens de faire étape par étape. Si le rapport ne tient
 pas en cinq lignes, c'est qu'il contient autre chose qu'un rapport.
 
-Ne pas charger `slash-redaction` pour ces rapports : ce skill couvre les écrits
+Ne pas charger `slash:redaction` pour ces rapports : ce skill couvre les écrits
 que lit un relecteur sur GitHub, et il exclut explicitement la rédaction destinée
 au chat. Il intervient à l'étape 6, pas avant.
 
@@ -84,7 +84,7 @@ le constater.
 La base du worktree est un clone de la base locale, elle-même clone de staging :
 elle manque souvent du cas précis que le ticket adresse. Juger si le cas y est.
 
-S'il manque quelque chose, appeler **`slash-recette-dataset`**. Il fait déjà
+S'il manque quelque chose, appeler **`slash:recette-dataset`**. Il fait déjà
 l'exploration en lecture seule, le plan de données soumis à validation, la
 baseline « avant » constatée en navigateur et le handoff dans le scratchpad — ne
 pas refaire son travail à la main, et ne pas relire le ticket une deuxième fois.
@@ -156,20 +156,20 @@ et les conventions maison, et on ne les court-circuite pas :
 
 - les commits via **`slash-commit`** : gitmoji, référence SLI, mode découpage, et
   il ne stage jamais rien sans demander. Il impose un **titre seul, sans corps** —
-  `slash-redaction` ne s'applique donc pas aux messages de commit de ce dépôt ;
+  `slash:redaction` ne s'applique donc pas aux messages de commit de ce dépôt ;
 - la PR via **`slash-create-pr`**, jamais un `gh pr create` monté à la main. Il
   extrait le SLI de la branche, remplit le template du projet, choisit le magic
   word Linear (`Close`, `Part of`, `Ref`), pousse et ouvre la PR en draft.
 
-**`slash-redaction` régit le contenu rédigé** de la description : la prose, sa
+**`slash:redaction` régit le contenu rédigé** de la description : la prose, sa
 longueur, ce qui mérite d'y figurer et ce qui n'est que du bruit. Là où les deux
 se croisent, `slash-create-pr` donne la structure et la mécanique,
-`slash-redaction` la façon d'écrire — une description qui remplit consciencieusement
+`slash:redaction` la façon d'écrire — une description qui remplit consciencieusement
 le template en recopiant le diff n'est pas conforme pour autant. Le charger
 **avant** de rédiger, pas après.
 
 Dans slash-web, qui n'a pas ces skills de dépôt, la PR se crée à la main et
-`slash-redaction` gouverne seul.
+`slash:redaction` gouverne seul.
 
 Ne pas committer les artefacts de recette : scripts de seed jetables, captures,
 fichiers du scratchpad.
