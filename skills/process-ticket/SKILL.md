@@ -3,12 +3,12 @@ name: process-ticket
 description: >
   Parcours complet de traitement d'un ticket Linear SLI dans un worktree
   slash-interim ou slash-web, du worktree déjà créé jusqu'à la PR ouverte. Impose
-  l'ordre qui compte : analyser le ticket, CONSTATER le problème dans le
-  navigateur avant d'écrire une ligne, faire arbitrer le plan, implémenter,
-  faire constater la résolution, puis committer. Deux points d'arrêt bloquants
-  où Vince valide explicitement — la validation du plan et la validation de la
-  résolution. Délègue le jeu de données à `slash:recette-dataset`, les commits et
-  la création de la PR aux skills du dépôt slash-interim (`slash-commit`,
+  l'ordre qui compte : faire CONSTATER le problème à Vince avant d'écrire une
+  ligne, faire arbitrer le plan, implémenter, faire constater la résolution, puis
+  committer. Deux points d'arrêt bloquants — la validation du plan, passée par le
+  mode plan, et la validation de la résolution. Délègue la compréhension et le
+  constat à `slash:constat`, le jeu de données à `slash:recette-dataset`, les
+  commits et la PR aux skills du dépôt slash-interim (`slash-commit`,
   `slash-create-pr`), et le contenu rédigé des écrits GitHub à `slash:redaction`.
   Use when the user says « mission : traiter ce ticket », « traite le ticket »,
   « on attaque SLI-XXXX », « je viens de créer le worktree », or
@@ -30,30 +30,29 @@ Le parcours ci-dessous existe pour empêcher ça. Il tient sur un ordre —
 **constater avant d'implémenter, faire constater avant de committer** — et sur
 deux points d'arrêt où Vince arbitre. Tout le reste est de l'intendance.
 
+Une troisième raison, apprise à l'usage : un parcours qui déroule tout seul finit
+par produire un développeur qui ne sait plus défendre son propre ticket en
+review. C'est pourquoi la première étape n'est pas une analyse, c'est un constat
+partagé.
+
 ## Préconditions
 
-Le worktree existe et sa branche porte le ticket : `sli-8298-ats-bloc-fiche-...`
-donne le ticket **SLI-8298**. L'identifiant se lit dans le nom de branche, il n'y
-a pas à le demander.
-
-Le ticket se récupère via le MCP Linear (`get_issue`), pas via une recherche
-approximative. Le constat se fait sur le dev local du worktree.
-
-Si l'une de ces conditions manque — pas de worktree, branche sans identifiant,
-ticket introuvable — le dire et s'arrêter. Ne pas improviser un périmètre.
+Le ticket est porté par le nom de la branche, et un hook l'injecte au démarrage
+de la session. Si ce contexte est absent — pas de worktree, branche sans
+identifiant — le dire et s'arrêter plutôt que d'improviser un périmètre.
 
 ## Ce que « rapport » veut dire ici
 
-À chaque étape, un rapport de **trois à cinq lignes en prose**, qui dit trois
-choses : ce que j'ai constaté, ce que je propose, ce qui bloque ou me manque.
+À chaque étape, un rapport de **trois à cinq lignes en prose** : ce qui a été
+constaté, ce qui est proposé, ce qui bloque ou manque.
 
 Pas de tableau, pas de recopie du diff, pas de liste de fichiers touchés, pas de
-récapitulatif de ce que je viens de faire étape par étape. Si le rapport ne tient
-pas en cinq lignes, c'est qu'il contient autre chose qu'un rapport.
+récapitulatif étape par étape. Si le rapport ne tient pas en cinq lignes, c'est
+qu'il contient autre chose qu'un rapport.
 
 Ne pas charger `slash:redaction` pour ces rapports : ce skill couvre les écrits
-que lit un relecteur sur GitHub, et il exclut explicitement la rédaction destinée
-au chat. Il intervient à l'étape 6, pas avant.
+que lit un relecteur sur GitHub, et il exclut la rédaction destinée au chat. Il
+intervient à la dernière étape.
 
 ## Rester dans le périmètre
 
@@ -63,89 +62,69 @@ d'un bug adjacent croisé en route, pas de nettoyage de code qu'on trouve laid.
 Ce qui est hors périmètre tient en **une ligne** dans le rapport de l'étape en
 cours — et on continue. Vince décidera s'il en fait un ticket.
 
-## Étape 1 — Analyse du ticket
+---
 
-Lire le ticket **une seule fois, mais à fond** : la description, les commentaires,
-et les liens fournis — Sentry, PR précédente, capture, document. Les ouvrir
-vraiment, ne pas les survoler.
+## Étape 1 — Constat partagé
 
-Localiser le code concerné, et surtout : déterminer **comment le problème sera
-observable**. Le plus souvent une URL et un parcours dans le navigateur. Quand ce
-n'est pas observable en navigateur — flux XML, job, cron, endpoint d'API, mail —
-dire par quoi on le remplace : une requête, un log, un appel direct, un test
-ciblé. C'est le point qui conditionne tout le reste du parcours ; ne pas le
-laisser implicite.
+Appeler **`slash:constat`** en mode « avant ». Il possède tout le bloc
+« comprendre » : la lecture du ticket — **la seule de tout le parcours**, ne pas
+la refaire ensuite —, la localisation du code, l'appel à `slash:recette-dataset`
+si le cas manque en base, la phase où Vince reproduit le problème de ses propres
+mains, et la répétition des challenges du PM et des reviewers.
 
-**Rapport** : ce que demande le ticket, où ça se joue dans le code, comment on va
-le constater.
+Il produit un fichier d'observation : le POURQUOI du ticket avec les mots de
+Vince, les questions restées ouvertes, et le script de rejeu. **Ce fichier
+voyage jusqu'à la dernière étape** — c'est de lui que sortira la description de
+PR, et non du diff.
 
-## Étape 2 — Données et constat « avant »
+**Si le problème ne se reproduit pas, s'arrêter là.** Ou le ticket décrit mal le
+problème, ou l'environnement ne correspond pas : dans les deux cas, coder est
+prématuré.
 
-La base du worktree est un clone de la base locale, elle-même clone de staging :
-elle manque souvent du cas précis que le ticket adresse. Juger si le cas y est.
-
-S'il manque quelque chose, appeler **`slash:recette-dataset`**. Il fait déjà
-l'exploration en lecture seule, le plan de données soumis à validation, la
-baseline « avant » constatée en navigateur et le handoff dans le scratchpad — ne
-pas refaire son travail à la main, et ne pas relire le ticket une deuxième fois.
-Il signale aussi les critères d'acceptation qui dépendent d'un service externe
-non mocké : si le constat en dépend, le remonter tout de suite.
-
-Si les données sont là, constater directement.
-
-Le constat se fait avec **`claude-in-chrome`**, dans le Chrome de Vince, **pas en
-headless** : l'onglet doit lui rester ouvert pour qu'il constate lui-même. Lui
-donner l'URL et les étapes exactes.
-
-**Si le problème ne se reproduit pas, s'arrêter là.** Dire ce qui a été essayé et
-ce qu'on observe à la place. Ne jamais implémenter sur la seule foi du ticket : ou
-le ticket décrit mal le problème, ou l'environnement ne correspond pas, et dans
-les deux cas coder est prématuré.
-
-**Rapport** : le constat — ou la non-reproduction — et l'état des données.
-
-## Étape 3 — Plan et arbitrage (point d'arrêt bloquant)
+## Étape 2 — Plan et arbitrage (point d'arrêt bloquant)
 
 Proposer un plan : l'approche retenue et pourquoi, les fichiers concernés, les
 effets de bord attendus, ce qu'on laisse volontairement de côté. Une alternative
-ne se présente que si le choix entre les deux change quelque chose pour Vince ;
-sinon, recommander et avancer.
+ne se présente que si le choix change quelque chose pour Vince ; sinon,
+recommander et avancer.
 
-**Ne rien écrire dans le dépôt à ce stade.** Pas de code, pas de fichier
+**Passer par le mode plan** et soumettre via `ExitPlanMode`. C'est une vraie
+porte d'approbation : elle ne se franchit pas sur un « ok » qui répondait à autre
+chose. **Ne rien écrire dans le dépôt à ce stade** — pas de code, pas de fichier
 préparatoire, pas de branche annexe.
 
-Vince arbitre. Le plan peut se raffiner à deux. Attendre une **validation
-explicite** : un « ok » qui répond à une autre question, une remarque, une
-reformulation ou un silence ne valent pas validation. En cas de doute, demander
-plutôt que de supposer.
+Le plan peut se raffiner à deux avant d'être soumis.
 
-## Étape 4 — Implémentation et vérification
+## Étape 3 — Implémentation et vérification
 
 Implémenter le plan validé, rien de plus. Un écart au plan se signale, il ne se
 décide pas en cours de route.
 
-Vérifier dans le navigateur, sur le parcours exact de l'étape 2 : le constat doit
-avoir disparu. Un test vert ne remplace pas cette vérification.
+Vérifier soi-même dans le navigateur, sur le parcours exact du script
+d'observation : le constat doit avoir disparu. Un test vert ne remplace pas cette
+vérification.
 
-Lancer les tests et le lint **pertinents** avant de considérer que c'est fini —
-ciblés sur ce qui est touché, pas la suite complète si ce n'est pas nécessaire.
+Lancer les tests et le lint **pertinents** — ciblés sur ce qui est touché, pas la
+suite complète si ce n'est pas nécessaire.
 
-Les captures d'écran vont dans le scratchpad de session. `gh` ne sait pas
-uploader d'image sur GitHub : elles ne peuvent donc pas atterrir seules dans la
-description de PR. Dire où elles sont pour que Vince les colle s'il le souhaite,
-ou les attacher au ticket Linear. Ne pas promettre une PR illustrée qu'on ne peut
-pas produire.
+Les captures vont dans le scratchpad. `gh` ne sait pas uploader d'image sur
+GitHub : elles ne peuvent pas atterrir seules dans la description de PR. Dire où
+elles sont pour que Vince les colle s'il le souhaite, ou les attacher au ticket
+Linear. Ne pas promettre une PR illustrée qu'on ne peut pas produire.
 
 **Rapport** : ce qui a été fait, ce qui a résisté, les écarts au plan. Puis la
-démarche de reproduction pas à pas, et la question : faut-il remettre le jeu de
-données en état pour constater la résolution ?
+question : faut-il remettre le jeu de données en état pour constater la
+résolution ?
 
-## Étape 5 — Validation de la résolution (point d'arrêt bloquant)
+## Étape 4 — Constat de la résolution (point d'arrêt bloquant)
 
-Vince reproduit et constate. Attendre sa validation explicite **avant de
-committer** — même règle qu'à l'étape 3 sur ce qui compte comme validation.
+Appeler **`slash:constat`** en mode « après ». Il rejoue le script à l'identique
+et reprend les critères d'acceptation un par un, avec Vince aux commandes — c'est
+lui qui devra affirmer en review que ça marche.
 
-## Étape 6 — Finalisation
+Attendre sa validation explicite **avant de committer**.
+
+## Étape 5 — Finalisation
 
 Découper les commits **par intention** : le correctif d'un côté, un renommage ou
 un déplacement de l'autre. Un commit qui mélange les deux est illisible en
@@ -158,21 +137,22 @@ et les conventions maison, et on ne les court-circuite pas :
   il ne stage jamais rien sans demander. Il impose un **titre seul, sans corps** —
   `slash:redaction` ne s'applique donc pas aux messages de commit de ce dépôt ;
 - la PR via **`slash-create-pr`**, jamais un `gh pr create` monté à la main. Il
-  extrait le SLI de la branche, remplit le template du projet, choisit le magic
-  word Linear (`Close`, `Part of`, `Ref`), pousse et ouvre la PR en draft.
+  extrait le SLI de la branche, remplit le template, choisit le magic word Linear
+  (`Close`, `Part of`, `Ref`), pousse et ouvre la PR en draft.
 
-**`slash:redaction` régit le contenu rédigé** de la description : la prose, sa
-longueur, ce qui mérite d'y figurer et ce qui n'est que du bruit. Là où les deux
-se croisent, `slash-create-pr` donne la structure et la mécanique,
-`slash:redaction` la façon d'écrire — une description qui remplit consciencieusement
-le template en recopiant le diff n'est pas conforme pour autant. Le charger
-**avant** de rédiger, pas après.
+**La description part du fichier d'observation**, pas du diff. Les cinq lignes de
+POURQUOI écrites à l'étape 1, avec les mots de Vince, sont très exactement ce que
+`slash:redaction` réclame et que personne ne sait reconstituer deux jours plus
+tard en relisant un diff. Charger `slash:redaction` **avant** de rédiger.
+
+Là où les deux se croisent, `slash-create-pr` donne la structure et la mécanique,
+`slash:redaction` la façon d'écrire — une description qui remplit
+consciencieusement le template en recopiant le diff n'est pas conforme pour
+autant.
 
 Dans slash-web, qui n'a pas ces skills de dépôt, la PR se crée à la main et
 `slash:redaction` gouverne seul.
 
 Ne pas committer les artefacts de recette : scripts de seed jetables, captures,
-fichiers du scratchpad.
-
-Enfin, vérifier que la référence Linear figure bien dans la description — c'est ce
-qui referme le ticket.
+fichiers du scratchpad. Enfin, vérifier que la référence Linear figure bien dans
+la description — c'est ce qui referme le ticket.
