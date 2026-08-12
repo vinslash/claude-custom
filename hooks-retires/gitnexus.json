@@ -1,0 +1,31 @@
+{
+  "_origine": "Retirés de ~/.claude/settings.json : GitNexus n'a jamais indexé aucun dépôt, et son index est local au dépôt donc invisible depuis les worktrees. Ces hooks lançaient un process Node à chaque Grep, Glob et Bash. À recoller ici si un jour un index existe.",
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"$HOME/.claude/hooks/gitnexus/gitnexus-hook.cjs\"",
+            "timeout": 10,
+            "statusMessage": "Checking GitNexus index freshness..."
+          }
+        ]
+      }
+    ],
+    "PreToolUse": [
+      {
+        "matcher": "Grep|Glob|Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"$HOME/.claude/hooks/gitnexus/gitnexus-hook.cjs\"",
+            "timeout": 10,
+            "statusMessage": "Enriching with GitNexus graph context..."
+          }
+        ]
+      }
+    ]
+  }
+}
