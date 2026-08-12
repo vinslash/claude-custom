@@ -1,0 +1,22 @@
+{
+  "_lisezmoi": [
+    "Ce fichier n'est pas appliqué automatiquement : il documente le peu qui doit",
+    "vivre dans ~/.claude/settings.json, lequel n'est pas versionné parce que",
+    "Claude Code le réécrit lui-même (thème, plugins activés, /config) — un",
+    "symlink y serait remplacé par un fichier ordinaire sans prévenir.",
+    "",
+    "Tout le reste — skills, hooks, serveur MCP — est porté par le plugin et donc",
+    "versionné. install.sh applique la seule entrée ci-dessous, de façon idempotente.",
+    "",
+    "disabledMcpjsonServers : le .mcp.json de slash-interim déclare un serveur",
+    "chrome-devtools taillé pour le devcontainer (il vise host.docker.internal,",
+    "qui ne résout pas sur l'hôte). On le neutralise côté utilisateur plutôt que",
+    "de modifier le dépôt de l'équipe. Le plugin fournit son propre serveur",
+    "`chrome`, qui lance son navigateur avec un profil par worktree.",
+    "",
+    "Retiré volontairement de settings.json (voir hooks-retires/) : les deux hooks",
+    "GitNexus, qui lançaient un process Node à chaque Grep, Glob et Bash pour",
+    "interroger un index qui n'existe sur aucun dépôt."
+  ],
+  "disabledMcpjsonServers": ["chrome-devtools"]
+}

@@ -1,0 +1,10 @@
+{
+  "$schema": "https://anthropic.com/claude-code/plugin.schema.json",
+  "name": "slash",
+  "version": "0.1.0",
+  "description": "Skills et automatismes de traitement des tickets Linear SLI : parcours du ticket, constat partagé, jeu de données de recette, rédaction des écrits GitHub, ancrage du navigateur.",
+  "author": {
+    "name": "Vincent Lalanne",
+    "email": "vincent.lalanne@slash-interim.com"
+  }
+}
