@@ -1,4 +1,11 @@
 {
+  "_lisezmoi": [
+    "Ce fichier ne fait que nommer un script par événement, et c'est délibéré.",
+    "Toute modification de CE fichier exige un /reload-plugins dans chaque session",
+    "ouverte, alors que le CORPS des handlers est relu à chaque déclenchement.",
+    "Garder la logique dans les scripts, c'est donc rendre le rechargement manuel",
+    "inutile en pratique."
+  ],
   "hooks": {
     "SessionStart": [
       {
@@ -6,6 +13,26 @@
           {
             "type": "command",
             "command": "bash \"${CLAUDE_PLUGIN_ROOT}/hooks/handlers/session-start.sh\""
+          }
+        ]
+      }
+    ],
+    "FileChanged": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash \"${CLAUDE_PLUGIN_ROOT}/hooks/handlers/file-changed.sh\""
+          }
+        ]
+      }
+    ],
+    "UserPromptSubmit": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash \"${CLAUDE_PLUGIN_ROOT}/hooks/handlers/user-prompt-submit.sh\""
           }
         ]
       }

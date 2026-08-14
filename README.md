@@ -17,23 +17,37 @@ ses règles tiennent.
 
 **Tout versionné, d'où le montage.** `~/.claude` mélange la config écrite à la
 main et l'état runtime — sessions, historique, `.credentials.json` : le dossier
-entier n'est pas versionnable. D'où un dépôt séparé, et des liens symboliques pour
-que `~/.claude` pointe dessus. Et le format **plugin** plutôt qu'un lien par
-skill, parce qu'un seul point de montage suffit alors, hooks et serveur MCP
-compris.
+entier n'est pas versionnable. D'où un dépôt séparé. Et le format **plugin**
+plutôt qu'un lien par skill, parce qu'un seul point de montage suffit alors,
+hooks et serveur MCP compris.
+
+**Deux dépôts, et non plus un lien symbolique.** Ce que lisent les sessions est un
+**clone**, à `~/.claude/skills/slash`, que personne n'édite. On développe ici, on
+publie en poussant, et le clone suit tout seul : un agent launchd tire toutes les
+deux minutes.
+
+Tant que `~/.claude/skills/slash` était un lien vers ce worktree, le brouillon
+*était* la production — chaque sauvegarde partait à l'instant dans toutes les
+sessions ouvertes, y compris un skill à moitié réécrit. Et un agent launchd ne
+peut pas tirer dans le worktree où l'on est en train d'écrire. Cette séparation
+est donc à la fois ce qui rend la mise à jour automatique possible, et ce qui fait
+enfin exister une notion de version.
 
 ```
-  ~/.claude/                             claude-custom/  ← le plugin « slash »
-  │                                      │
-  ├── settings.json   (non versionné)    │
-  ├── sessions/, …    (état runtime)     │
-  │                                      │
-  ├── CLAUDE.md ───────── lien ──────────▶ CLAUDE.md
-  │                                      │
-  └── skills/slash/ ───── lien ──────────▶ .  ← skills/, hooks/, .mcp.json
-                                         │
-                                         ▼  ce qui a fait ses preuves
-                           slash-interim/.claude/skills/
+  claude-custom/              ← ici : on écrit, on commit, on pousse
+        │  git push
+        ▼
+     GitHub
+        │  git pull --ff-only, toutes les 2 min (agent launchd)
+        ▼
+  ~/.claude/skills/slash/     ← le clone installé, édité par personne
+        │
+        ├── skills/, hooks/, .mcp.json    le plugin « slash »
+        └── CLAUDE.md ◀─── importé par ─── ~/.claude/CLAUDE.md
+                                           (fichier d'une ligne, pas un lien)
+
+                    ▼  ce qui a fait ses preuves
+              slash-interim/.claude/skills/
 ```
 
 ## Contenu
@@ -43,6 +57,7 @@ compris.
 | Chemin | Invocation | Rôle |
 | --- | --- | --- |
 | `skills/constat/` | `/slash:constat` | Fait constater le problème par la personne qui traite le ticket, plutôt que de lui rapporter un constat — phase didactique avant implémentation, vérification de la résolution après. |
+| `skills/maj/` | `/slash:maj` | Force la mise à jour du clone installé sans attendre le tick de launchd, et depuis le dépôt de dev plutôt que GitHub avec `--depuis-dev` — pour éprouver un skill committé sans le pousser. |
 | `skills/decoupage-pr/` | `/slash:decoupage-pr` | Garde-fou sur la taille des PR, et mécanique d'ouverture de plusieurs PR pour un ticket — en parallèle ou empilées. Surcharge `slash-create-pr`. |
 | `skills/process-ticket/` | `/slash:process-ticket` | Parcours complet d'un ticket Linear, du worktree déjà créé jusqu'à la PR ouverte — sept étapes suivies en task list, pour retrouver où on en est en revenant sur un ticket. Orchestre les autres. |
 | `skills/recette-dataset/` | `/slash:recette-dataset` | Jeu de données de recette scopé à un ticket SLI, pour constater un bug avant correction puis prouver sa résolution. |
@@ -66,9 +81,14 @@ dans `CLAUDE.md`, parce que leur déclenchement ne peut pas dépendre du hasard.
 | `CLAUDE.md` | Les instructions globales, lues à chaque session, tous projets confondus. Ne contient que des imports `@`. |
 | `RTK.md` | Référence du proxy CLI `rtk`, importée par `CLAUDE.md`. |
 | `.claude-plugin/plugin.json` | Le manifeste. C'est sa seule présence qui fait charger le dossier comme plugin. |
-| `hooks/` | `SessionStart` : injecte le ticket lu dans le nom de branche quand la session s'ouvre dans un worktree SLI. |
+| `hooks/hooks.json` | Le câblage, et rien d'autre : un script par événement. Volontairement famélique — voir « Ce qui se propage tout seul ». |
+| `hooks/handlers/session-start.sh` | Déclare les `watchPaths` à surveiller, et injecte le ticket lu dans le nom de branche quand la session s'ouvre dans un worktree SLI. |
+| `hooks/handlers/file-changed.sh` | `FileChanged` : se déclenche seul quand un fichier de config bouge sur disque, prévient à l'écran, pose un marqueur. |
+| `hooks/handlers/user-prompt-submit.sh` | Consomme le marqueur au message suivant et réinjecte les instructions permanentes modifiées. |
+| `hooks/handlers/commun.sh` | Les deux ensembles de fichiers qui fondent tout le rattrapage : instructions permanentes contre câblage. |
+| `bin/mise-a-jour.sh` | Le `git pull --ff-only` du clone installé. Tiré par launchd, et par `/slash:maj`. Hors de Claude Code, donc gratuit. |
 | `.mcp.json` | Serveur MCP `chrome` : lance son propre navigateur, avec un profil par worktree. |
-| `install.sh` | Pose les deux liens et neutralise ce qui entre en conflit. Idempotent. |
+| `install.sh` | Pose le clone installé, l'import `CLAUDE.md`, l'agent launchd, et neutralise ce qui entre en conflit. Idempotent. |
 | `hooks-retires/` | Hooks retirés de `settings.json`, conservés pour pouvoir les recoller. |
 | `settings.snippet.json` | Le peu qui doit vivre dans `settings.json`, et pourquoi. |
 | `claude-custom.code-workspace` | Espace de travail VS Code, versionné volontairement — le `.gitignore` l'exclut de l'exclusion des éditeurs. |
@@ -128,17 +148,59 @@ cd ~/Development/claude-custom && ./install.sh
 ```
 
 `install.sh` est idempotent et ne supprime jamais un fichier sans l'avoir
-sauvegardé. Il pose les deux liens (`~/.claude/skills/slash → <dépôt>` et
-`~/.claude/CLAUDE.md`), verse un `CLAUDE.md` ou un `RTK.md` local dans le dépôt
-en proposant d'en récupérer le contenu, retire les anciens liens par skill,
-neutralise le serveur MCP `chrome-devtools` de slash-interim, valide le
-manifeste, vérifie que les imports `@` résolvent, et termine sur l'inventaire des
-composants et leur coût en tokens.
+sauvegardé. Il clone le dépôt vers `~/.claude/skills/slash` et fait pointer
+son origine sur GitHub, remplace `~/.claude/CLAUDE.md` par le fichier d'une ligne
+qui importe celui du clone, verse un `CLAUDE.md` ou un `RTK.md` local dans le
+dépôt en proposant d'en récupérer le contenu, retire les anciens liens par skill,
+neutralise le serveur MCP `chrome-devtools` de slash-interim, pose l'agent
+launchd, puis vérifie : manifeste valide, imports `@` qui résolvent, mise à jour
+opérationnelle, agent chargé, et l'inventaire des composants avec leur coût en
+tokens.
 
-Un lien suffit pour le plugin : un dossier de `~/.claude/skills/` qui contient un
-`.claude-plugin/plugin.json` est chargé comme plugin complet — skills, hooks,
-serveur MCP — sans marketplace ni installation. Rien n'est copié : on édite dans
-le dépôt, c'est actif à la session suivante.
+Rien à déclarer côté marketplace : un dossier de `~/.claude/skills/` qui contient
+un `.claude-plugin/plugin.json` est chargé comme plugin complet — skills, hooks,
+serveur MCP.
+
+Le clone installé ne doit **jamais** être édité. Un seul fichier modifié dedans et
+le `merge --ff-only` échoue : les mises à jour s'arrêteraient, et en silence.
+C'est pour ça que `bin/mise-a-jour.sh` le vérifie à chaque passage et le notifie à
+l'écran — c'est la seule panne du montage qu'on ne verrait pas venir.
+
+## Ce qui se propage tout seul
+
+Une session ouverte depuis trois jours doit bénéficier d'un correctif sans qu'on
+la redémarre. Ce qui se recharge à chaud et ce qui ne se recharge pas n'est pas
+affaire de goût : c'est ce que Claude Code sait faire, vérifié.
+
+| Ce qui change | Propagation |
+| --- | --- |
+| Corps d'un `SKILL.md`, sa description, ajout, suppression, renommage | Surveillant natif, dans la session en cours |
+| Corps d'un handler de hook | Relu à chaque déclenchement — `hooks.json` ne nomme qu'un script |
+| `~/.claude/settings.json` | Surveillant natif |
+| `CLAUDE.md` et ses imports `@` — `RTK.md`, les `AMORCE.md` | **Rien ne les relit.** Réinjectés par `user-prompt-submit.sh` |
+| `hooks/hooks.json`, `.mcp.json`, `agents/`, `output-styles/` | `/reload-plugins` — le seul geste manuel qui reste |
+
+Les instructions permanentes sont le trou réel, et le plus sournois : une session
+de trois jours obéit aux amorces d'il y a trois jours, et rien ne le montre. D'où
+la chaîne, qui ne demande aucun geste —
+
+launchd tire → les fichiers changent sur disque → `FileChanged` part **seul**,
+sans prompt, dans toutes les sessions ouvertes à la fois → les skills sont déjà
+rechargés → un message dit ce qui a bougé → et au message suivant, le contenu
+frais des instructions permanentes est réinjecté dans le contexte.
+
+Rattraper au message suivant plutôt qu'à l'instant du changement n'est pas un
+pis-aller : c'est l'instant juste avant que ces instructions puissent compter. Une
+session au repos n'a besoin de rien.
+
+**`/reload-plugins` est irréductible.** Le câblage du plugin vit dans la mémoire du
+process, et `reload_plugins` est une control request réservée au SDK — vérifié dans
+le binaire : aucun hook ne peut la déclencher. D'où `hooks.json` réduit à nommer
+des scripts : tant qu'on n'y ajoute pas d'événement, il ne bouge plus, et le geste
+manuel ne se présente jamais.
+
+L'état des hooks vit dans `~/.claude/slash-etat/` — un marqueur par session, le
+journal des mises à jour. Jamais dans le clone, qui doit rester impeccable.
 
 `claude plugin validate` avertit que le `CLAUDE.md` de la racine « n'est pas
 chargé comme contexte de projet ». C'est **attendu** : il n'est pas censé l'être,
@@ -154,17 +216,28 @@ global ils échouent donc presque partout — **et en silence**. D'où la forme
 `@~/.claude/skills/slash/...`, ancrée sur le home et correcte depuis n'importe
 quel projet. `install.sh` le vérifie ; ne pas revenir à un chemin relatif.
 
-**`settings.json` n'est pas versionné et ne doit pas être symlinké** : Claude Code
-le réécrit lui-même (thème, plugins activés, `/config`), et une réécriture
-atomique remplacerait le lien par un fichier ordinaire sans prévenir. Tout ce qui
-peut vivre dans le plugin y vit ; le reste est documenté dans
+**Ce que Claude Code réécrit lui-même ne doit pas être un lien.** `settings.json`
+d'abord : il le réécrit (thème, plugins activés, `/config`), et une réécriture
+atomique remplacerait le lien par un fichier ordinaire sans prévenir. Il n'est donc
+pas versionné, et le peu qui doit y vivre est documenté dans
 `settings.snippet.json`.
+
+`~/.claude/CLAUDE.md` ensuite, pour la même raison poussée d'un cran : Claude Code
+y écrit aussi (`/memory`, « ajoute ça à CLAUDE.md »). Quand c'était un lien vers le
+dépôt, ces écritures y atterrissaient — ce qui était l'intention. Avec le montage
+par clone, elles saliraient le clone et gèleraient toutes les mises à jour. D'où le
+fichier d'une ligne : les ajouts personnels restent locaux, le contenu versionné
+arrive par l'import.
 
 ## Ajouter un skill
 
 Le créer **dans ce dépôt**, sous `skills/<nom>/SKILL.md` — jamais directement dans
-`~/.claude/skills/`, ce qui l'exclurait du versionnement sans prévenir. Il est
-visible à la session suivante, sans rien réinstaller.
+`~/.claude/skills/slash/`, qui est le clone installé : le travail y serait perdu au
+premier `pull`, et hors versionnement en attendant.
+
+Il devient actif quand le clone le reçoit : commit puis push, et le tick suivant
+l'apporte — dans les deux minutes, sans redémarrer aucune session. Pour l'éprouver
+sans le pousser, `/slash:maj` sait tirer depuis ce dépôt-ci.
 
 Vérifier son coût avant de le laisser vivre :
 
