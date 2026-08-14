@@ -44,7 +44,7 @@ compris.
 | --- | --- | --- |
 | `skills/constat/` | `/slash:constat` | Fait constater le problème par la personne qui traite le ticket, plutôt que de lui rapporter un constat — phase didactique avant implémentation, vérification de la résolution après. |
 | `skills/decoupage-pr/` | `/slash:decoupage-pr` | Garde-fou sur la taille des PR, et mécanique d'ouverture de plusieurs PR pour un ticket — en parallèle ou empilées. Surcharge `slash-create-pr`. |
-| `skills/process-ticket/` | `/slash:process-ticket` | Parcours complet d'un ticket Linear, du worktree déjà créé jusqu'à la PR ouverte. Orchestre les autres. |
+| `skills/process-ticket/` | `/slash:process-ticket` | Parcours complet d'un ticket Linear, du worktree déjà créé jusqu'à la PR ouverte — sept étapes suivies en task list, pour retrouver où on en est en revenant sur un ticket. Orchestre les autres. |
 | `skills/recette-dataset/` | `/slash:recette-dataset` | Jeu de données de recette scopé à un ticket SLI, pour constater un bug avant correction puis prouver sa résolution. |
 | `skills/redaction/` | `/slash:redaction` | Cadre de rédaction des écrits lus par un humain : descriptions de PR, commentaires de review, messages de commit. |
 | `skills/chrome-ancrage/` | `/slash:chrome-ancrage` | Règles de pilotage du navigateur quand plusieurs sessions tournent en parallèle. |
@@ -176,6 +176,25 @@ La colonne *always-on* est payée par **toutes** les sessions de **tous** les
 projets — c'est la description du frontmatter. La colonne *on-invoke* est payée à
 chaque déclenchement : au-delà de quelques milliers de tokens, sortir le détail
 en `references/`, lu seulement quand la question se pose.
+
+Ce seuil se pondère par la **fréquence de déclenchement**. `process-ticket` est à
+~5 k et les assume : il ne part qu'une fois par ticket, et tout son contenu sert
+dès le début du parcours — l'extraire en référence ajouterait une lecture sans
+rien économiser. Un skill qui part plusieurs fois par session n'a pas cette
+latitude.
+
+## Tenir ce README à jour
+
+Toute modification du dépôt se termine ici, en **confrontant ce fichier au dépôt**
+plutôt qu'en le relisant seul : aucune entrée suivie qui manque à l'inventaire,
+les chemins cités qui existent, les comportements décrits conformes à
+`install.sh` et aux liens réellement posés, et chaque chiffre annoncé traçable
+jusqu'au skill qui le porte.
+
+C'est la porte d'entrée de quelqu'un qui clone cet atelier, et les dérives ne se
+voient pas de l'intérieur : une relecture a déjà trouvé un montage annoncé comme
+un lien unique alors qu'il en faut deux, et cinq entrées suivies absentes de
+l'inventaire.
 
 ## Ne pas versionner ici
 
