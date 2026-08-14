@@ -4,13 +4,16 @@ description: >
   Parcours complet de traitement d'un ticket Linear SLI dans un worktree
   slash-interim ou slash-web, du worktree déjà créé jusqu'à la PR ouverte. Impose
   l'ordre qui compte : faire CONSTATER le problème à Vince avant d'écrire une
-  ligne, faire arbitrer le plan, implémenter, faire constater la résolution, puis
-  committer. Deux points d'arrêt bloquants — la validation du plan, passée par le
-  mode plan, et la validation de la résolution. Délègue la compréhension et le
-  constat à `slash:constat`, le jeu de données à `slash:recette-dataset`, les
-  commits et la PR aux skills du dépôt slash-interim (`slash-commit`,
-  `slash-create-pr`), la taille de la PR et son découpage éventuel à
-  `slash:decoupage-pr`, et le contenu rédigé des écrits GitHub à
+  ligne, faire arbitrer le plan, implémenter, faire constater la résolution,
+  committer, remettre la branche à jour sur `develop`, puis ouvrir la PR. Deux
+  points d'arrêt bloquants — la validation du plan, passée par le mode plan, et la
+  validation de la résolution. Impose l'appel explicite de la commande
+  `/slash-rebase` avant toute PR, seul endroit où l'ordre des migrations TypeORM
+  est contrôlé — un CI rouge qui ne se voit pas dans le diff. Délègue la
+  compréhension et le constat à `slash:constat`, le jeu de données à
+  `slash:recette-dataset`, les commits et la PR aux skills du dépôt slash-interim
+  (`slash-commit`, `slash-create-pr`), la taille de la PR et son découpage
+  éventuel à `slash:decoupage-pr`, et le contenu rédigé des écrits GitHub à
   `slash:redaction`.
   Use when the user says « mission : traiter ce ticket », « traite le ticket »,
   « on attaque SLI-XXXX », « je viens de créer le worktree », or
@@ -104,7 +107,7 @@ porteurs de logique, charger **`slash:decoupage-pr`** et faire arbitrer le
 découpage **dans le même plan** que l'approche.
 
 Découper maintenant coûte le choix d'un ordre d'implémentation. Découper à
-l'étape 5 coûte des cherry-picks et des rebases sur du code déjà écrit : c'est le
+l'étape 7 coûte des cherry-picks et des rebases sur du code déjà écrit : c'est le
 même travail à dix fois le prix. Un lot arbitré ici fixe aussi l'ordre des
 commits, ce qui rend le découpage des branches mécanique le moment venu.
 
@@ -137,27 +140,66 @@ lui qui devra affirmer en review que ça marche.
 
 Attendre sa validation explicite **avant de committer**.
 
-## Étape 5 — Finalisation
+## Étape 5 — Commits
 
 Découper les commits **par intention** : le correctif d'un côté, un renommage ou
 un déplacement de l'autre. Un commit qui mélange les deux est illisible en
 `git blame`.
 
-**Dans slash-interim, passer par les skills du dépôt** — ils portent la mécanique
-et les conventions maison, et on ne les court-circuite pas :
+**Dans slash-interim, passer par `slash-commit`** — gitmoji, référence SLI, mode
+découpage, et il ne stage jamais rien sans demander. Il impose un **titre seul,
+sans corps** : `slash:redaction` ne s'applique donc pas aux messages de commit de
+ce dépôt.
 
-- les commits via **`slash-commit`** : gitmoji, référence SLI, mode découpage, et
-  il ne stage jamais rien sans demander. Il impose un **titre seul, sans corps** —
-  `slash:redaction` ne s'applique donc pas aux messages de commit de ce dépôt ;
-- la PR via **`slash-create-pr`**, jamais un `gh pr create` monté à la main. Il
-  extrait le SLI de la branche, remplit le template, choisit le magic word Linear
-  (`Close`, `Part of`, `Ref`), pousse et ouvre la PR en draft.
+Ne pas committer les artefacts de recette : scripts de seed jetables, captures,
+fichiers du scratchpad.
+
+## Étape 6 — Remise à jour sur la branche de base
+
+Les commits faits, et **avant toute PR**, remettre la branche à jour sur
+`develop` avec la commande **`/slash-rebase`** du dépôt slash-interim.
+
+C'est une **commande**, pas un skill : elle ne se déclenche jamais toute seule,
+il faut l'appeler. C'est précisément pour ça que cette étape existe en dur dans
+le parcours.
+
+Ce qu'elle apporte et qu'on ne peut pas obtenir autrement : **elle contrôle
+l'ordre des migrations TypeORM.** Quand `develop` a ramené une migration
+au timestamp plus récent que celle de la branche, celle de la branche se retrouve
+avant elle dans l'ordre d'exécution, et la CI sort rouge sur
+`handle-migrations.sh`. **Ce cas ne se voit pas dans le diff** — le fichier de
+migration est intact, seul un ordre relatif a bougé. Ni la self-review, ni le
+relecteur, ni les tests locaux ne l'attrapent.
+
+Trois points de vigilance :
+
+- **rebaser avant d'ouvrir la PR, jamais après.** `/slash-rebase` finit sur un
+  `git push --force-with-lease` ; un force-push sur une PR déjà relue replie les
+  commentaires ancrés en *outdated* ;
+- **rebaser avant de découper en plusieurs branches.** Le re-timestampage d'une
+  migration amende l'historique (`--fixup` puis `--autosquash`) : fait après le
+  découpage, il faut le refaire dans chaque branche de la pile ;
+- **si le rebase ramène un changement de `develop` dans la zone touchée**, le
+  constat de résolution validé à l'étape 4 ne vaut plus tout à fait. Le dire, et
+  rejouer le script d'observation si le conflit était réel — pas si le rebase
+  s'est déroulé sans toucher au périmètre.
+
+`/slash-rebase` s'arrête d'elle-même avant le push et rend la main. Ne pas la
+court-circuiter en rebasant à la main : elle porte la parade au *racy git* en
+conteneur et le backup préalable.
+
+## Étape 7 — Ouverture de la PR
+
+**Passer par `slash-create-pr`**, jamais un `gh pr create` monté à la main : il
+extrait le SLI de la branche, remplit le template, choisit le magic word Linear
+(`Close`, `Part of`, `Ref`), pousse et ouvre la PR en draft. C'est un skill du
+dépôt slash-interim, et on ne le court-circuite pas.
 
 ### Re-vérifier le volume avant d'ouvrir la PR
 
-Les commits faits, mesurer le diff réel avant d'appeler `slash-create-pr`. La
-branche de base se déduit, elle ne s'écrit pas en dur — `slash-interim` est sur
-`develop` et n'a **pas** de `main` :
+Mesurer le diff réel avant d'appeler `slash-create-pr`. La branche de base se
+déduit, elle ne s'écrit pas en dur — `slash-interim` est sur `develop` et n'a
+**pas** de `main` :
 
 ```bash
 BASE=$(git symbolic-ref --short refs/remotes/origin/HEAD | sed 's|^origin/||')
@@ -168,7 +210,8 @@ git diff "$BASE"...HEAD --shortstat -- . \
 
 Au-delà de **400 lignes ou 15 fichiers**, charger **`slash:decoupage-pr`**. Si le
 découpage a déjà été arbitré à l'étape 2, il ne reste que sa mécanique à dérouler ;
-sinon c'est un rattrapage, et il faut le dire comme tel.
+sinon c'est un rattrapage, et il faut le dire comme tel. Le découpage vient
+**après** le rebase de l'étape 6, jamais avant.
 
 Un dépassement ne se contourne pas en silence : soit on découpe, soit Vince
 assume une PR unique en connaissance de cause.
@@ -188,6 +231,5 @@ s'applique pas** : c'est `slash:redaction` qui tranche, 150 à 250 mots en prose
 Dans slash-web, qui n'a pas ces skills de dépôt, la PR se crée à la main et
 `slash:redaction` gouverne seul.
 
-Ne pas committer les artefacts de recette : scripts de seed jetables, captures,
-fichiers du scratchpad. Enfin, vérifier que la référence Linear figure bien dans
-la description — c'est ce qui referme le ticket.
+Enfin, vérifier que la référence Linear figure bien dans la description — c'est ce
+qui referme le ticket.

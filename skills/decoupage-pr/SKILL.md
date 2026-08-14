@@ -87,8 +87,21 @@ frontières. **C'est le même travail à 10 % du prix.**
 
 Donc : dès que le plan laisse prévoir un dépassement des seuils, poser la
 question dans le plan lui-même, et faire arbitrer en même temps que l'approche.
-L'étape 5 ne fait qu'une **re-vérification** sur le diff réel — le découpage y
-est un rattrapage, pas le cas nominal.
+L'étape d'ouverture de la PR ne fait qu'une **re-vérification** sur le diff réel —
+le découpage y est un rattrapage, pas le cas nominal.
+
+## Rebaser d'abord, découper ensuite
+
+Sur slash-interim, la branche doit être remise à jour sur `develop` **avant**
+qu'on la découpe — c'est l'étape 6 de `slash:process-ticket`, via la commande
+`/slash-rebase`.
+
+L'ordre n'est pas indifférent : quand le rebase re-timestampe une migration
+TypeORM, il **amende l'historique** (`--fixup` puis `--autosquash`). Fait après le
+découpage, ce travail est à refaire dans chaque branche du lot. Et sur une pile,
+chaque fusion amont impose un rebase de l'aval, donc un nouveau contrôle de
+l'ordre des migrations à chaque étage — raison de plus pour garder les piles
+courtes.
 
 ## Où passent les frontières
 
