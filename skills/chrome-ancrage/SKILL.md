@@ -8,11 +8,11 @@ description: >
   lancer Chrome à la main, ni se connecter à un navigateur par un port de debug
   partagé. Impose aussi de vérifier la page avant toute action dont dépend un
   constat, et de ne fermer que l'instance qu'on possède.
-  Use when about to open or drive Chrome — ouverture d'une page, navigation,
-  clic, capture d'écran, lecture de la console — and BEFORE the first browser
-  action, not after. Also when the user says « ouvre le navigateur », « va voir
-  la page », « constate dans Chrome », « prends une capture », or mentions
-  plusieurs sessions en parallèle. Ne PAS utiliser pour `WebFetch` / `WebSearch`,
+  Use when about to open or drive Chrome — opening a page, navigating, clicking,
+  taking a screenshot, reading the console — and BEFORE the first browser action,
+  not after. Also when the user says « ouvre le navigateur », « va voir la page »,
+  « constate dans Chrome », « prends une capture », or mentions several parallel
+  sessions. Ne PAS utiliser pour `WebFetch` / `WebSearch`,
   qui ne touchent pas au navigateur.
 ---
 
