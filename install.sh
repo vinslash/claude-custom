@@ -281,11 +281,18 @@ while IFS= read -r ref; do
 done < <(grep -oE '^@[^[:space:]]+' "$CLONE/CLAUDE.md" 2>/dev/null || true)
 [ "$missing" = 0 ] || warn "corrige les références ci-dessus : elles échouent en silence."
 
-if sortie="$(bash "$CLONE/bin/mise-a-jour.sh" 2>&1)"; then
-  ok "mise à jour opérationnelle : $sortie"
-else
+# Le tick launchd vient d'être chargé (`RunAtLoad`) et tient peut-être le verrou :
+# on retente, plutôt que de conclure sur une exécution qui n'a rien fait.
+essais=0
+while :; do
+  sortie="$(bash "$CLONE/bin/mise-a-jour.sh" 2>&1)" && { ok "mise à jour opérationnelle : $sortie"; break; }
+  code=$?
+  if [ "$code" = 3 ] && [ "$essais" -lt 5 ]; then
+    essais=$((essais + 1)); sleep 2; continue
+  fi
   warn "la mise à jour a signalé : $sortie"
-fi
+  break
+done
 
 launchctl print "$domaine/$LABEL" >/dev/null 2>&1 && ok "agent actif dans $domaine." \
   || warn "agent absent de $domaine — vérifier avec : launchctl print $domaine/$LABEL"

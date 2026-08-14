@@ -73,8 +73,11 @@ alerter() {
 if ! mkdir "$VERROU" 2>/dev/null; then
   pose=$(stat -f %m "$VERROU" 2>/dev/null || echo 0)
   if [ $(($(date +%s) - pose)) -lt 300 ]; then
+    # Code distinct : appelé par install.sh, « verrou occupé » ne doit surtout pas
+    # se confondre avec un succès, sinon la vérification affiche ✔ sans avoir rien
+    # vérifié — ce qui est pire que pas de vérification du tout.
     note "une autre mise à jour est en cours, rien fait"
-    exit 0
+    exit 3
   fi
   # Verrou abandonné par un process tué en cours de route : on le reprend, sinon
   # les mises à jour s'arrêtent pour toujours sans que personne ne le sache.
