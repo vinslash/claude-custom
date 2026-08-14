@@ -1,29 +1,77 @@
 # claude-custom
 
-Ma customisation Claude Code, versionnée. **Le dépôt est un plugin** nommé
-`slash`, monté par un unique lien symbolique.
+Mon atelier Claude Code : l'endroit où j'éprouve des skills et des configs avant
+de les proposer à l'équipe.
 
-`~/.claude` mélange de la config écrite à la main et de l'état runtime (sessions,
-historique, `.credentials.json`) : le dossier entier n'est pas versionnable. Ce
-dépôt ne contient que le premier, et `~/.claude` pointe dessus.
+**Un bac à sable, parce qu'un skill ne se juge pas sur le papier.** Il faut le
+faire tourner sur de vrais tickets, plusieurs jours, et le corriger à chaud. Tant
+qu'il n'est pas stabilisé, il n'a rien à faire dans un dépôt d'équipe : ici je
+casse et je reprends sans conséquence pour personne.
+
+**Un chemin vers l'équipe, ensuite.** Ce qui a fait ses preuves est destiné à
+migrer vers `slash-interim/.claude/`. C'est pour ça que chaque skill est écrit
+pour rester lisible hors de son contexte d'origine, et que les surcharges d'un
+skill du dépôt vivent ici en attendant. `skills/decoupage-pr/` en est l'exemple
+courant : il surcharge `slash-create-pr` sans y toucher, le temps de vérifier que
+ses règles tiennent.
+
+**Tout versionné, d'où le montage.** `~/.claude` mélange la config écrite à la
+main et l'état runtime — sessions, historique, `.credentials.json` : le dossier
+entier n'est pas versionnable. D'où un dépôt séparé, et des liens symboliques pour
+que `~/.claude` pointe dessus. Et le format **plugin** plutôt qu'un lien par
+skill, parce qu'un seul point de montage suffit alors, hooks et serveur MCP
+compris.
+
+```
+  ~/.claude/                             claude-custom/  ← le plugin « slash »
+  │                                      │
+  ├── settings.json   (non versionné)    │
+  ├── sessions/, …    (état runtime)     │
+  │                                      │
+  ├── CLAUDE.md ───────── lien ──────────▶ CLAUDE.md
+  │                                      │
+  └── skills/slash/ ───── lien ──────────▶ .  ← skills/, hooks/, .mcp.json
+                                         │
+                                         ▼  ce qui a fait ses preuves
+                           slash-interim/.claude/skills/
+```
 
 ## Contenu
 
+### Les skills
+
+| Chemin | Invocation | Rôle |
+| --- | --- | --- |
+| `skills/constat/` | `/slash:constat` | Fait constater le problème par la personne qui traite le ticket, plutôt que de lui rapporter un constat — phase didactique avant implémentation, vérification de la résolution après. |
+| `skills/decoupage-pr/` | `/slash:decoupage-pr` | Garde-fou sur la taille des PR, et mécanique d'ouverture de plusieurs PR pour un ticket — en parallèle ou empilées. Surcharge `slash-create-pr`. |
+| `skills/process-ticket/` | `/slash:process-ticket` | Parcours complet d'un ticket Linear, du worktree déjà créé jusqu'à la PR ouverte. Orchestre les autres. |
+| `skills/recette-dataset/` | `/slash:recette-dataset` | Jeu de données de recette scopé à un ticket SLI, pour constater un bug avant correction puis prouver sa résolution. |
+| `skills/redaction/` | `/slash:redaction` | Cadre de rédaction des écrits lus par un humain : descriptions de PR, commentaires de review, messages de commit. |
+| `skills/chrome-ancrage/` | `/slash:chrome-ancrage` | Règles de pilotage du navigateur quand plusieurs sessions tournent en parallèle. |
+
+Le nom du plugin sert de **namespace** : c'est pourquoi les dossiers ne portent
+plus le préfixe `slash-`, qui ferait doublon. Attention à ne pas les confondre
+avec les skills du dépôt slash-interim (`slash-commit`, `slash-create-pr`), qui
+gardent le leur.
+
+Taper la commande reste l'exception : un skill part surtout **de lui-même**, sur
+sa description. `redaction` et `chrome-ancrage` s'appuient en plus sur une amorce
+dans `CLAUDE.md`, parce que leur déclenchement ne peut pas dépendre du hasard.
+
+### Le montage
+
 | Chemin | Rôle |
 | --- | --- |
-| `skills/constat/` | Fait constater un ticket à Vince lui-même — phase didactique avant implémentation, vérification de la résolution après. |
-| `skills/decoupage-pr/` | Garde-fou sur la taille des PR, et mécanique d'ouverture de plusieurs PR pour un ticket — en parallèle ou empilées. Surcharge `slash-create-pr`. |
-| `skills/process-ticket/` | Parcours complet d'un ticket Linear, du worktree déjà créé jusqu'à la PR ouverte. Orchestre les autres. |
-| `skills/recette-dataset/` | Jeu de données de recette scopé à un ticket SLI, pour constater un bug avant correction puis prouver sa résolution. |
-| `skills/redaction/` | Cadre de rédaction des écrits lus par un humain : descriptions de PR, commentaires de review, messages de commit. |
-| `skills/chrome-ancrage/` | Règles de pilotage du navigateur quand plusieurs sessions tournent en parallèle. |
+| `skills/*/AMORCE.md` | Quelques lignes importées par `CLAUDE.md` pour garantir le déclenchement d'un skill que sa seule description ne suffit pas à faire partir à coup sûr. |
+| `CLAUDE.md` | Les instructions globales, lues à chaque session, tous projets confondus. Ne contient que des imports `@`. |
+| `RTK.md` | Référence du proxy CLI `rtk`, importée par `CLAUDE.md`. |
+| `.claude-plugin/plugin.json` | Le manifeste. C'est sa seule présence qui fait charger le dossier comme plugin. |
 | `hooks/` | `SessionStart` : injecte le ticket lu dans le nom de branche quand la session s'ouvre dans un worktree SLI. |
 | `.mcp.json` | Serveur MCP `chrome` : lance son propre navigateur, avec un profil par worktree. |
+| `install.sh` | Pose les deux liens et neutralise ce qui entre en conflit. Idempotent. |
 | `hooks-retires/` | Hooks retirés de `settings.json`, conservés pour pouvoir les recoller. |
 | `settings.snippet.json` | Le peu qui doit vivre dans `settings.json`, et pourquoi. |
-
-Les skills s'invoquent **`/slash:<nom>`** : le nom du plugin sert de namespace,
-c'est pourquoi les dossiers ne portent plus le préfixe `slash-`.
+| `claude-custom.code-workspace` | Espace de travail VS Code, versionné volontairement — le `.gitignore` l'exclut de l'exclusion des éditeurs. |
 
 ## Installation
 
@@ -33,15 +81,22 @@ cd ~/Development/claude-custom && ./install.sh
 ```
 
 `install.sh` est idempotent et ne supprime jamais un fichier sans l'avoir
-sauvegardé. Il pose `~/.claude/skills/slash → <dépôt>`, verse `CLAUDE.md` et
-`RTK.md` dans le dépôt (en proposant de récupérer un contenu local existant),
-retire les anciens liens par skill, neutralise le serveur MCP `chrome-devtools`
-de slash-interim, et vérifie que les imports `@` résolvent.
+sauvegardé. Il pose les deux liens (`~/.claude/skills/slash → <dépôt>` et
+`~/.claude/CLAUDE.md`), verse un `CLAUDE.md` ou un `RTK.md` local dans le dépôt
+en proposant d'en récupérer le contenu, retire les anciens liens par skill,
+neutralise le serveur MCP `chrome-devtools` de slash-interim, valide le
+manifeste, vérifie que les imports `@` résolvent, et termine sur l'inventaire des
+composants et leur coût en tokens.
 
-Un seul lien suffit : un dossier de `~/.claude/skills/` qui contient un
+Un lien suffit pour le plugin : un dossier de `~/.claude/skills/` qui contient un
 `.claude-plugin/plugin.json` est chargé comme plugin complet — skills, hooks,
 serveur MCP — sans marketplace ni installation. Rien n'est copié : on édite dans
 le dépôt, c'est actif à la session suivante.
+
+`claude plugin validate` avertit que le `CLAUDE.md` de la racine « n'est pas chargé
+comme contexte de projet ». C'est **attendu** : il n'est pas censé l'être, il est
+lu via le lien `~/.claude/CLAUDE.md` en tant qu'instructions globales. Ne pas
+chercher à faire taire cet avertissement en déplaçant ou en supprimant le fichier.
 
 ## Deux pièges vérifiés à la dure
 
@@ -78,3 +133,6 @@ en `references/`, lu seulement quand la question se pose.
 
 `.credentials.json`, `settings.local.json`, et plus généralement tout ce qui porte
 un jeton ou une URL interne. Le dépôt est sur GitHub.
+
+`drafts/` est également ignoré : brouillons et handoffs de session, propres à la
+machine et sans intérêt pour quelqu'un qui clone.
