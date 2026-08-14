@@ -50,6 +50,11 @@ Seulement s'il y a vraiment quelque chose. Voir ci-dessous.
 Écris en **prose**. Des phrases, pas une avalanche de puces. Trois paragraphes
 courts se lisent plus vite qu'une liste de douze items.
 
+Ces 150 à 250 mots valent **par PR**. Si le diff dépasse 400 lignes ou 15
+fichiers porteurs de logique, le problème n'est plus la description : charger
+`slash:decoupage-pr` avant de rédiger, parce qu'il y a peut-être trois PR à
+écrire et non une.
+
 ### La seule section où le détail est rentable
 
 « À vérifier en recette » sert à ce que le relecteur ne peut pas deviner et qui

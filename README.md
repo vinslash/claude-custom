@@ -12,6 +12,7 @@ dépôt ne contient que le premier, et `~/.claude` pointe dessus.
 | Chemin | Rôle |
 | --- | --- |
 | `skills/constat/` | Fait constater un ticket à Vince lui-même — phase didactique avant implémentation, vérification de la résolution après. |
+| `skills/decoupage-pr/` | Garde-fou sur la taille des PR, et mécanique d'ouverture de plusieurs PR pour un ticket — en parallèle ou empilées. Surcharge `slash-create-pr`. |
 | `skills/process-ticket/` | Parcours complet d'un ticket Linear, du worktree déjà créé jusqu'à la PR ouverte. Orchestre les autres. |
 | `skills/recette-dataset/` | Jeu de données de recette scopé à un ticket SLI, pour constater un bug avant correction puis prouver sa résolution. |
 | `skills/redaction/` | Cadre de rédaction des écrits lus par un humain : descriptions de PR, commentaires de review, messages de commit. |

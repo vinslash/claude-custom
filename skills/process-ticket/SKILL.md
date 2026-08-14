@@ -9,11 +9,13 @@ description: >
   mode plan, et la validation de la résolution. Délègue la compréhension et le
   constat à `slash:constat`, le jeu de données à `slash:recette-dataset`, les
   commits et la PR aux skills du dépôt slash-interim (`slash-commit`,
-  `slash-create-pr`), et le contenu rédigé des écrits GitHub à `slash:redaction`.
+  `slash-create-pr`), la taille de la PR et son découpage éventuel à
+  `slash:decoupage-pr`, et le contenu rédigé des écrits GitHub à
+  `slash:redaction`.
   Use when the user says « mission : traiter ce ticket », « traite le ticket »,
   « on attaque SLI-XXXX », « je viens de créer le worktree », or
   `/slash:process-ticket SLI-XXXX`; and at the start of any session whose cwd is
-  un worktree `sli-XXXX-*`. Ne PAS utiliser pour reprendre une PR déjà ouverte
+  an `sli-XXXX-*` worktree. Ne PAS utiliser pour reprendre une PR déjà ouverte
   (→ `slash:redaction`), pour une review, ni pour un travail sans ticket
   Linear — exploration, question, correctif ponctuel demandé dans le chat.
 ---
@@ -95,6 +97,17 @@ préparatoire, pas de branche annexe.
 
 Le plan peut se raffiner à deux avant d'être soumis.
 
+### Une PR ou plusieurs — ça se tranche ici
+
+Si le plan laisse prévoir un diff au-delà de **400 lignes ou 15 fichiers**
+porteurs de logique, charger **`slash:decoupage-pr`** et faire arbitrer le
+découpage **dans le même plan** que l'approche.
+
+Découper maintenant coûte le choix d'un ordre d'implémentation. Découper à
+l'étape 5 coûte des cherry-picks et des rebases sur du code déjà écrit : c'est le
+même travail à dix fois le prix. Un lot arbitré ici fixe aussi l'ordre des
+commits, ce qui rend le découpage des branches mécanique le moment venu.
+
 ## Étape 3 — Implémentation et vérification
 
 Implémenter le plan validé, rien de plus. Un écart au plan se signale, il ne se
@@ -140,6 +153,26 @@ et les conventions maison, et on ne les court-circuite pas :
   extrait le SLI de la branche, remplit le template, choisit le magic word Linear
   (`Close`, `Part of`, `Ref`), pousse et ouvre la PR en draft.
 
+### Re-vérifier le volume avant d'ouvrir la PR
+
+Les commits faits, mesurer le diff réel avant d'appeler `slash-create-pr`. La
+branche de base se déduit, elle ne s'écrit pas en dur — `slash-interim` est sur
+`develop` et n'a **pas** de `main` :
+
+```bash
+BASE=$(git symbolic-ref --short refs/remotes/origin/HEAD | sed 's|^origin/||')
+git diff "$BASE"...HEAD --shortstat -- . \
+  ':(exclude)*.lock' ':(exclude)**/*.snap' ':(exclude)**/migrations/**' \
+  ':(exclude)**/locales/**' ':(exclude)**/*.generated.*' ':(exclude)**/generated/**'
+```
+
+Au-delà de **400 lignes ou 15 fichiers**, charger **`slash:decoupage-pr`**. Si le
+découpage a déjà été arbitré à l'étape 2, il ne reste que sa mécanique à dérouler ;
+sinon c'est un rattrapage, et il faut le dire comme tel.
+
+Un dépassement ne se contourne pas en silence : soit on découpe, soit Vince
+assume une PR unique en connaissance de cause.
+
 **La description part du fichier d'observation**, pas du diff. Les cinq lignes de
 POURQUOI écrites à l'étape 1, avec les mots de Vince, sont très exactement ce que
 `slash:redaction` réclame et que personne ne sait reconstituer deux jours plus
@@ -148,7 +181,9 @@ tard en relisant un diff. Charger `slash:redaction` **avant** de rédiger.
 Là où les deux se croisent, `slash-create-pr` donne la structure et la mécanique,
 `slash:redaction` la façon d'écrire — une description qui remplit
 consciencieusement le template en recopiant le diff n'est pas conforme pour
-autant.
+autant. En particulier, l'étape 6 de `slash-create-pr`, qui réclame un diagramme
+mermaid et une description « aussi claire et informative que possible », **ne
+s'applique pas** : c'est `slash:redaction` qui tranche, 150 à 250 mots en prose.
 
 Dans slash-web, qui n'a pas ces skills de dépôt, la PR se crée à la main et
 `slash:redaction` gouverne seul.
