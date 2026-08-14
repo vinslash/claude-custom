@@ -117,5 +117,5 @@ plus tard, par quelqu'un qui fait un `git blame` sans aucun contexte.
 Avant de rédiger, lis `references/exemples.md` : des paires avant/après tirées de
 vraies PR, annotées. Elles portent plus que les règles ci-dessus.
 
-Quand tu produis une description qui se fait retoquer par Vince, **ajoute la paire
-à ce fichier**. C'est comme ça que ce skill s'affine.
+Quand tu produis une description qui se fait retoquer par l'utilisateur,
+**ajoute la paire à ce fichier**. C'est comme ça que ce skill s'affine.

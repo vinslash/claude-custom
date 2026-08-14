@@ -45,8 +45,8 @@ BASE=$(git symbolic-ref --short refs/remotes/origin/HEAD | sed 's|^origin/||')
 ```
 
 Si la commande ne renvoie rien (remote HEAD jamais résolu), `git remote set-head
-origin --auto` puis retenter. En dernier recours, demander à Vince plutôt que de
-parier sur `main`.
+origin --auto` puis retenter. En dernier recours, demander à l'utilisateur
+plutôt que de parier sur `main`.
 
 Dans tout ce qui suit, `$BASE` désigne cette branche.
 
@@ -67,7 +67,7 @@ git diff "$BASE"...HEAD --shortstat -- . \
 
 **Seuils d'arbitrage** : plus de **400 lignes** (ajoutées + supprimées) **ou**
 plus de **15 fichiers** porteurs de logique. En dessous : une PR, ce skill
-s'arrête ici, ne pas encombrer Vince d'une question rhétorique.
+s'arrête ici, ne pas encombrer l'utilisateur d'une question rhétorique.
 
 Deux corollaires :
 
@@ -76,7 +76,7 @@ Deux corollaires :
   mélanger noie le correctif ;
 - les seuils sont un **déclencheur de conversation**, pas une loi. 500 lignes
   dont 400 sont un même pattern répété se relisent mieux que 200 lignes de
-  logique dense. Le dire, et laisser Vince trancher.
+  logique dense. Le dire, et laisser l'utilisateur trancher.
 
 ## Le découpage se décide au plan, pas après
 

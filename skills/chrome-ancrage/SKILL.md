@@ -59,11 +59,11 @@ attendue — l'URL, et un repère visible dans la page. Si ça ne correspond pas
 
 **Ne fermer que ce qu'on possède.** Si une instance survit à sa session, elle
 s'identifie par son `--user-data-dir`. On ne tue que celle de son propre
-worktree, jamais une autre, et jamais le Chrome personnel de Vince.
+worktree, jamais une autre, et jamais son Chrome personnel.
 
-**Laisser la fenêtre ouverte quand Vince doit constater.** C'est ce que demandent
-`slash:constat` et `slash:process-ticket` : le navigateur est là pour qu'il
-manipule lui-même, pas seulement pour produire des captures.
+**Laisser la fenêtre ouverte quand l'utilisateur doit constater.** C'est ce que
+demandent `slash:constat` et `slash:process-ticket` : le navigateur est là pour
+qu'il manipule lui-même, pas seulement pour produire des captures.
 
 ## Ce qu'il faut savoir en pratique
 

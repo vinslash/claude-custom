@@ -162,8 +162,8 @@ n'apparaît pas, ne pas continuer : le dataset est inopérant.
 ## Phase 3 — La baseline « avant »
 
 **Appelé par `slash:constat`, s'arrêter ici** et le lui rendre la main : la
-baseline se constate avec Vince, c'est précisément son travail et non le nôtre.
-Se contenter de dire que le cas est visible, et où.
+baseline se constate avec l'utilisateur, c'est précisément son travail et non le
+nôtre. Se contenter de dire que le cas est visible, et où.
 
 **Appelé seul**, faire la baseline soi-même : se placer sur la branche avant
 implémentation, naviguer jusqu'à l'écran, capturer l'état fautif, noter les

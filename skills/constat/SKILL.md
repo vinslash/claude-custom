@@ -1,12 +1,13 @@
 ---
 name: constat
 description: >
-  Fait CONSTATER un ticket SLI à Vince lui-même, plutôt que de lui rapporter un
-  constat. Deux modes : « avant », qui explique le ticket côté métier, le lui fait
-  reproduire de ses propres mains dans le navigateur et répète avec lui les
+  Fait CONSTATER un ticket SLI à l'utilisateur lui-même, plutôt que de lui
+  rapporter un constat. Deux modes : « avant », qui explique le ticket côté
+  métier, le lui fait reproduire de ses propres mains dans le navigateur et
+  répète avec lui les
   challenges du PM et des reviewers ; « après », qui rejoue le même script critère
   par critère pour vérifier la résolution. Le mode se déduit de l'existence du
-  fichier d'observation. Produit le POURQUOI du ticket avec les mots de Vince — la
+  fichier d'observation. Produit le POURQUOI du ticket avec ses mots — la
   matière première de la description de PR — la liste des questions à poser au PM,
   et un script de rejeu. Délègue le jeu de données à `slash:recette-dataset` et la
   localisation du code à un sous-agent d'exploration.
@@ -23,17 +24,19 @@ description: >
 
 ## Pourquoi ce skill existe
 
-Le réflexe d'un agent est de lire le ticket, aller voir, et rapporter. Vince lit
-le rapport, dit « ok », et se retrouve deux jours plus tard face à un PM ou à un
-reviewer sans modèle mental du problème. Lire un bon rapport donne l'illusion de
+Le réflexe d'un agent est de lire le ticket, aller voir, et rapporter.
+L'utilisateur lit le rapport, dit « ok », et se retrouve deux jours plus tard
+face à un PM ou à un reviewer sans modèle mental du problème. Lire un bon rapport
+donne l'illusion de
 comprendre ; un point d'arrêt qu'on franchit en lisant un rapport finit tamponné.
 
-Ce skill inverse la manœuvre : **l'agent prépare le terrain, Vince manipule.**
-La différence entre regarder et faire est exactement la différence entre « il y
-avait un truc sur les avenants » et pouvoir répondre à une objection.
+Ce skill inverse la manœuvre : **l'agent prépare le terrain, l'utilisateur
+manipule.** La différence entre regarder et faire est exactement la différence
+entre « il y avait un truc sur les avenants » et pouvoir répondre à une
+objection.
 
 Corollaire : ce qui sort d'ici n'est pas un compte rendu de l'agent, c'est **la
-compréhension de Vince, écrite avec ses mots**. C'est aussi ce que
+compréhension de l'utilisateur, écrite avec ses mots**. C'est aussi ce que
 `slash:redaction` réclamera à l'heure de la PR — le POURQUOI que le diff ne dit
 pas — et qu'on ne sait plus reconstituer après coup à partir du diff.
 
@@ -44,8 +47,8 @@ Le fichier d'observation est `<scratchpad de session>/SLI-XXXX-OBSERVATION.md`.
 - absent → **mode avant** ;
 - présent → **mode après**.
 
-**Annoncer le mode déduit en une ligne** et laisser Vince le corriger. Ne jamais
-le deviner en silence.
+**Annoncer le mode déduit en une ligne** et laisser l'utilisateur le corriger.
+Ne jamais le deviner en silence.
 
 ---
 
@@ -74,8 +77,8 @@ Trois questions, avant d'engager quoi que ce soit :
 1. **Y a-t-il quelque chose d'observable ?** Non (refactor, renommage, migration
    de typage) → pas de phase didactique. Dire ce que fait le ticket en trois
    lignes et rendre la main.
-2. **Vince connaît-il déjà cette zone du produit ?** S'il la pratique tous les
-   jours, la partie métier se réduit à ce qui est nouveau.
+2. **L'utilisateur connaît-il déjà cette zone du produit ?** S'il la pratique
+   tous les jours, la partie métier se réduit à ce qui est nouveau.
 3. **Un challenge est-il probable ?** Un ticket qui change une règle de gestion,
    un montant, un droit d'accès ou un comportement visible client en attirera
    un ; une correction d'affichage, non.
@@ -89,7 +92,7 @@ contourné ne sert plus à rien.
 
 Juger si le cas est dans la base clonée. S'il manque, appeler
 **`slash:recette-dataset`**, qui s'arrêtera une fois le cas visible à l'écran :
-la baseline se constate ici, avec Vince.
+la baseline se constate ici, avec l'utilisateur.
 
 Il signale aussi les critères qui dépendent d'un service externe non mocké. Si le
 constat en dépend, le remonter tout de suite.
@@ -97,7 +100,7 @@ constat en dépend, le remonter tout de suite.
 ## 4. La phase didactique
 
 Le navigateur est celui du serveur MCP `chrome` : une instance dédiée au
-worktree, que Vince voit et dans laquelle il peut cliquer. Charger
+worktree, que l'utilisateur voit et dans laquelle il peut cliquer. Charger
 `slash:chrome-ancrage` avant la première action.
 
 Quatre règles, dans cet ordre.
@@ -107,10 +110,10 @@ ce qu'il va montrer — « à ton avis, la liste affiche zéro ligne ou trois ? 
 via `AskUserQuestion`. Se tromper est ce qui fixe le souvenir ; se faire raconter
 la réponse ne fixe rien.
 
-**Laisser Vince manipuler.** Naviguer jusqu'à la page — ça, c'est de l'intendance
-— puis **rendre le clavier**. Donner l'étape suivante en une phrase et attendre
-ce qu'il observe. Ne pas cliquer à sa place, ne pas décrire ce qu'il va voir
-avant qu'il l'ait vu.
+**Laisser l'utilisateur manipuler.** Naviguer jusqu'à la page — ça, c'est de
+l'intendance — puis **rendre le clavier**. Donner l'étape suivante en une phrase
+et attendre ce qu'il observe. Ne pas cliquer à sa place, ne pas décrire ce qu'il
+va voir avant qu'il l'ait vu.
 
 **Expliquer le métier, pas le code.** Un PM ne demande jamais quelle méthode de
 repository. Il demande qui est impacté, ce qu'il advient de l'existant, pourquoi
@@ -119,26 +122,26 @@ repository. Il demande qui est impacté, ce qu'il advient de l'existant, pourquo
 **Marquer la confiance.** Séparer explicitement ce qui est **lu dans le code**
 (fait), ce qui est **déduit** (hypothèse), et ce qui reste **inconnu** (question
 pour le PM). Un agent qui enseigne un modèle métier faux est pire qu'un agent
-muet : Vince le répétera. La liste des inconnues est un livrable — arriver chez
-le PM avec trois questions précises, c'est exactement l'objectif.
+muet : l'utilisateur le répétera. La liste des inconnues est un livrable —
+arriver chez le PM avec trois questions précises, c'est exactement l'objectif.
 
 ## 5. La répétition du challenge
 
 Faire jouer le PM puis le reviewer par un **sous-agent naïf**, qui ne reçoit que
-le texte du ticket et les quelques lignes d'explication de Vince — **pas** le
-code, pas l'analyse. C'est la condition pour qu'il challenge comme quelqu'un qui
-n'a pas lu le code, c'est-à-dire comme le vrai PM. Un agent qui sait tout pose des
-questions d'initié.
+le texte du ticket et les quelques lignes d'explication de l'utilisateur —
+**pas** le code, pas l'analyse. C'est la condition pour qu'il challenge comme
+quelqu'un qui n'a pas lu le code, c'est-à-dire comme le vrai PM. Un agent qui
+sait tout pose des questions d'initié.
 
-Trois questions suffisent. Celles auxquelles Vince ne sait pas répondre sont les
-trous à combler — repérés avant qu'une ligne soit écrite, quand c'est encore
-gratuit.
+Trois questions suffisent. Celles auxquelles l'utilisateur ne sait pas répondre
+sont les trous à combler — repérés avant qu'une ligne soit écrite, quand c'est
+encore gratuit.
 
 ## 6. Ce qu'on écrit
 
 `<scratchpad>/SLI-XXXX-OBSERVATION.md`, court :
 
-- **Le POURQUOI, cinq lignes, avec les mots de Vince** : ce que ça change, pour
+- **Le POURQUOI, cinq lignes, avec ses mots** : ce que ça change, pour
   qui, pourquoi c'était comme ça. Le lui faire formuler plutôt que le rédiger à
   sa place — c'est le test de la compréhension, et c'est la matière de la PR.
 - **Les questions pour le PM**, telles quelles.
@@ -157,8 +160,8 @@ Puis reprendre **les critères d'acceptation un par un** : chacun est constaté,
 ou il ne l'est pas et on le dit. Un critère bloqué par un service externe reste
 bloqué, il ne devient pas vert parce que le reste fonctionne.
 
-Là encore, c'est Vince qui manipule : c'est lui qui devra affirmer en review que
-ça marche.
+Là encore, c'est l'utilisateur qui manipule : c'est lui qui devra affirmer en
+review que ça marche.
 
 Si un écart apparaît, **ne pas le réparer en passant**. Le décrire et rendre la
 main : la correction relève de l'étape d'implémentation, pas d'ici.
@@ -175,6 +178,6 @@ main : la correction relève de l'étape d'implémentation, pas d'ici.
 - Présenter une déduction comme un fait — surtout sur l'intention métier, où
   l'agent extrapole le plus.
 - Donner au sous-agent qui joue le PM autre chose que le ticket et les mots de
-  Vince.
+  l'utilisateur.
 - Enchaîner sur le plan ou l'implémentation : ce skill s'arrête au constat.
-- Écrire le POURQUOI à la place de Vince.
+- Écrire le POURQUOI à la place de l'utilisateur.

@@ -3,8 +3,9 @@ name: process-ticket
 description: >
   Parcours complet de traitement d'un ticket Linear SLI dans un worktree
   slash-interim ou slash-web, du worktree déjà créé jusqu'à la PR ouverte. Impose
-  l'ordre qui compte : faire CONSTATER le problème à Vince avant d'écrire une
-  ligne, faire arbitrer le plan, implémenter, faire constater la résolution,
+  l'ordre qui compte : faire CONSTATER le problème à l'utilisateur avant
+  d'écrire une ligne, faire arbitrer le plan, implémenter, faire constater la
+  résolution,
   committer, remettre la branche à jour sur `develop`, puis ouvrir la PR. Deux
   points d'arrêt bloquants — la validation du plan, passée par le mode plan, et la
   validation de la résolution. Impose l'appel explicite de la commande
@@ -33,7 +34,7 @@ n'a vu casser, et on n'a rien pour prouver que c'est réparé.
 
 Le parcours ci-dessous existe pour empêcher ça. Il tient sur un ordre —
 **constater avant d'implémenter, faire constater avant de committer** — et sur
-deux points d'arrêt où Vince arbitre. Tout le reste est de l'intendance.
+deux points d'arrêt où l'utilisateur arbitre. Tout le reste est de l'intendance.
 
 Une troisième raison, apprise à l'usage : un parcours qui déroule tout seul finit
 par produire un développeur qui ne sait plus défendre son propre ticket en
@@ -65,20 +66,20 @@ Le ticket, et rien que le ticket. Pas de refactor opportuniste, pas de correctio
 d'un bug adjacent croisé en route, pas de nettoyage de code qu'on trouve laid.
 
 Ce qui est hors périmètre tient en **une ligne** dans le rapport de l'étape en
-cours — et on continue. Vince décidera s'il en fait un ticket.
+cours — et on continue. L'utilisateur décidera s'il en fait un ticket.
 
 ---
 
 ## Étape 1 — Constat partagé
 
-Appeler **`slash:constat`** en mode « avant ». Il possède tout le bloc
-« comprendre » : la lecture du ticket — **la seule de tout le parcours**, ne pas
+Appeler **`slash:constat`** en mode « avant ». Il possède tout le bloc «
+comprendre » : la lecture du ticket — **la seule de tout le parcours**, ne pas
 la refaire ensuite —, la localisation du code, l'appel à `slash:recette-dataset`
-si le cas manque en base, la phase où Vince reproduit le problème de ses propres
-mains, et la répétition des challenges du PM et des reviewers.
+si le cas manque en base, la phase où l'utilisateur reproduit le problème de ses
+propres mains, et la répétition des challenges du PM et des reviewers.
 
 Il produit un fichier d'observation : le POURQUOI du ticket avec les mots de
-Vince, les questions restées ouvertes, et le script de rejeu. **Ce fichier
+l'utilisateur, les questions restées ouvertes, et le script de rejeu. **Ce fichier
 voyage jusqu'à la dernière étape** — c'est de lui que sortira la description de
 PR, et non du diff.
 
@@ -90,7 +91,7 @@ prématuré.
 
 Proposer un plan : l'approche retenue et pourquoi, les fichiers concernés, les
 effets de bord attendus, ce qu'on laisse volontairement de côté. Une alternative
-ne se présente que si le choix change quelque chose pour Vince ; sinon,
+ne se présente que si le choix change quelque chose pour l'utilisateur ; sinon,
 recommander et avancer.
 
 **Passer par le mode plan** et soumettre via `ExitPlanMode`. C'est une vraie
@@ -125,8 +126,8 @@ suite complète si ce n'est pas nécessaire.
 
 Les captures vont dans le scratchpad. `gh` ne sait pas uploader d'image sur
 GitHub : elles ne peuvent pas atterrir seules dans la description de PR. Dire où
-elles sont pour que Vince les colle s'il le souhaite, ou les attacher au ticket
-Linear. Ne pas promettre une PR illustrée qu'on ne peut pas produire.
+elles sont pour que l'utilisateur les colle s'il le souhaite, ou les attacher au
+ticket Linear. Ne pas promettre une PR illustrée qu'on ne peut pas produire.
 
 **Rapport** : ce qui a été fait, ce qui a résisté, les écarts au plan. Puis la
 question : faut-il remettre le jeu de données en état pour constater la
@@ -135,8 +136,8 @@ résolution ?
 ## Étape 4 — Constat de la résolution (point d'arrêt bloquant)
 
 Appeler **`slash:constat`** en mode « après ». Il rejoue le script à l'identique
-et reprend les critères d'acceptation un par un, avec Vince aux commandes — c'est
-lui qui devra affirmer en review que ça marche.
+et reprend les critères d'acceptation un par un, avec l'utilisateur aux
+commandes — c'est lui qui devra affirmer en review que ça marche.
 
 Attendre sa validation explicite **avant de committer**.
 
@@ -213,11 +214,11 @@ découpage a déjà été arbitré à l'étape 2, il ne reste que sa mécanique 
 sinon c'est un rattrapage, et il faut le dire comme tel. Le découpage vient
 **après** le rebase de l'étape 6, jamais avant.
 
-Un dépassement ne se contourne pas en silence : soit on découpe, soit Vince
-assume une PR unique en connaissance de cause.
+Un dépassement ne se contourne pas en silence : soit on découpe, soit
+l'utilisateur assume une PR unique en connaissance de cause.
 
 **La description part du fichier d'observation**, pas du diff. Les cinq lignes de
-POURQUOI écrites à l'étape 1, avec les mots de Vince, sont très exactement ce que
+POURQUOI écrites à l'étape 1, avec ses mots, sont très exactement ce que
 `slash:redaction` réclame et que personne ne sait reconstituer deux jours plus
 tard en relisant un diff. Charger `slash:redaction` **avant** de rédiger.
 
