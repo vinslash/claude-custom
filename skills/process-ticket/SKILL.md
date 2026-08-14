@@ -47,6 +47,40 @@ Le ticket est porté par le nom de la branche, et un hook l'injecte au démarrag
 de la session. Si ce contexte est absent — pas de worktree, branche sans
 identifiant — le dire et s'arrêter plutôt que d'improviser un périmètre.
 
+## Le suivi d'avancement
+
+Avant l'étape 1, matérialiser le parcours en **task list** : une tâche par étape,
+sept en tout, dans l'ordre, en reprenant les intitulés des titres d'étape
+ci-dessous pour que deux tickets se lisent pareil. Pas plus fin — les phases
+internes de `slash:constat` ou `slash:recette-dataset` n'y entrent pas, elles
+transformeraient la liste en bruit.
+
+C'est ce qui permet de reprendre un ticket après en avoir traité un autre :
+plusieurs worktrees tournent en parallèle, et savoir où on en est ne doit pas
+dépendre de ce qu'on se rappelle.
+
+**Commencer par `TaskList`.** Si les tâches existent déjà, ne pas les recréer.
+
+**Si la liste est vide alors que le travail a commencé** — nouvelle session sur un
+ticket entamé, ou session précédente perdue — la reconstruire et marquer d'emblée
+`completed` ce qui est déjà fait. L'état se lit dans le fichier d'observation,
+dans les commits de la branche et dans le diff, jamais dans la mémoire de la
+session.
+
+Ensuite : `in_progress` en entrant dans une étape, `completed` en la quittant.
+Les deux barrières s'encodent en dépendances plutôt qu'en bonnes intentions —
+l'étape 3 `addBlockedBy` l'étape 2, l'étape 7 `addBlockedBy` l'étape 4.
+
+**Une étape à barrière ne passe à `completed` que sur validation explicite de
+l'utilisateur**, jamais sur l'appréciation de l'agent. C'est la règle qui compte,
+parce qu'une checklist invite exactement au travers que ce skill existe pour
+empêcher : prendre le fait de cocher pour l'accomplissement. Une case cochée sans
+que l'utilisateur ait rien constaté a l'air de la rigueur et n'en est pas.
+
+Enfin, la liste porte la **position** dans le parcours ; le fichier d'observation
+porte le **contenu**. Ni l'un ni l'autre ne remplace le rapport de trois à cinq
+lignes ci-dessous : cocher une case n'est pas rendre compte.
+
 ## Ce que « rapport » veut dire ici
 
 À chaque étape, un rapport de **trois à cinq lignes en prose** : ce qui a été
