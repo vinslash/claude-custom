@@ -57,12 +57,12 @@ enfin exister une notion de version.
 | Chemin | Invocation | Rôle |
 | --- | --- | --- |
 | `skills/constat/` | `/slash:constat` | Fait constater le problème par la personne qui traite le ticket, plutôt que de lui rapporter un constat — phase didactique avant implémentation, vérification de la résolution après. |
-| `skills/maj/` | `/slash:maj` | Force la mise à jour du clone installé sans attendre le tick de launchd, et depuis le dépôt de dev plutôt que GitHub avec `--depuis-dev` — pour éprouver un skill committé sans le pousser. |
 | `skills/decoupage-pr/` | `/slash:decoupage-pr` | Garde-fou sur la taille des PR, et mécanique d'ouverture de plusieurs PR pour un ticket — en parallèle ou empilées. Surcharge `slash-create-pr`. |
 | `skills/process-ticket/` | `/slash:process-ticket` | Parcours complet d'un ticket Linear, du worktree déjà créé jusqu'à la PR ouverte — sept étapes suivies en task list, pour retrouver où on en est en revenant sur un ticket. Orchestre les autres. |
 | `skills/recette-dataset/` | `/slash:recette-dataset` | Jeu de données de recette scopé à un ticket SLI, pour constater un bug avant correction puis prouver sa résolution. |
 | `skills/redaction/` | `/slash:redaction` | Cadre de rédaction des écrits lus par un humain : descriptions de PR, commentaires de review, messages de commit. |
 | `skills/chrome-ancrage/` | `/slash:chrome-ancrage` | Règles de pilotage du navigateur quand plusieurs sessions tournent en parallèle. |
+| `skills/maj/` | `/slash:maj` | Le seul qui ne parle pas de tickets : force la mise à jour du clone installé sans attendre le tick de launchd, et depuis ce dépôt-ci plutôt que GitHub avec `--depuis-dev`, pour éprouver un skill committé sans le pousser. |
 
 Le nom du plugin sert de **namespace** : c'est pourquoi les dossiers ne portent
 plus le préfixe `slash-`, qui ferait doublon. Attention à ne pas les confondre
@@ -78,7 +78,7 @@ dans `CLAUDE.md`, parce que leur déclenchement ne peut pas dépendre du hasard.
 | Chemin | Rôle |
 | --- | --- |
 | `skills/*/AMORCE.md` | Quelques lignes importées par `CLAUDE.md` pour garantir le déclenchement d'un skill que sa seule description ne suffit pas à faire partir à coup sûr. |
-| `CLAUDE.md` | Les instructions globales, lues à chaque session, tous projets confondus. Ne contient que des imports `@`. |
+| `CLAUDE.md` | Les instructions globales, lues à chaque session, tous projets confondus. Ne contient que des imports `@`, et n'est lui-même atteint que par l'import posé dans `~/.claude/CLAUDE.md`. |
 | `RTK.md` | Référence du proxy CLI `rtk`, importée par `CLAUDE.md`. |
 | `.claude-plugin/plugin.json` | Le manifeste. C'est sa seule présence qui fait charger le dossier comme plugin. |
 | `hooks/hooks.json` | Le câblage, et rien d'autre : un script par événement. Volontairement famélique — voir « Ce qui se propage tout seul ». |
