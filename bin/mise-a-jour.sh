@@ -103,6 +103,12 @@ if [ -n "$sale" ]; then
   exit 1
 fi
 
+# Le clone est sain : on efface le témoin d'anti-répétition tout de suite. Le
+# garder jusqu'à la prochaine mise à jour effective rendrait muette une vraie
+# panne survenant dans l'heure — une alerte qu'on étouffe soi-même est pire que
+# pas d'alerte.
+rm -f "$ETAT/.alerte-vue"
+
 local_sha=$(git -C "$CLONE" rev-parse HEAD 2>/dev/null)
 
 # On interroge la source SANS rien écrire dans le clone. C'est ce qui permet de
@@ -146,5 +152,4 @@ fi
 
 fichiers=$(git -C "$CLONE" diff --name-only "$local_sha" "$distant_sha" 2>/dev/null | tr '\n' ' ')
 note "mis à jour ${local_sha:0:7} → ${distant_sha:0:7} : $fichiers"
-rm -f "$ETAT/.alerte-vue"
 borner_journal
