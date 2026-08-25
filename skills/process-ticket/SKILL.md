@@ -90,9 +90,10 @@ Pas de tableau, pas de recopie du diff, pas de liste de fichiers touchés, pas d
 récapitulatif étape par étape. Si le rapport ne tient pas en cinq lignes, c'est
 qu'il contient autre chose qu'un rapport.
 
-Ne pas charger `slash:redaction` pour ces rapports : ce skill couvre les écrits
-que lit un relecteur sur GitHub, et il exclut la rédaction destinée au chat. Il
-intervient à la dernière étape.
+Ne pas charger `slash:redaction` pour ces rapports : il exclut explicitement la
+rédaction destinée au chat. Il gouverne en revanche le **document de plan** de
+l'étape 2 et les écrits GitHub de l'étape 7 — un rapport de cinq lignes et un
+plan soumis à arbitrage ne sont pas le même écrit.
 
 ## Rester dans le périmètre
 
@@ -127,6 +128,13 @@ Proposer un plan : l'approche retenue et pourquoi, les fichiers concernés, les
 effets de bord attendus, ce qu'on laisse volontairement de côté. Une alternative
 ne se présente que si le choix change quelque chose pour l'utilisateur ; sinon,
 recommander et avancer.
+
+**Charger `slash:redaction` avant de rédiger le plan.** Un plan est un livrable
+long relu par un humain, et c'est ce skill qui en porte la forme : 200 lignes au
+plus, la passe d'élagage avant de soumettre, pas de plaidoirie sur des décisions
+que personne ne conteste, et le hors-périmètre réduit à une ligne de renvoi.
+L'analyse coûteuse qui n'entre pas dans le plan ne se perd pas pour autant : elle
+part en commentaire du ticket Linear, dans les 250 mots.
 
 **Passer par le mode plan** et soumettre via `ExitPlanMode`. C'est une vraie
 porte d'approbation : elle ne se franchit pas sur un « ok » qui répondait à autre

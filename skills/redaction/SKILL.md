@@ -2,17 +2,25 @@
 name: redaction
 description: >
   Cadre de rédaction des écrits destinés à un relecteur humain : descriptions de
-  pull request, commentaires de code review, messages de commit. Impose une
-  description courte, en prose, qui dit le POURQUOI que le diff ne dit pas, et
-  qui bannit les tableaux de recette exhaustifs, les snippets recopiés du diff et
-  les détails d'outillage sans conséquence pour le relecteur.
+  pull request, commentaires de code review, messages de commit, et livrables
+  écrits longs — document de plan, handoff, analyse, dossier de décision. Impose
+  une description courte, en prose, qui dit le POURQUOI que le diff ne dit pas,
+  et bannit les tableaux de recette exhaustifs, les snippets recopiés du diff et
+  les détails d'outillage sans conséquence pour le relecteur. Sur les livrables
+  longs, impose une passe d'élagage avant de rendre — plaidoirie, hors-périmètre
+  et méta-commentaire dehors — et donne un exutoire borné au détail technique
+  coûteux à reproduire : un commentaire Linear ou PR.
   Use when about to run `gh pr create`, `gh pr edit --body`, `gh pr review`,
-  `gh pr comment`, or `git commit`; when the user says « ouvre une PR », « fais
-  la PR », « rédige la description », « décris la PR », « commente la review »,
-  « relis cette PR », « message de commit », « rédige le commit »; and whenever
-  producing text a human teammate will read on GitHub. À charger AVANT d'écrire
-  le texte, pas après. Ne PAS utiliser pour la rédaction destinée à l'utilisateur
-  dans le chat, ni pour la documentation technique de fond (README, ADR).
+  `gh pr comment`, or `git commit`; before handing over any long written
+  deliverable a human will review, including a plan submitted through
+  `ExitPlanMode`; when the user says « ouvre une PR », « fais la PR », « rédige
+  la description », « décris la PR », « commente la review », « relis cette PR »,
+  « message de commit », « rédige le commit », « rédige le plan », « fais-moi un
+  document », « prépare le handoff », « c'est illisible », « trop de texte »; and
+  whenever producing text a human teammate will read on GitHub or in Linear. À
+  charger AVANT d'écrire le texte, pas après l'avoir écrit. Ne PAS utiliser pour
+  la rédaction destinée à l'utilisateur dans le chat — le rapport d'étape de
+  trois à cinq lignes —, ni pour la documentation technique de fond (README, ADR).
 ---
 
 # Rédaction pour un relecteur humain
@@ -92,6 +100,38 @@ Un détail technique ne se garde que s'il change quelque chose pour le relecteur
 sa décision de merger, ce qu'il ira regarder, ou ce qu'il devra surveiller après
 déploiement. Sinon il tombe.
 
+## Le détail technique qu'il serait dommage de perdre
+
+Ce qui tombe d'une description ou d'un plan est le plus souvent à **supprimer**.
+Mais il existe un cas où ce serait une perte : une analyse coûteuse à refaire —
+investigation de cause racine, mesure, exploration de données, hypothèse
+éliminée. Elle ne change aucune décision du relecteur, et quelqu'un la
+rechercherait pourtant dans six mois.
+
+Celle-là va dans un **commentaire**, jamais dans le corps du livrable :
+
+| Ça explique… | Commentaire sur… |
+| --- | --- |
+| le problème — cause racine, données observées, analyse d'origine du ticket | le **ticket Linear** : ça survit à la PR, et c'est là qu'on le cherchera |
+| la solution — pourquoi cette approche, ce qui a été écarté | la **PR** : le relecteur le lit sur place |
+
+**250 mots, un seul commentaire, jamais une série.** Au-delà, ce n'est plus un
+commentaire mais un document : s'il le mérite, c'est un fichier dans le dépôt ;
+sinon, c'est qu'il fallait le supprimer.
+
+Ouvrir sur une ligne qui dit ce que c'est et qu'on peut ne pas le lire —
+« Analyse à l'origine du ticket, gardée ici ; sans effet sur la relecture. » Un
+commentaire non lu ne coûte rien, une description non lue est un échec.
+
+Dans le livrable, **au plus une ligne de renvoi**, jamais un résumé du
+commentaire : sinon la pollution revient par la fenêtre.
+
+Ce n'est pas un commentaire de code review — celui-là s'adresse à l'auteur sur
+un défaut. Celui-ci ne s'adresse à personne en particulier, il dépose.
+
+Et le hors-périmètre n'entre pas dans ce couloir : son détail va dans l'autre
+ticket, pas en commentaire de celui-ci.
+
 ## Commentaires de code review
 
 Une remarque utile tient en trois temps : **le problème, sa conséquence, ce que tu
@@ -111,6 +151,36 @@ pas comment, le diff s'en charge.
 
 Un corps de commit peut être plus détaillé qu'une description de PR : il est lu
 plus tard, par quelqu'un qui fait un `git blame` sans aucun contexte.
+
+## Les livrables longs
+
+Un document de plan, un handoff, une analyse, un dossier de décision : même
+lecteur, même principe, autre borne. Il n'a pas trente secondes mais dix
+minutes, et il n'a pas le diff — il a une décision à prendre. Ce qui ne change
+pas cette décision n'a rien à faire dans le document.
+
+Viser **200 lignes**. Au-delà, ce n'est plus un plan mais un dossier : le
+relecteur le survole au lieu de l'arbitrer, et son accord ne vaut plus rien.
+
+Avant de rendre, lire `references/livrables-longs.md` et faire la passe
+d'élagage qu'il décrit. Elle n'est pas optionnelle, et **si elle ne retire rien,
+elle n'a pas été faite** : sur le cas qui a fondé cette règle, six allers-retours
+ont ramené 841 lignes à 197 sans qu'une seule information soit perdue.
+
+Trois choses qui tombent toujours :
+
+- **la plaidoirie.** Énoncer la décision, point. Renvoyer à la règle du dépôt
+  quand elle existe : c'est la règle qui justifie, pas le document. Justifier
+  seulement quand ignorer le pourquoi conduirait à défaire la décision ;
+- **le hors-périmètre.** Une ligne de renvoi, jamais son détail — même
+  excellent, surtout excellent. C'est un autre ticket ;
+- **le méta-commentaire sur notre conversation** — « remarque de X retenue »,
+  « correction de ce que j'avais avancé », « les deux questions de Y ». Un
+  document décrit l'état du monde, pas l'historique de sa rédaction.
+
+Et une conversion qui gagne sur les deux tableaux : **la prose qui compare
+devient un tableau, la prose qui énumère des acteurs devient un schéma
+mermaid.** Plus court et plus clair du même geste, jamais l'un contre l'autre.
 
 ## Exemples
 

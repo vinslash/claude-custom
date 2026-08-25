@@ -1,9 +1,12 @@
 # slash:redaction
 
 Cadre de rédaction des écrits destinés à un relecteur humain : descriptions de
-pull request, commentaires de code review, messages de commit.
+pull request, commentaires de code review, messages de commit, et livrables
+écrits longs — document de plan, handoff, analyse, dossier de décision.
 
-Un principe : **le relecteur a trente secondes et il a déjà le diff.**
+Un principe : **le relecteur a trente secondes et il a déjà le diff.** Sur un
+livrable long il en a dix minutes, mais il a une décision à prendre : ce qui ne
+change pas cette décision n'a rien à faire dans le document.
 
 ## Contenu
 
@@ -11,7 +14,8 @@ Un principe : **le relecteur a trente secondes et il a déjà le diff.**
 |---|---|
 | `SKILL.md` | Les règles. Chargé à la demande par Claude Code. |
 | `references/exemples.md` | Paires avant/après tirées de vraies PR, annotées. |
-| `AMORCE.md` | Trois lignes à importer dans `CLAUDE.md` pour garantir le déclenchement. |
+| `references/livrables-longs.md` | La passe d'élagage : le geste, les quatre défauts et à quoi on les reconnaît, le levier tableau/mermaid. Lu seulement quand le livrable est long. |
+| `AMORCE.md` | Quelques lignes à importer dans `CLAUDE.md` pour garantir le déclenchement. |
 
 ## Installation
 
@@ -36,7 +40,10 @@ répertoire courant de la session, donc échoue partout ailleurs, en silence.
 ## Faire évoluer le cadre
 
 Quand une rédaction se fait retoquer, ajouter la paire avant/après à
-`references/exemples.md` avec ce qui clochait. Les exemples portent plus que les
-règles — c'est le mécanisme d'affinage prévu, pas un pense-bête.
+`references/exemples.md` — ou, pour un livrable long, le symptôme et son
+correctif à `references/livrables-longs.md` — avec ce qui clochait. Les exemples
+portent plus que les règles : c'est le mécanisme d'affinage prévu, pas un
+pense-bête.
 
-Garder `SKILL.md` court : un skill dilué ne change rien au comportement.
+Garder `SKILL.md` court, et le détail dans `references/` : un skill dilué ne
+change rien au comportement, et `SKILL.md` est payé à chaque déclenchement.
