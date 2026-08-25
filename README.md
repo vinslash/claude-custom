@@ -92,6 +92,7 @@ dans `CLAUDE.md`, parce que leur déclenchement ne peut pas dépendre du hasard.
 | `hooks-retires/` | Hooks retirés de `settings.json`, conservés pour pouvoir les recoller. |
 | `settings.snippet.json` | Le peu qui doit vivre dans `settings.json`, et pourquoi. |
 | `claude-custom.code-workspace` | Espace de travail VS Code, versionné volontairement — le `.gitignore` l'exclut de l'exclusion des éditeurs. |
+| `.wtkit/config` | Profil wtkit : `wt open claude-custom` pose un onglet `claude` à côté du shell. Les onglets ne sont créés qu'à la naissance de la session tmux — la modifier n'a d'effet qu'après un `tmux kill-session`. |
 
 ## Les limites posées
 
