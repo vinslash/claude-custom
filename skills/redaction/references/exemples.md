@@ -73,8 +73,9 @@ ajoutée, aucune traduction perdue.
 - les **cinq fichiers appelants listés nommément** — « les autres rendus
   d'annonce l'utilisent tous » dit la même chose et se lit dix fois plus vite ;
 - le **tableau de recette** occupe le tiers de la description pour prouver un
-  correctif de six lignes. C'est de la preuve adressée au demandeur, pas au
-  relecteur ;
+  correctif de six lignes. C'est de la preuve adressée au demandeur ; ce que le
+  relecteur attend à cet endroit, c'est un mode d'emploi — par où passer et ce
+  qu'il doit voir, puisque c'est lui qui recette avant de relire ;
 - les **IDs d'agence 301/322/242** et les villes exactes : aucune décision du
   relecteur n'en dépend ;
 - la **ligne sur `msgfmt`** : pur détail d'outillage. Que le `.mo` soit bien
@@ -82,7 +83,7 @@ ajoutée, aucune traduction perdue.
 - les **renvois aux « 2ᵉ / 3ᵉ critère d'acceptation »** : le relecteur n'a pas le
   ticket sous les yeux et n'ira pas compter.
 
-### ✅ Après — 190 mots
+### ✅ Après — 120 mots de prose, plus un script de trois étapes
 
 ```markdown
 Closes [SLI-8493](...)
@@ -106,14 +107,17 @@ ne pas y passer.
 Et quand vraiment aucune localisation n'est disponible, la pastille affiche
 « Localisation non précisée » plutôt qu'une icône orpheline.
 
-## À vérifier en recette
+## Recettage
 
-Le format s'aligne sur celui des conseillers : `Ville (73460)` au lieu de
-`Ville ( 73460 )`.
+Prérequis : une annonce dont le champ `localisation` est renseigné mais dont le
+géocodage n'a pas abouti.
 
-Testé en local sur trois cas — annonce géocodée, annonce sans marqueur mais avec
-`localisation` (le bug), annonce sans aucune localisation — et sur trois agences
-différentes, où la ville affichée correspond bien à la source ATS.
+1. Ouvrir sa page de détail → la pastille affiche la ville et le code postal, au
+   lieu de l'icône seule.
+2. Ouvrir une annonce géocodée → affichage inchangé, au format près :
+   `Ville (73460)` et non `Ville ( 73460 )`.
+3. Ouvrir une annonce sans localisation ni agence rattachée → « Localisation non
+   précisée ».
 ```
 
 **Ce qui est conservé, et pourquoi :**
@@ -123,8 +127,11 @@ différentes, où la ville affichée correspond bien à la source ATS.
 - le **lien vers l'exemple en prod** — le relecteur peut constater en un clic ;
 - l'argument **« les autres rendus l'utilisent tous »** — c'est ce qui rassure
   sur le choix d'approche, bien plus qu'une preuve de test ;
-- le **changement de format**, isolé en « à vérifier » : c'est la seule chose de
-  cette PR qui peut surprendre quelqu'un en prod ;
-- la couverture de test **en une phrase**, sans les valeurs.
+- le **script de recettage**, trois étapes avec leur attendu : le relecteur
+  recette avant de relire, il faut qu'il sache par où passer. Les mêmes trois cas
+  que le tableau du « avant », mais tournés vers ce qu'il doit faire plutôt que
+  vers ce qu'on a fait — et sans les IDs d'agence, dont il n'a pas besoin ;
+- le **changement de format**, porté par l'étape 2 plutôt qu'annoncé à part :
+  c'est la seule chose de cette PR qui peut surprendre quelqu'un en prod.
 
 Le tout tient dans un écran, sans scroll.

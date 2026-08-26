@@ -4,9 +4,11 @@ description: >
   Cadre de rédaction des écrits destinés à un relecteur humain : descriptions de
   pull request, commentaires de code review, messages de commit, et livrables
   écrits longs — document de plan, handoff, analyse, dossier de décision. Impose
-  une description courte, en prose, qui dit le POURQUOI que le diff ne dit pas,
-  et bannit les tableaux de recette exhaustifs, les snippets recopiés du diff et
-  les détails d'outillage sans conséquence pour le relecteur. Sur les livrables
+  une description courte, en prose, qui dit le POURQUOI que le diff ne dit pas.
+  Impose sur toute PR une section « Recettage » — le script que le relecteur
+  déroule avant de lire le code, ou la raison qu'il n'y en ait pas — et bannit
+  les preuves de test exhaustives, les snippets recopiés du diff et les détails
+  d'outillage sans conséquence pour le relecteur. Sur les livrables
   longs, impose une passe d'élagage avant de rendre — plaidoirie, hors-périmètre
   et méta-commentaire dehors — et donne un exutoire borné au détail technique
   coûteux à reproduire : un commentaire Linear ou PR.
@@ -37,7 +39,7 @@ est moins lue.
 
 ## Description de pull request
 
-Vise **150 à 250 mots**. Trois sections, jamais plus :
+Vise **150 à 250 mots**. Trois sections — ni plus, ni moins :
 
 ```markdown
 Closes [SLI-XXXX](lien Linear)
@@ -51,48 +53,91 @@ Un lien vers un exemple reproductible si tu en as un.
 s'appuie sur un helper ou un pattern déjà en place ailleurs, dis-le : ça
 rassure plus que n'importe quelle preuve.
 
-## À vérifier en recette
-Seulement s'il y a vraiment quelque chose. Voir ci-dessous.
+## Recettage
+Les étapes que le relecteur déroule avant d'ouvrir le diff, avec l'attendu à
+chacune. Ou la phrase qui dit pourquoi il n'y en a pas. Voir ci-dessous.
 ```
 
 Écris en **prose**. Des phrases, pas une avalanche de puces. Trois paragraphes
 courts se lisent plus vite qu'une liste de douze items.
 
-Ces 150 à 250 mots valent **par PR**. Si le diff dépasse 400 lignes ou 15
-fichiers porteurs de logique, le problème n'est plus la description : charger
+Ces 150 à 250 mots sont ceux de la **prose** — problème et correctif. Le script
+de recettage se compte à part, en étapes : cinq au plus.
+
+Ces bornes valent **par PR**. Si le diff dépasse 400 lignes ou 15 fichiers
+porteurs de logique, le problème n'est plus la description : charger
 `slash:decoupage-pr` avant de rédiger, parce qu'il y a peut-être trois PR à
 écrire et non une.
 
-### La seule section où le détail est rentable
+### « Recettage » : la section qui ne se supprime pas
 
-« À vérifier en recette » sert à ce que le relecteur ne peut pas deviner et qui
-peut le surprendre en prod :
+Chez nous, le relecteur assigné **recette d'abord et relit le code ensuite**. Il
+n'a pas constaté le bug, il n'a pas le jeu de données en tête, et il ne sait pas
+par où passer : c'est la description qui le lui donne, ou il saute l'étape.
+
+Cette section est donc **toujours présente**, sous l'une des deux formes. Jamais
+absente, jamais un « N/A ».
+
+**Forme 1 — le script.** Des étapes numérotées, **cinq au plus**, chacune avec
+son attendu — sans l'attendu, le relecteur voit l'écran sans savoir si c'est
+bon. Une ligne de prérequis en tête quand le cas demande des données
+particulières.
+
+```markdown
+## Recettage
+
+Prérequis : une annonce dont le champ `localisation` est renseigné mais dont le
+géocodage n'a pas abouti.
+
+1. Ouvrir sa page de détail → la pastille affiche la ville et le code postal, au
+   lieu de l'icône seule.
+2. Ouvrir une annonce géocodée → affichage inchangé, au format près :
+   `Ville (73460)` et non `Ville ( 73460 )`.
+3. Ouvrir une annonce sans aucune localisation → « Localisation non précisée ».
+```
+
+Ce script ne s'invente pas au moment de la PR : c'est celui de `slash:constat`
+mode « après », déroulé à la validation de la résolution. Le recopier, pas le
+refaire.
+
+**Forme 2 — rien à recetter à la main.** Une phrase, avec sa raison et ce qui
+couvre à la place :
+
+> Aucun recettage manuel nécessaire : extraction d'un helper à comportement
+> constant, couverte par les tests existants de `job-location.spec.ts`.
+
+Ce qui tranche entre les deux formes : **si la PR change quoi que ce soit qu'un
+utilisateur peut percevoir** — un écran, une réponse d'API, un mail, un export,
+un délai —, il y a un script. « C'est couvert par les tests » n'est une raison
+valable que si rien de perceptible n'a bougé ; sinon c'est une dérobade, et le
+relecteur la verra comme telle.
+
+À la suite du script, s'il y a lieu, ce que le relecteur ne peut pas deviner et
+qui peut le surprendre en prod :
 
 - un effet de bord assumé (un changement visuel, un format qui bouge) ;
 - une décision discutable, énoncée comme telle ;
 - ce que tu as volontairement laissé de côté, et pourquoi.
 
-Pour les tests, **une phrase suffit** : ce qui a été couvert, pas comment. « Testé
-en local sur trois cas — annonce géocodée, annonce sans marqueur, annonce sans
-localisation » vaut mieux qu'un tableau de trois lignes avec les valeurs exactes.
-
-Si tu n'as rien de tout ça à signaler, supprime la section. Ne la remplis jamais
-pour la forme.
+Ces trois-là restent facultatifs. Le script, lui, ne l'est pas.
 
 ## Ce qui ne va pas dans une PR
 
 À bannir, sans exception :
 
-- **le tableau de recette exhaustif** — valeurs testées, avant/après ligne à
-  ligne, IDs des fixtures. Ça, c'est ton rapport à celui qui t'a demandé le
-  travail, pas la PR ;
+- **la preuve de test exhaustive** — valeurs testées, avant/après ligne à ligne,
+  IDs des fixtures. Ça, c'est ton rapport à celui qui t'a demandé le travail, pas
+  la PR. Le « Recettage » dit au relecteur **ce qu'il a à faire**, il ne lui
+  prouve pas que tu l'as fait ;
 - **le snippet recopié du diff** — le relecteur a le diff, en mieux et en couleur ;
 - **la liste des fichiers touchés** — GitHub l'affiche déjà ;
 - **les détails d'outillage sans conséquence** — `msgfmt`, la commande docker, le
   nom du conteneur. Si ça ne change rien pour le relecteur, ça dégage ;
 - **les valeurs de test énumérées** — les trois IDs d'agence, les slugs des
-  fixtures ;
-- **les sections vides** remplies pour respecter un gabarit ;
+  fixtures. Sauf celles dont le relecteur a besoin pour atteindre le cas : là,
+  elles sont le prérequis du script ;
+- **les sections vides** remplies pour respecter un gabarit — « Recettage »
+  comprise : une section sans attendu ne vaut pas mieux qu'une section absente ;
 - **l'auto-satisfaction** — « correctif propre et robuste », « refactoring
   élégant ». Le relecteur jugera.
 

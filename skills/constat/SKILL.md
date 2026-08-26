@@ -146,7 +146,9 @@ encore gratuit.
   sa place — c'est le test de la compréhension, et c'est la matière de la PR.
 - **Les questions pour le PM**, telles quelles.
 - **Le script de rejeu** : URL exacte, étapes, ce qu'on observe aujourd'hui, ce
-  qu'on devra observer après. C'est lui qui sera rejoué en mode « après ».
+  qu'on devra observer après. C'est lui qui sera rejoué en mode « après », puis
+  recopié tel quel dans la section « Recettage » de la PR — l'écrire déjà comme
+  des étapes numérotées avec leur attendu.
 - **Ce qui n'est pas validable localement**, s'il y en a.
 
 ---

@@ -264,6 +264,12 @@ POURQUOI écrites à l'étape 1, avec ses mots, sont très exactement ce que
 `slash:redaction` réclame et que personne ne sait reconstituer deux jours plus
 tard en relisant un diff. Charger `slash:redaction` **avant** de rédiger.
 
+Le **script de rejeu** du même fichier, celui que l'étape 4 vient de dérouler,
+est la section **Recettage** de la description — obligatoire sur toute PR, parce
+que le relecteur assigné recette avant de relire le code. Le recopier, pas le
+réinventer. Une PR qui ne change rien de perceptible porte à la place la phrase
+qui le dit, et ce qui la couvre.
+
 Là où les deux se croisent, `slash-create-pr` donne la structure et la mécanique,
 `slash:redaction` la façon d'écrire — une description qui remplit
 consciencieusement le template en recopiant le diff n'est pas conforme pour
