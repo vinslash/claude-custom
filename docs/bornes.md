@@ -11,7 +11,7 @@ Le domicile unique de tous les chiffres annoncés par cet atelier : chacun doit
 | Écrit | Borne | Au-delà |
 | --- | --- | --- |
 | Description de PR | **150 à 250 mots de prose**, 3 sections ni plus ni moins, 2 à 4 phrases pour le problème et pour le correctif | Ce n'est plus une description mais un rapport. Le relecteur a trente secondes et il a déjà le diff. |
-| Section « Recettage » d'une PR | **obligatoire** : un script de **cinq étapes au plus** avec l'attendu à chacune, ou la phrase qui dit pourquoi rien n'est à recetter | Le relecteur recette avant de relire le code. Sans script, il saute l'étape — et personne ne vérifie que la PR fait ce qu'elle annonce. Au-delà de cinq étapes, c'est la PR qui fait trop de choses. |
+| Section « Recettage » d'une PR | **obligatoire**, et **une seule** : un script de **cinq étapes au plus** avec l'attendu à chacune — déroulé, ou annoncé comme non joué avec son empêchement —, ou la phrase qui dit pourquoi rien n'est à recetter | Le relecteur recette avant de relire le code. Sans script, il saute l'étape — et personne ne vérifie que la PR fait ce qu'elle annonce. Au-delà de cinq étapes, c'est la PR qui fait trop de choses. |
 | Preuve de ce qui a été testé, dans la description | **rien** — le script dit quoi faire, pas ce qui a été fait | Un tableau de recette est une preuve adressée au demandeur, pas au relecteur. |
 | Rapport d'étape dans le chat | **3 à 5 lignes** en prose | S'il ne tient pas en cinq lignes, il contient autre chose qu'un rapport. |
 | Ce qui est hors périmètre | **une ligne**, puis on continue | Le ticket, et rien que le ticket ; c'est à l'utilisateur d'en faire un autre. Son détail va dans l'autre ticket, jamais dans celui-ci. |
