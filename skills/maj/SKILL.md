@@ -44,8 +44,9 @@ Rapporter en une ligne, pas en rapport d'exécution : ce qui a changé, ou que t
 Deux conséquences à ne pas taire :
 
 - si la sortie mentionne **`hooks.json` ou `.mcp.json`**, dire à l'utilisateur de
-  lancer `/reload-plugins` — le câblage vit dans la mémoire du process et rien ne
-  peut le recharger à sa place ;
+  lancer `/reload-plugins` **dans le terminal**, ou d'**ouvrir une nouvelle
+  session** s'il est dans l'extension VSCode, qui n'expose pas cette commande. Le
+  câblage vit dans la mémoire du process et rien ne peut le recharger à sa place ;
 - si la sortie dit **`clone sali`**, ne pas tenter de forcer. Le clone installé
   n'est censé être édité par personne, et un `git checkout` d'autorité
   effacerait ce que quelqu'un y a mis. Montrer la liste et demander.

@@ -77,7 +77,10 @@ while IFS= read -r f; do
 done < <(cablage)
 
 if [ "$recharger" = 1 ]; then
-  msg='Configuration slash mise à jour — le câblage du plugin a changé : lance /reload-plugins.'
+  # Les deux gestes, parce que le hook ne sait pas d'où il parle : la commande
+  # /reload-plugins n'est pas exposée par l'extension VSCode, où il faut ouvrir
+  # une nouvelle session. Voir docs/propagation.md.
+  msg='Configuration slash mise à jour — le câblage du plugin a changé : /reload-plugins dans le terminal, nouvelle session dans VSCode.'
 else
   msg='Configuration slash mise à jour — skills déjà rechargés, instructions permanentes au prochain message.'
 fi

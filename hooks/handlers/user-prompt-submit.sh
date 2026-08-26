@@ -91,8 +91,10 @@ if a:
 if b:
     bouts.append(
         "Le câblage du plugin a changé (%s). Il ne peut pas être rechargé à chaud : "
-        "dis à l’utilisateur de lancer `/reload-plugins`. Les skills, eux, sont "
-        "déjà à jour." % ", ".join(os.path.basename(f) for f in b)
+        "dis à l’utilisateur de lancer `/reload-plugins` s’il est dans le terminal, "
+        "ou d’ouvrir une nouvelle session s’il est dans l’extension VSCode, qui "
+        "n’expose pas cette commande. Les skills, eux, sont déjà à jour."
+        % ", ".join(os.path.basename(f) for f in b)
     )
 
 bouts.append(

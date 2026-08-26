@@ -15,7 +15,7 @@ affaire de goût : c'est ce que Claude Code sait faire, vérifié.
 | Corps d'un handler de hook | Relu à chaque déclenchement — `hooks.json` ne nomme qu'un script |
 | `~/.claude/settings.json` | Surveillant natif |
 | `CLAUDE.md` et ses imports `@` — `RTK.md`, les `AMORCE.md` | **Rien ne les relit.** Réinjectés par `user-prompt-submit.sh` |
-| `hooks/hooks.json`, `.mcp.json`, `agents/`, `output-styles/` | `/reload-plugins` — le seul geste manuel qui reste |
+| `hooks/hooks.json`, `.mcp.json`, `agents/`, `output-styles/` | Le seul geste manuel qui reste : `/reload-plugins` dans le terminal, **nouvelle session** dans l'extension VSCode |
 
 Les instructions permanentes sont le trou réel, et le plus sournois : une session
 de trois jours obéit aux amorces d'il y a trois jours, et rien ne le montre. D'où
@@ -40,6 +40,14 @@ process, et `reload_plugins` est une control request réservée au SDK — véri
 le binaire : aucun hook ne peut la déclencher. D'où `hooks.json` réduit à nommer
 des scripts : tant qu'on n'y ajoute pas d'événement, il ne bouge plus, et le geste
 manuel ne se présente jamais.
+
+**Et il n'existe pas partout.** La commande est bien dans le binaire, mais la liste
+des slash commands dépend de l'environnement : l'extension VSCode ne l'expose pas,
+et répond « isn't available in this environment ». Là, le geste équivalent est
+d'**ouvrir une nouvelle session** — le câblage étant chargé par process, et
+l'extension lançant un process par session, elle repart d'un état frais. Ne pas
+annoncer `/reload-plugins` sans dire l'alternative : l'utilisateur travaille dans
+VSCode, et une consigne qui échoue sous ses yeux discrédite les suivantes.
 
 L'état des hooks vit dans `~/.claude/slash-etat/` — un marqueur par session, le
 journal des mises à jour. Jamais dans le clone, qui doit rester impeccable.
