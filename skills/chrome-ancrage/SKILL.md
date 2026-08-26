@@ -36,6 +36,11 @@ Du serveur MCP **`chrome`** déclaré par ce plugin. Il ne se connecte pas à un
 navigateur existant : il **lance le sien**, avec un profil dérivé du worktree
 (`~/.cache/chrome-mcp/<nom-du-worktree>`) et un viewport de 1440×820.
 
+Le lancement passe par `bin/chrome-mcp.sh`, qui fait une chose de plus : quand le
+profil du worktree n'existe pas encore, il le **clone depuis un profil modèle**,
+`~/.cache/chrome-mcp/_modele`. C'est de là que viennent les extensions — Dashlane
+au premier chef — et leur session déjà ouverte.
+
 Conséquence : deux sessions sur deux worktrees ont deux navigateurs, deux
 profils, deux jeux de cookies. Il n'y a plus de port partagé, donc plus de
 collision possible — à condition de ne pas recréer le problème à la main.
@@ -46,6 +51,11 @@ collision possible — à condition de ne pas recréer le problème à la main.
 `--remote-debugging-port`, pas de profil posé dans le scratchpad. C'est
 exactement le geste qui a produit l'incident ci-dessus. Le navigateur appartient
 au serveur MCP, et à lui seul.
+
+Une seule exception, et elle est bornée : `bin/chrome-modele.sh`, qui ouvre le
+profil modèle pour y installer une extension. Il n'ouvre aucun port de debug, donc
+aucune session ne peut se tromper et venir piloter cette fenêtre-là. C'est un
+geste d'utilisateur, pas un geste de session.
 
 **Ne jamais se connecter par un port.** Une configuration en `--browserUrl` vise
 un endpoint unique que toutes les sessions partagent. Celle que déclare le dépôt
@@ -76,4 +86,10 @@ partage silencieux. Dans ce cas, une seule des deux sessions pilote le navigateu
 
 **Le profil n'est pas jetable.** Il vit dans `~/.cache/chrome-mcp/`, il survit aux
 sessions et c'est ce qui évite de se reconnecter à chaque fois. Ne pas le
-supprimer par réflexe de nettoyage.
+supprimer par réflexe de nettoyage. Et surtout pas `_modele`, dont tous les
+profils à venir descendent.
+
+**Le clonage n'a lieu qu'à la naissance du profil.** Une extension installée dans
+le modèle aujourd'hui n'apparaîtra pas dans un worktree ouvert hier. Pour qu'un
+ticket en cours reparte du modèle, il faut supprimer son dossier dans
+`~/.cache/chrome-mcp/` — au prix de sa session applicative.

@@ -30,6 +30,11 @@ Rattraper au message suivant plutôt qu'à l'instant du changement n'est pas un
 pis-aller : c'est l'instant juste avant que ces instructions puissent compter. Une
 session au repos n'a besoin de rien.
 
+`.mcp.json` suit la même discipline : il ne nomme que `bin/chrome-mcp.sh`. Le
+script est relu à chaque lancement du serveur, donc changer la façon dont Chrome
+démarre — un argument, le clonage du profil modèle — ne coûte rien. Seul un
+changement du câblage lui-même redemanderait `/reload-plugins`.
+
 **`/reload-plugins` est irréductible.** Le câblage du plugin vit dans la mémoire du
 process, et `reload_plugins` est une control request réservée au SDK — vérifié dans
 le binaire : aucun hook ne peut la déclencher. D'où `hooks.json` réduit à nommer

@@ -17,7 +17,9 @@ Pour savoir *quand* un changement prend effet, c'est [`propagation.md`](propagat
 | `hooks/handlers/user-prompt-submit.sh` | Consomme le marqueur au message suivant et réinjecte les instructions permanentes modifiées. |
 | `hooks/handlers/commun.sh` | Les deux ensembles de fichiers qui fondent tout le rattrapage : instructions permanentes contre câblage. |
 | `bin/mise-a-jour.sh` | Le `git pull --ff-only` du clone installé. Tiré par launchd, et par `/slash:maj`. Hors de Claude Code, donc gratuit. |
-| `.mcp.json` | Serveur MCP `chrome` : lance son propre navigateur, avec un profil par worktree. |
+| `.mcp.json` | Déclare le serveur MCP `chrome`, et rien d'autre : il ne nomme qu'un script. Même sobriété que `hooks/hooks.json`, même raison — voir [`propagation.md`](propagation.md). |
+| `bin/chrome-mcp.sh` | Le lancement du navigateur : profil dérivé du worktree, cloné du profil modèle à sa naissance, et `--disable-extensions` retiré des arguments par défaut de Puppeteer. |
+| `bin/chrome-modele.sh` | Ouvre `~/.cache/chrome-mcp/_modele` pour y installer Dashlane une fois pour toutes. Le seul lancement de Chrome à la main qui soit permis. |
 | `install.sh` | Pose le clone installé, l'import `CLAUDE.md`, l'agent launchd, et neutralise ce qui entre en conflit. Idempotent. |
 | `hooks-retires/` | Hooks retirés de `settings.json`, conservés pour pouvoir les recoller. |
 | `settings.snippet.json` | Le peu qui doit vivre dans `settings.json`, et pourquoi. |
