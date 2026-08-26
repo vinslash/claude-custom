@@ -78,6 +78,19 @@ par où passer : c'est la description qui le lui donne, ou il saute l'étape.
 Cette section est donc **toujours présente**, sous l'une des deux formes. Jamais
 absente, jamais un « N/A ».
 
+Quand le dépôt fournit un gabarit, ses titres et son ordre restent : sur
+slash-interim, `.github/pull_request_template.md` intitule cette section
+`# 🧭 Tests`, et c'est ce titre qui reste. Le skill gouverne le contenu et le
+destinataire, pas la nomenclature. Le commentaire du gabarit ne fait pas foi :
+celui de slash-interim dit « décrire comment tu as testé la PR » — mauvais
+lecteur, et c'est exactement ce qui produit la version « avant » de la PR #942
+dans `references/exemples.md`.
+
+Et **une seule section**, jamais un découpage « Tests automatisés » / « Recette
+manuelle » : un bloc « automatisé » est une cachette. Il se remplit de compteurs
+de tests que la CI affiche déjà et dont aucune décision de merge ne dépend, et le
+script manuel y devient la garniture facultative.
+
 **Forme 1 — le script.** Des étapes numérotées, **cinq au plus**, chacune avec
 son attendu — sans l'attendu, le relecteur voit l'écran sans savoir si c'est
 bon. Une ligne de prérequis en tête quand le cas demande des données
@@ -100,6 +113,17 @@ Ce script ne s'invente pas au moment de la PR : c'est celui de `slash:constat`
 mode « après », déroulé à la validation de la résolution. Le recopier, pas le
 refaire.
 
+**Variante — le script écrit, non joué.** Même script, mêmes attendus, une ligne
+de préambule qui dit qu'il n'a pas été déroulé et pourquoi :
+
+> ⚠️ Recette manuelle non jouée — à faire en review : `ats_command_candidate` est
+> vide en local et je n'ai pas de session interne authentifiée.
+
+Le relecteur sait alors qu'il essuie les plâtres. La raison est obligatoire et
+porte sur un empêchement : « la table est vide et le flag est off partout » en est
+une, « pas eu le temps » n'en est pas une. Sans le préambule c'est un mensonge ;
+sans la raison, c'est la dérobade de la forme 2.
+
 **Forme 2 — rien à recetter à la main.** Une phrase, avec sa raison et ce qui
 couvre à la place :
 
@@ -120,6 +144,11 @@ qui peut le surprendre en prod :
 - ce que tu as volontairement laissé de côté, et pourquoi.
 
 Ces trois-là restent facultatifs. Le script, lui, ne l'est pas.
+
+Ils peuvent se plier dans un `<details><summary>Points de vigilance pour la
+review</summary>`. Replier n'est pas une dispense d'élagage : le contenu du bloc
+obéit aux mêmes règles que le reste de la description, et le hors-périmètre y
+reste interdit — il va dans l'autre ticket.
 
 ## Ce qui ne va pas dans une PR
 
