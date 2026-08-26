@@ -93,3 +93,10 @@ profils à venir descendent.
 le modèle aujourd'hui n'apparaîtra pas dans un worktree ouvert hier. Pour qu'un
 ticket en cours reparte du modèle, il faut supprimer son dossier dans
 `~/.cache/chrome-mcp/` — au prix de sa session applicative.
+
+**Le modèle doit être fermé quand un profil en est cloné.** Sa session Dashlane
+vit dans une base leveldb ; copiée pendant que Chrome écrit dedans, elle arrive
+incohérente dans le clone. Le symptôme serait illisible — un Dashlane déconnecté
+dans un worktree sur deux, sans rien pour le relier à la cause. En pratique le
+modèle n'est ouvert que le jour où l'on y installe quelque chose ; ce jour-là, ne
+pas ouvrir de worktree neuf en même temps.

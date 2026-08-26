@@ -9,6 +9,10 @@
 # À faire dans cette fenêtre : installer les extensions voulues depuis le Chrome
 # Web Store — Dashlane — et s'y connecter. Puis fermer la fenêtre. Tout profil de
 # worktree créé ensuite partira de cet état.
+#
+# Pas d'`exec` : le script reste vivant derrière Chrome pour vérifier le profil
+# une fois la fenêtre fermée, et le dire. Sans ça, on ne sait pas si le modèle
+# est prêt ou laissé à moitié écrit.
 set -eu
 
 modele="${HOME}/.cache/chrome-mcp/_modele"
@@ -30,11 +34,28 @@ mkdir -p "$modele"
 echo "Profil modèle : $modele"
 echo
 echo "Dans la fenêtre qui s'ouvre : installer Dashlane depuis le Chrome Web Store,"
-echo "s'y connecter, puis fermer la fenêtre."
+echo "et s'y connecter."
+echo
+echo "Puis QUITTER PAR CMD+Q, et non en fermant la dernière fenêtre — sur macOS"
+echo "Chrome survit parfois à sa dernière fenêtre, et un profil pas encore vidé"
+echo "sur disque serait cloné à moitié écrit. Ne pas interrompre ce script."
 echo
 echo "Les profils de worktree DÉJÀ créés ne changent pas. Pour qu'un ticket en"
 echo "cours reparte du modèle, supprimer son dossier dans ~/.cache/chrome-mcp/."
 echo
 
-exec "$chrome" --user-data-dir="$modele" --no-first-run --no-default-browser-check \
-  "https://chromewebstore.google.com/detail/fdjamakpfbbddfjaooikfcpapjohcfmg"
+"$chrome" --user-data-dir="$modele" --no-first-run --no-default-browser-check \
+  "https://chromewebstore.google.com/detail/fdjamakpfbbddfjaooikfcpapjohcfmg" || true
+
+# Chrome est sorti. Les verrous d'instance sont des liens symboliques vers le
+# process qui vient de mourir ; `chrome-mcp.sh` les jette de toute façon à chaque
+# clonage, mais les laisser ici rendrait le modèle inouvrable à la main.
+rm -f "$modele/SingletonLock" "$modele/SingletonCookie" "$modele/SingletonSocket"
+
+echo
+extensions="$modele/Default/Extensions"
+if [ -d "$extensions/fdjamakpfbbddfjaooikfcpapjohcfmg" ]; then
+  echo "Modèle prêt : Dashlane installé. Les prochains worktrees en hériteront."
+else
+  echo "Attention : Dashlane n'est pas dans le modèle. Relancer ce script."
+fi
