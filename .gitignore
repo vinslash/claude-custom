@@ -27,3 +27,6 @@ drafts/
 # (claude.code-workspace est versionné volontairement — ne pas ignorer *.code-workspace)
 .vscode/
 .idea/
+
+# Working notes per ticket (seed recipes, step plans) — local scaffolding
+.claude/work/
