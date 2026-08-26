@@ -135,3 +135,83 @@ géocodage n'a pas abouti.
   c'est la seule chose de cette PR qui peut surprendre quelqu'un en prod.
 
 Le tout tient dans un écran, sans scroll.
+
+---
+
+## PR #942 — slash-interim, SLI-8669 (2026-08-26)
+
+Grosse feature backend, PR empilée. Le diff était découpé, la prose dans les
+bornes, le POURQUOI solide — et la description ratait quand même, sur un seul
+point : **la section de test racontait le travail de l'auteur au lieu de donner
+son mode d'emploi au relecteur.**
+
+### ❌ Avant — section « Tests »
+
+```markdown
+# 🧭 Tests
+
+Simulation puis exécution réelle entre deux indépendants d'agences distinctes,
+`--page-size 2` pour traverser plusieurs pages du curseur. En simulation aucun
+port d'écriture n'est appelé ; en réel les quatre listes de la cible passent de
+vide à peuplé et la source garde tous ses liens.
+
+Deux pièges couverts par les tests : `ats_command.createdById` est un id
+d'**utilisateur** et n'a aucune clé étrangère — la confusion avec l'id
+d'indépendant passerait en silence ; et un échec n'interrompt pas les suivants.
+```
+
+**Ce qui cloche :**
+
+- tout est au **passé et à la première personne** — « simulation puis exécution
+  réelle », « aucun port n'est appelé ». C'est un rapport d'avancement, pas un
+  script. Le relecteur, qui recette avant de relire, ne sait toujours pas quelle
+  commande taper ;
+- **aucun prérequis**, alors que le cas demande deux indépendants dans deux
+  agences distinctes avec un portefeuille — sans ça le relecteur ne peut rien
+  observer, et il abandonnera ;
+- « **deux pièges couverts par les tests** » : formulé comme une preuve, alors
+  que le contenu est utile. Ces deux pièges disent *où poser l'attention* — leur
+  place est dans « Le correctif », pas dans une section de test ;
+- le tout **existait déjà ailleurs** : le script du constat mode « après », avec
+  ses attendus chiffrés, dormait dans le fichier d'observation. Il n'y avait
+  qu'à le recopier.
+
+### ✅ Après — même titre, autre destinataire
+
+```markdown
+# 🧭 Tests
+
+Prérequis : deux indépendants dans deux agences distinctes, la source détenant
+des affaires, un client, des intérimaires et des commandes ATS. Le plus rapide
+est deux `POST /api/e2e/seed`, un par conseiller.
+
+1. `yarn command transfer-independent-portfolio --from-independent <source> --to-independent <cible> --dry-run --page-size 2`
+   → un rapport par nature où `scanned = transferred + skipped + failed`, un log
+   par page, et **aucune** écriture en base.
+2. Rejouer sans `--dry-run` → mêmes compteurs, `failed=0`.
+3. Connecté en tant que la cible : « Mes affaires » et « Mes clients » passent de
+   vide à peuplé, `/commandes` affiche les commandes ATS, et la fiche d'un
+   intérimaire transféré s'ouvre.
+4. Côté source : elle ne gère plus rien, mais conserve tous ses liens d'agence —
+   rien ne lui a été retiré.
+5. Relancer la commande sur le même couple → `scanned=0`, rien n'est réécrit.
+
+À surveiller au déploiement : les commissions passées ne bougent pas
+(`margin.agencyId` est figé au mois), mais les marges historiques afficheront
+désormais la cible comme gestionnaire.
+```
+
+**Le déplacement qui compte :** les deux pièges sont remontés dans « Le
+correctif », sous la forme « deux endroits où poser l'attention ». Même
+information, mais adressée à la décision du relecteur au lieu de servir d'alibi.
+
+**La leçon, transposable :** quand le parcours a été mené jusqu'au constat de
+résolution, le script de recettage **existe déjà** — dans le fichier
+d'observation. Une section « Tests » rédigée au passé est le signe qu'on ne l'a
+pas rouvert.
+
+**Le titre ne bouge pas.** Le gabarit du dépôt intitule cette section
+`# 🧭 Tests` et on la laisse ainsi : le skill gouverne le contenu, pas le nom des
+sections d'un template. C'est le commentaire du gabarit — « décrire comment tu as
+testé la PR » — qui produit la version « avant » : il désigne le mauvais
+destinataire. La section garde son titre et change de lecteur.
