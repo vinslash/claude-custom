@@ -22,10 +22,15 @@ chaque déclenchement : au-delà de quelques milliers de tokens, sortir le déta
 en `references/`, lu seulement quand la question se pose.
 
 Ce seuil se pondère par la **fréquence de déclenchement**. `process-ticket` est à
-~5 k et les assume : il ne part qu'une fois par ticket, et tout son contenu sert
+~6 k et les assume : il ne part qu'une fois par ticket, et tout son contenu sert
 dès le début du parcours — l'extraire en référence ajouterait une lecture sans
 rien économiser. Un skill qui part plusieurs fois par session n'a pas cette
 latitude.
+
+L'autre levier, quand la référence ne convient pas parce que la règle doit être
+lue à coup sûr : la rendre **appelable** plutôt que lisible. Un contrôle en
+`scripts/` ne coûte rien en contexte, et la prose qu'il remplace n'a plus à
+énumérer ce qu'il vérifie — il le dit lui-même en sortie.
 
 ## Tenir la doc à jour
 
