@@ -136,12 +136,32 @@ que personne ne conteste, et le hors-périmètre réduit à une ligne de renvoi.
 L'analyse coûteuse qui n'entre pas dans le plan ne se perd pas pour autant : elle
 part en commentaire du ticket Linear, dans les 250 mots.
 
+**Charger `slash-ddd-backend` avant de rédiger**, dès que le ticket touche
+`backend/src/` : ports, mappers, entité ou value-object se décident dans le plan,
+et à l'étape 3 c'est figé. Nominalement auto-déclenché, il ne part pas tout seul
+au milieu d'une étape de dizaines d'appels d'outils — même raison qu'à l'étape 6
+pour `/slash-rebase`, d'où le nommage en dur.
+
 **Passer par le mode plan** et soumettre via `ExitPlanMode`. C'est une vraie
 porte d'approbation : elle ne se franchit pas sur un « ok » qui répondait à autre
 chose. **Ne rien écrire dans le dépôt à ce stade** — pas de code, pas de fichier
 préparatoire, pas de branche annexe.
 
 Le plan peut se raffiner à deux avant d'être soumis.
+
+### La forme du code s'énonce dans le plan
+
+Sur tout ticket qui touche `backend/src/`, le plan dit en **trois à cinq lignes** :
+arbo plate ou SDDD — `ARCHITECTURE.md` §2 laisse la distinction « à trancher au cas
+par cas » sans nommer d'arbitre —, use-case ou application service, ports, entité
+ou value-object, et **le fichier existant sur lequel chacun est calqué**.
+
+Ce dernier point décide du reste : 62 % des fichiers créés naissent dans un dossier
+qui n'existait pas, donc c'est la référence imitée qui fait la forme — et
+`cooperation/`, que `slash-ddd-backend` donne pour modèle, injecte un repository
+service dans son controller, ce que le même skill interdit ailleurs. Nommer le
+modèle rend le choix arbitrable en dix secondes ; le taire le laisse surgir en
+review, sur du code déjà écrit.
 
 ### Une PR ou plusieurs — ça se tranche ici
 
@@ -165,6 +185,19 @@ vérification.
 
 Lancer les tests et le lint **pertinents** — ciblés sur ce qui est touché, pas la
 suite complète si ce n'est pas nécessaire.
+
+Puis, **depuis la racine du worktree**, le contrôle des red flags SDDD :
+
+```bash
+python3 <base-dir-du-skill>/scripts/red-flags-sddd.py
+```
+
+Il rejoue sur les fichiers back de la branche la table « Red flags » de
+`slash-ddd-backend` et les invariants de `.claude/rules/sddd-structure.md`, et
+nomme lui-même ce qu'il trouve. Sortie non nulle : **traiter tout signalement avant
+le rapport d'étape**. Un red flag non traité part en review, où il coûte un
+aller-retour sur une décision de conception, donc sur du code déjà écrit. Il se
+corrige, ou il s'assume en une ligne du rapport — jamais en silence.
 
 Les captures vont dans le scratchpad. `gh` ne sait pas uploader d'image sur
 GitHub : elles ne peuvent pas atterrir seules dans la description de PR. Dire où

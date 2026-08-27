@@ -18,6 +18,7 @@ Le domicile unique de tous les chiffres annoncés par cet atelier : chacun doit
 | Livrable écrit long — plan, handoff, analyse, dossier de décision | **200 lignes**, après une passe d'élagage obligatoire | Ce n'est plus un plan mais un dossier : le relecteur le survole au lieu de l'arbitrer, et son accord ne vaut plus rien. |
 | Commentaire de détail technique (Linear ou PR) | **250 mots**, un seul, jamais une série | Ce n'est plus un commentaire mais un document : soit un fichier dans le dépôt, soit c'était à supprimer. |
 | Renvoi vers ce commentaire depuis le livrable | **une ligne**, jamais un résumé | La pollution qu'on venait de sortir revient par la fenêtre. |
+| La forme du code retenue, dans le plan (ticket qui touche `backend/src/`) | **trois à cinq lignes** : arbo plate ou SDDD, use-case ou application service, ports, entité ou value-object, et le fichier existant imité | La forme se décide dans le plan ou elle se subit en review : à l'implémentation elle est déjà écrite, et la remarque coûte un aller-retour. |
 | Le POURQUOI d'un ticket | **cinq lignes**, avec les mots de l'utilisateur | C'est la matière première de la description de PR, pas une analyse. |
 | Message de commit (slash-interim) | **titre seul, sans corps** | Convention du dépôt, portée par `slash-commit`. |
 
@@ -38,6 +39,16 @@ même pattern répété se relisent mieux que 200 lignes de logique dense.
 slash-interim : 500 lignes ou 10 fichiers, qui découpe en **commits** et non en
 PR. Les deux se cumulent — des commits bien découpés peuvent très bien partir
 dans une PR unique et énorme, ce que la borne ci-dessus existe pour empêcher.
+
+## Les contrôles mécaniques
+
+Une règle qu'on peut appeler ne se retient pas. Dans slash-interim, les règles
+SDDD mécanisées ont **zéro** violation ; les mêmes laissées en prose en comptent
+de **14 à 27** chacune.
+
+| Contrôle | Borne | Au-delà |
+| --- | --- | --- |
+| `process-ticket` → `scripts/red-flags-sddd.py`, à l'étape 3 | **zéro signalement** sur les fichiers back touchés par la branche | Un red flag SDDD non traité part en review. La remarque y porte sur une décision de conception — ports, mapper, entité ou value-object — donc sur du code déjà écrit : un aller-retour. |
 
 ## Les portes anti-overkill
 
