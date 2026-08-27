@@ -12,16 +12,6 @@ WT_MODE=local
 # Fichiers gitignored à recopier dans chaque worktree (vide = rien, sûr).
 WT_COPY=()
 
-# Commande de dev lancée par `wt up` — le port se décale à la volée via wt_port.
-# L'arithmétique se résout au SOURCING (WT_OFFSET déjà connu), pas d'eval runtime.
-# WT_UP_CMD="PORT=$(wt_port 3000) yarn dev"
-
-# URLs de dev, affichées par `wt urls` et dans le menu SwiftBar. Format :
-# "<label>:<port de base>[:<chemin>[:<SF Symbol>]]" — le moteur ajoute WT_OFFSET.
-# Rien de déclaré = aucune entrée d'URL (défaut sûr). Hôte : WT_URL_HOST.
-#
-# WT_URLS=("App:3000::globe")
-
 # Provisioning à la création (installer les deps, préparer l'env natif, démarrer l'infra…).
 # WT_PROVISION_CMD="yarn install"     # commande générique lancée par le moteur
 # wt_hook_post_new() {
