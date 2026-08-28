@@ -95,7 +95,14 @@ d'extensions. Le constat se fait en une commande —
 `ls ~/.cache/chrome-mcp/<worktree>/Default/Extensions`, qui doit lister
 `fdjamakpfbbddfjaooikfcpapjohcfmg`. S'il manque, supprimer le dossier du profil
 pour qu'il soit recloné au prochain lancement, en sachant qu'on y perd la session
-applicative. Fermer d'abord le Chrome qui le tient.
+applicative.
+
+**Arrêter la session avant de supprimer, jamais l'inverse.** Tant qu'elle vit,
+son serveur MCP relance un Chrome qui recrée le dossier — vide. Et comme le
+clonage n'a lieu qu'au démarrage du serveur, ce profil-là ne repartira jamais du
+modèle : on croit avoir nettoyé, on a fabriqué un profil nu définitif. Fermer la
+session, vérifier qu'il ne reste ni `chrome-devtools-mcp` ni Chrome sur ce
+`--user-data-dir`, supprimer ensuite.
 
 **Le clonage n'a lieu qu'à la naissance du profil.** Une extension installée dans
 le modèle aujourd'hui n'apparaîtra pas dans un worktree ouvert hier. Pour qu'un
