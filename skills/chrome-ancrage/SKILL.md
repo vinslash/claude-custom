@@ -89,6 +89,14 @@ sessions et c'est ce qui évite de se reconnecter à chaque fois. Ne pas le
 supprimer par réflexe de nettoyage. Et surtout pas `_modele`, dont tous les
 profils à venir descendent.
 
+**Un profil qui a perdu Dashlane est mort, pas réparable.** Rien ne le
+réinstallera : le navigateur est lancé sans réseau de fond, donc sans mise à jour
+d'extensions. Le constat se fait en une commande —
+`ls ~/.cache/chrome-mcp/<worktree>/Default/Extensions`, qui doit lister
+`fdjamakpfbbddfjaooikfcpapjohcfmg`. S'il manque, supprimer le dossier du profil
+pour qu'il soit recloné au prochain lancement, en sachant qu'on y perd la session
+applicative. Fermer d'abord le Chrome qui le tient.
+
 **Le clonage n'a lieu qu'à la naissance du profil.** Une extension installée dans
 le modèle aujourd'hui n'apparaîtra pas dans un worktree ouvert hier. Pour qu'un
 ticket en cours reparte du modèle, il faut supprimer son dossier dans
