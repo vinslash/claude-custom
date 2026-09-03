@@ -47,6 +47,14 @@ Deux conséquences à ne pas taire :
   lancer `/reload-plugins` **dans le terminal**, ou d'**ouvrir une nouvelle
   session** s'il est dans l'extension VSCode, qui n'expose pas cette commande. Le
   câblage vit dans la mémoire du process et rien ne peut le recharger à sa place ;
+- si la sortie dit **`Not possible to fast-forward`** après un `--depuis-dev`,
+  c'est qu'un commit déjà tiré par le clone a été réécrit depuis — un `--amend`,
+  un rebase. Le clone n'est pas sali pour autant : le vérifier
+  (`git -C ~/.claude/skills/slash status --short` doit être vide), puis le
+  recaler sur le dépôt de développement plutôt que sur GitHub, qui ne l'a pas
+  encore :
+  `git -C ~/.claude/skills/slash fetch ~/Development/claude-custom main && git -C ~/.claude/skills/slash reset --hard FETCH_HEAD`.
+  La morale tient en une ligne : ne pas amender un commit déjà déployé ;
 - si la sortie dit **`clone sali`**, ne pas tenter de forcer. Le clone installé
   n'est censé être édité par personne, et un `git checkout` d'autorité
   effacerait ce que quelqu'un y a mis. Montrer la liste et demander.
