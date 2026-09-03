@@ -41,6 +41,16 @@ profil du worktree n'existe pas encore, il le **clone depuis un profil modèle**
 `~/.cache/chrome-mcp/_modele`. C'est de là que viennent les extensions — Dashlane
 au premier chef — et leur session déjà ouverte.
 
+Chaque fenêtre s'ouvre avec **deux onglets** : une page blanche, sur laquelle la
+session travaille, et un **onglet de repère** titré du ticket — `SLI-8422` —
+coiffé d'une pastille jaune en favicon. C'est lui qui dit, à l'œil et depuis la
+barre d'onglets, à quel worktree la fenêtre appartient. Il le dit aussi à la
+session, puisque `list_pages` le montre.
+
+Leur ordre n'est pas garanti : le repère peut arriver en premier et donc être la
+page sélectionnée. C'est pourquoi son URL porte sa consigne — voir la règle
+plus bas.
+
 Conséquence : deux sessions sur deux worktrees ont deux navigateurs, deux
 profils, deux jeux de cookies. Il n'y a plus de port partagé, donc plus de
 collision possible — à condition de ne pas recréer le problème à la main.
@@ -70,6 +80,11 @@ attendue — l'URL, et un repère visible dans la page. Si ça ne correspond pas
 **Ne fermer que ce qu'on possède.** Si une instance survit à sa session, elle
 s'identifie par son `--user-data-dir`. On ne tue que celle de son propre
 worktree, jamais une autre, et jamais son Chrome personnel.
+
+**Ne pas naviguer l'onglet de repère.** C'est le seul endroit où s'affiche
+l'identité de la fenêtre : le navigateur qui l'a perdue redevient anonyme jusqu'à
+son prochain lancement. Viser un `pageId` explicite, et jamais celui dont l'URL
+finit par `repere-ne-pas-naviguer.html`.
 
 **Laisser la fenêtre ouverte quand l'utilisateur doit constater.** C'est ce que
 demandent `slash:constat` et `slash:process-ticket` : le navigateur est là pour
