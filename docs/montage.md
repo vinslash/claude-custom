@@ -18,7 +18,8 @@ Pour savoir *quand* un changement prend effet, c'est [`propagation.md`](propagat
 | `hooks/handlers/commun.sh` | Les deux ensembles de fichiers qui fondent tout le rattrapage : instructions permanentes contre câblage. |
 | `bin/mise-a-jour.sh` | Le `git pull --ff-only` du clone installé. Tiré par launchd, et par `/slash:maj`. Hors de Claude Code, donc gratuit. |
 | `.mcp.json` | Déclare le serveur MCP `chrome`, et rien d'autre : il ne nomme qu'un script. Même sobriété que `hooks/hooks.json`, même raison — voir [`propagation.md`](propagation.md). |
-| `bin/chrome-mcp.sh` | Le lancement du navigateur : profil dérivé du worktree, cloné du profil modèle à sa naissance, et deux arguments retirés de ceux que Puppeteer pose par défaut — `--disable-extensions`, qui empêcherait les extensions de démarrer, et `--use-mock-keychain`, qui les ferait effacer du profil au premier lancement. |
+| `bin/chrome-mcp.sh` | Le lancement du navigateur : profil dérivé du worktree, cloné du profil modèle à sa naissance, extension de repère préparée dans le worktree, et deux arguments retirés de ceux que Puppeteer pose par défaut — `--disable-extensions`, qui empêcherait les extensions de démarrer, et `--use-mock-keychain`, qui les ferait effacer du profil au premier lancement. |
+| `bin/extension-repere/` | L'extension qui range les onglets d'une fenêtre dans un groupe au nom du ticket. Le lanceur en dépose une copie étiquetée dans `<worktree>/.chrome-repere`, la session l'installe une fois par profil. |
 | `bin/chrome-modele.sh` | Ouvre `~/.cache/chrome-mcp/_modele` pour y installer Dashlane une fois pour toutes. Le seul lancement de Chrome à la main qui soit permis. |
 | `install.sh` | Pose le clone installé, l'import `CLAUDE.md`, l'agent launchd, et neutralise ce qui entre en conflit. Idempotent. |
 | `hooks-retires/` | Hooks retirés de `settings.json`, conservés pour pouvoir les recoller. |

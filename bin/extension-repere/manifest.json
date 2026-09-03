@@ -1,0 +1,8 @@
+{
+  "manifest_version": 3,
+  "name": "Repère de worktree",
+  "version": "1.0.0",
+  "description": "Range tous les onglets de la fenêtre dans un groupe nommé d'après le ticket, pour qu'on sache à quel worktree elle appartient.",
+  "permissions": ["tabs", "tabGroups", "storage"],
+  "background": { "service_worker": "worker.js" }
+}
