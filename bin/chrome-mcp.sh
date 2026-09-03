@@ -61,10 +61,16 @@ fi
 # Reste ce que fait l'extension Claude for Chrome : un **groupe d'onglets**,
 # c'est-à-dire un chip coloré et nommé dans la barre d'onglets. Il faut une
 # extension pour ça — `chrome.tabGroups` n'existe que là — et Chrome 142 a
-# retiré `--load-extension`. Mais le CDP, lui, sait installer : c'est l'outil
-# `install_extension` du serveur, d'où le `--categoryExtensions` plus bas. La
-# pose revient donc à la session, une fois par profil ; Chrome l'inscrit ensuite
-# dans le profil et la recharge tout seul. Voir le skill `chrome-ancrage`.
+# retiré `--load-extension`. Le CDP sait encore installer, lui : c'est l'outil
+# `install_extension`, d'où le `--categoryExtensions` plus bas.
+#
+# Mais ce qu'il pose ne survit pas au navigateur. Mesuré : premier lancement,
+# extension active et service worker en vie ; deuxième lancement sur le même
+# profil, plus aucune trace, l'entrée a même disparu des préférences. Il faut
+# donc reposer l'extension à chaque ouverture — ce qui interdit d'en faire un
+# geste de session, et interdit aussi de l'installer une fois dans le modèle
+# pour que les profils en héritent. D'où le relais `chrome-repere-proxy.py`,
+# qui s'en charge tout seul au premier appel d'outil.
 #
 # Le dossier vit dans le worktree, et pas à côté du profil, parce que
 # `install_extension` refuse tout chemin hors des roots MCP — vérifié, y compris
@@ -113,7 +119,8 @@ fi
 # du vrai trousseau, comme le Chrome personnel. Il n'accède pas pour autant à son
 # profil, qui vit ailleurs. C'est le prix d'une session Dashlane utilisable, qui
 # est précisément ce qu'on cherche.
-exec npx -y chrome-devtools-mcp@latest \
+exec python3 "$ici/chrome-repere-proxy.py" "$atelier" \
+  npx -y chrome-devtools-mcp@latest \
   --userDataDir="$profil" \
   --viewport 1440x820 \
   --categoryExtensions \

@@ -44,9 +44,9 @@ au premier chef — et leur session déjà ouverte.
 Chaque fenêtre porte enfin le nom de son ticket, dans la barre d'onglets : une
 petite extension range **tous** ses onglets dans un groupe jaune intitulé
 `SLI-8422`. Tous, et pas seulement le premier — un groupe meurt avec son dernier
-onglet, donc en fermer un ne peut pas effacer le repère. C'est le lanceur qui
-grave l'étiquette dans l'extension, mais c'est à la session de la poser la
-première fois : voir la règle plus bas.
+onglet, donc en fermer un ne peut pas effacer le repère. Tout est automatique :
+le lanceur grave l'étiquette et repose l'extension à chaque ouverture — elle ne
+survit pas au navigateur — sans qu'aucune session ait à s'en occuper.
 
 Conséquence : deux sessions sur deux worktrees ont deux navigateurs, deux
 profils, deux jeux de cookies. Il n'y a plus de port partagé, donc plus de
@@ -78,19 +78,6 @@ attendue — l'URL, et un repère visible dans la page. Si ça ne correspond pas
 s'identifie par son `--user-data-dir`. On ne tue que celle de son propre
 worktree, jamais une autre, et jamais son Chrome personnel.
 
-**Poser le repère avant la première action.** À la première ouverture du
-navigateur dans une session, appeler `list_extensions`. Si « Repère de
-worktree » n'y figure pas, appeler `install_extension` avec le chemin
-`<racine du worktree>/.chrome-repere` — le dossier que le lanceur vient d'y
-écrire. C'est à faire **une seule fois par profil** : Chrome inscrit ensuite
-l'extension dans le profil et la recharge d'elle-même à chaque lancement.
-
-Sans elle, la fenêtre est anonyme au milieu de dix autres, et l'utilisateur ne
-peut plus dire laquelle regarder. Deux détails qui vont avec : le chemin doit
-être **dans le worktree**, seul endroit que `install_extension` accepte ; et
-`list_pages` affiche désormais une section « Extension Service Workers » — c'est
-le moteur de l'extension, pas une page à piloter.
-
 **Laisser la fenêtre ouverte quand l'utilisateur doit constater.** C'est ce que
 demandent `slash:constat` et `slash:process-ticket` : le navigateur est là pour
 qu'il manipule lui-même, pas seulement pour produire des captures.
@@ -103,6 +90,10 @@ la session est persistante pour ce ticket. Deuxième conséquence : deux session
 Claude sur le **même** worktree se disputent le même profil, et Chrome refusera
 d'en ouvrir un second. L'échec est bruyant — c'est voulu, il vaut mieux qu'un
 partage silencieux. Dans ce cas, une seule des deux sessions pilote le navigateur.
+
+**`list_pages` montre une section « Extension Service Workers ».** C'est le
+moteur du repère, et celui de Dashlane. Ce ne sont pas des pages à piloter, et
+leur absence ne veut rien dire : un service worker qui n'a rien à faire s'endort.
 
 **Le profil n'est pas jetable.** Il vit dans `~/.cache/chrome-mcp/`, il survit aux
 sessions et c'est ce qui évite de se reconnecter à chaque fois. Ne pas le
