@@ -83,17 +83,21 @@ ajoutée, aucune traduction perdue.
 - les **renvois aux « 2ᵉ / 3ᵉ critère d'acceptation »** : le relecteur n'a pas le
   ticket sous les yeux et n'ira pas compter.
 
-### ✅ Après — 120 mots de prose, plus un script de trois étapes
+### ✅ Après — 150 mots de prose, plus un script de trois étapes
 
 ```markdown
 Closes [SLI-8493](...)
 
+## Contexte
+
+La page de détail d'une annonce, sur le site public. Sous le titre, une pastille
+affiche la ville et le code postal de la mission.
+
 ## Le problème
 
-La page de détail d'une annonce lisait la ville uniquement dans le marqueur
-géocodé de `job_city`. Quand le géocodage échoue, il n'y a pas de marqueur : la
-pastille s'affichait avec l'icône seule, alors que la ville est bien en base dans
-le champ `localisation`.
+Elle lisait la ville uniquement dans le marqueur géocodé de `job_city`. Quand le
+géocodage échoue, il n'y a pas de marqueur : la pastille s'affichait avec l'icône
+seule, alors que la ville est bien en base dans le champ `localisation`.
 
 [Exemple en prod](https://slash-interim.com/trouver-une-mission/ats-44aa.../)
 
@@ -106,6 +110,14 @@ ne pas y passer.
 
 Et quand vraiment aucune localisation n'est disponible, la pastille affiche
 « Localisation non précisée » plutôt qu'une icône orpheline.
+
+## Screenshots
+
+Même annonce, celle du lien ci-dessus.
+
+| Avant | Après |
+|---|---|
+| ![pastille réduite à l'icône](…) | ![pastille avec ville et code postal](…) |
 
 ## Recettage
 
@@ -122,6 +134,10 @@ géocodage n'a pas abouti.
 
 **Ce qui est conservé, et pourquoi :**
 
+- le **lieu, avant tout le reste**. La version « avant » ouvre sur un chemin
+  d'accès PHP — un relecteur qui ne connaît pas `top-job` ne sait même pas de
+  quel écran on parle. Deux phrases de contexte, et il sait où cliquer avant de
+  savoir ce qui est cassé ;
 - la **cause réelle** (« quand le géocodage échoue, il n'y a pas de marqueur ») —
   c'est ce que le diff ne dit pas ;
 - le **lien vers l'exemple en prod** — le relecteur peut constater en un clic ;
@@ -132,7 +148,11 @@ géocodage n'a pas abouti.
   que le tableau du « avant », mais tournés vers ce qu'il doit faire plutôt que
   vers ce qu'on a fait — et sans les IDs d'agence, dont il n'a pas besoin ;
 - le **changement de format**, porté par l'étape 2 plutôt qu'annoncé à part :
-  c'est la seule chose de cette PR qui peut surprendre quelqu'un en prod.
+  c'est la seule chose de cette PR qui peut surprendre quelqu'un en prod ;
+- la **paire de captures**, sur la même annonce. Le correctif fait apparaître du
+  texte dans une pastille vide : ça se voit en un coup d'œil et ne se lit dans
+  aucun diff. L'« avant » vient du constat — après le correctif, il n'était
+  plus capturable.
 
 Le tout tient dans un écran, sans scroll.
 

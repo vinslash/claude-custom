@@ -4,9 +4,11 @@ description: >
   Cadre de rédaction des écrits destinés à un relecteur humain : descriptions de
   pull request, commentaires de code review, messages de commit, et livrables
   écrits longs — document de plan, handoff, analyse, dossier de décision. Impose
-  une description courte, en prose, qui dit le POURQUOI que le diff ne dit pas.
+  une description courte, en prose et en quatre sections — contexte, problème,
+  correctif, recettage —, qui dit le POURQUOI que le diff ne dit pas.
   Impose sur toute PR une section « Recettage » — le script que le relecteur
-  déroule avant de lire le code, ou la raison qu'il n'y en ait pas — et bannit
+  déroule avant de lire le code, ou la raison qu'il n'y en ait pas —, une
+  section « Screenshots » en avant/après dès que l'UI bouge, et bannit
   les preuves de test exhaustives, les snippets recopiés du diff et les détails
   d'outillage sans conséquence pour le relecteur. Sur les livrables
   longs, impose une passe d'élagage avant de rendre — plaidoirie, hors-périmètre
@@ -39,19 +41,30 @@ est moins lue.
 
 ## Description de pull request
 
-Vise **150 à 250 mots**. Trois sections — ni plus, ni moins :
+Vise **150 à 250 mots**. Quatre sections — ni plus, ni moins —, et une
+cinquième dès que l'UI bouge :
 
 ```markdown
 Closes [SLI-XXXX](lien Linear)
 
+## Contexte
+2 à 3 phrases, jamais de puces. Où on est : quel module, quel écran, quel
+flux. Le relecteur ne connaît pas forcément la zone, et sans ce point d'appui
+tout ce qui suit flotte.
+
 ## Le problème
 2 à 4 phrases. Ce qui ne marchait pas, et la cause réelle — pas les symptômes.
-Un lien vers un exemple reproductible si tu en as un.
+Un lien vers un exemple reproductible si tu en as un. Sur une feature, la
+section s'intitule « Le besoin » et dit ce qui manque, jamais la solution.
 
 ## Le correctif
 2 à 4 phrases. L'approche retenue et pourquoi elle est la bonne. Si elle
 s'appuie sur un helper ou un pattern déjà en place ailleurs, dis-le : ça
 rassure plus que n'importe quelle preuve.
+
+## Screenshots
+Seulement si l'UI bouge — et alors obligatoire. Un avant/après cadré sur la
+zone qui change. Voir ci-dessous.
 
 ## Recettage
 Les étapes que le relecteur déroule avant d'ouvrir le diff, avec l'attendu à
@@ -61,13 +74,95 @@ chacune. Ou la phrase qui dit pourquoi il n'y en a pas. Voir ci-dessous.
 Écris en **prose**. Des phrases, pas une avalanche de puces. Trois paragraphes
 courts se lisent plus vite qu'une liste de douze items.
 
-Ces 150 à 250 mots sont ceux de la **prose** — problème et correctif. Le script
-de recettage se compte à part, en étapes : cinq au plus.
+Des puces dans « Le correctif » seulement quand les changements sont
+**réellement disjoints** — trois chantiers indépendants dans une même PR,
+chacun sa puce. Un raisonnement continu débité en puces perd ses liens
+logiques, qui étaient précisément tout ce qu'il restait à apporter.
+
+Ces 150 à 250 mots comptent les trois sections de prose, contexte compris : le
+plafond ne monte pas parce qu'une section s'ajoute. Une partie de ce qu'on
+écrivait sous « Le problème » servait à situer le lecteur, et remonte
+simplement d'un cran. Le script de recettage se compte à part, en étapes : cinq
+au plus.
 
 Ces bornes valent **par PR**. Si le diff dépasse 400 lignes ou 15 fichiers
 porteurs de logique, le problème n'est plus la description : charger
 `slash:decoupage-pr` avant de rédiger, parce qu'il y a peut-être trois PR à
 écrire et non une.
+
+### Quand le dépôt fournit un gabarit
+
+Ses titres et son ordre gagnent : le skill gouverne le contenu et le
+destinataire, pas la nomenclature. Sur **slash-web**, aucun gabarit — les
+quatre titres s'appliquent tels quels. Sur **slash-interim**,
+`.github/pull_request_template.md` impose ses sections, et les quatre se
+replient dedans :
+
+| Section du gabarit | Ce qu'on y met |
+| --- | --- |
+| `# 🎯 Description` | Cocher `Hotfix` / `Bug` / `Feature` / `Refacto` — la case porte la nature de la PR, ne la redis pas en prose |
+| `### Explication` | « Contexte », « Le problème », « Le correctif » en sous-titres `####` |
+| `# 📸 Screenshot` | La section ci-dessous. Ce titre-là reste, singulier compris |
+| `# 🧭 Tests` | Le recettage. Ce titre-là reste. |
+
+Le commentaire du gabarit ne fait pas foi : celui de `# 🧭 Tests` dit « décrire
+comment tu as testé la PR » — mauvais lecteur, et c'est exactement ce qui
+produit la version « avant » de la PR #942 dans `references/exemples.md`.
+
+### Ne pas écraser ce qui est déjà là
+
+Une description se régénère souvent sur une PR déjà ouverte. Avant tout
+`gh pr edit --body`, relire le corps en place et reporter dans le nouveau :
+
+- la **ligne de liaison Linear** en tête — `Close`, `Ref` ou `Part of` selon le
+  cas, et `slash:decoupage-pr` tranche lequel sur une pile ;
+- ce que l'auteur a **écrit à la main** et que le diff ne redonne pas : captures
+  d'écran, lien de déploiement, note de rollout. Sous son titre d'origine.
+
+Une description régénérée qui perd la capture de l'auteur est une régression,
+pas une amélioration.
+
+### « Screenshots » : dès que l'UI bouge
+
+Un relecteur qui a vu l'écran sait ce qu'il cherche avant de recetter. Et la
+capture est le seul endroit où un libellé tronqué, une couleur ou un décalage
+se voient : le diff ne les montre pas, et le script de recettage suppose déjà
+qu'on sait à quoi ressemble le bon résultat.
+
+La section existe **dès que le diff touche quelque chose de visible** — un
+écran, un composant, un mail, un PDF, un export mis en forme. Un changement de
+CSS compte ; un renommage de variable non.
+
+**Un avant/après**, cadré sur la zone qui change et non sur la fenêtre entière,
+où le relecteur devra chercher ce qui a bougé. Côte à côte plutôt qu'empilées :
+la comparaison est le but.
+
+```markdown
+## Screenshots
+
+| Avant | Après |
+|---|---|
+| ![](…) | ![](…) |
+```
+
+**L'« avant » ne se rattrape pas.** Le correctif en place, l'écran fautif
+n'existe plus : la capture se prend au constat mode « avant », ou elle est
+perdue. Une PR d'UI sans « avant » est presque toujours une PR dont la capture
+a été oubliée au seul moment où elle était possible.
+
+Sur slash-interim, le gabarit livre la section et son commentaire la donne
+lui-même pour conditionnelle : si l'UI ne bouge pas, la **retirer** plutôt que
+d'y écrire « N/A ». C'est le seul titre du gabarit qui se supprime.
+
+**L'upload, c'est nous.** `gh` ne sait pas poser d'image sur GitHub et il
+n'existe aucune API pour ça, mais le navigateur du serveur MCP `chrome` sait le
+faire — la marche à suivre est dans `references/screenshots-github.md`, à lire
+dès qu'il y a des captures à poser. Un seul point d'arrêt : la connexion GitHub
+dans ce navigateur, qui est un geste d'utilisateur. Le repli, si ça résiste,
+reste les captures dans le scratchpad et l'utilisateur qui les colle.
+
+Ce qui reste interdit dans tous les cas : pousser un `![](…)` mort, et annoncer
+une PR illustrée dont les images ne se rendent pas.
 
 ### « Recettage » : la section qui ne se supprime pas
 
@@ -77,14 +172,6 @@ par où passer : c'est la description qui le lui donne, ou il saute l'étape.
 
 Cette section est donc **toujours présente**, sous l'une des deux formes. Jamais
 absente, jamais un « N/A ».
-
-Quand le dépôt fournit un gabarit, ses titres et son ordre restent : sur
-slash-interim, `.github/pull_request_template.md` intitule cette section
-`# 🧭 Tests`, et c'est ce titre qui reste. Le skill gouverne le contenu et le
-destinataire, pas la nomenclature. Le commentaire du gabarit ne fait pas foi :
-celui de slash-interim dit « décrire comment tu as testé la PR » — mauvais
-lecteur, et c'est exactement ce qui produit la version « avant » de la PR #942
-dans `references/exemples.md`.
 
 Et **une seule section**, jamais un découpage « Tests automatisés » / « Recette
 manuelle » : un bloc « automatisé » est une cachette. Il se remplit de compteurs
