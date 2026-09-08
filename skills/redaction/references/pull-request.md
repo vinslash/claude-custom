@@ -18,12 +18,12 @@ ne s'y plie pas : on garde sa **substance**, pas sa mise en page.
 | La ligne de liaison Linear | Gardée, en tête |
 | La case `Hotfix` / `Bug` / `Feature` / `Refacto` | Gardée, nue sous la ligne Linear. Elle porte la nature de la PR : ne la redis pas en prose |
 | `# 🎯 Description`, `### Explication` | **Retirés.** Deux étiquettes qui n'annoncent rien qu'on ne sache déjà — les sections qu'elles contiennent *sont* la description et l'explication — et deux crans d'imbrication en trop |
-| `# 📸 Screenshot` | Gardé, au singulier du gabarit. Retiré quand l'UI ne bouge pas, son propre commentaire le donnant pour conditionnel |
-| `# 🧭 Tests` | Devient **`# 🧪 Comment tester`** : même section, un titre qui dit au relecteur ce qu'on attend de lui au lieu de ce qu'on a fait |
-| `# ✅ Checklist` | Gardée telle quelle, cases comprises |
+| `# 📸 Screenshot` | Gardé, au singulier du gabarit, en `## 📸 Screenshot`. Retiré quand l'UI ne bouge pas, son propre commentaire le donnant pour conditionnel |
+| `# 🧭 Tests` | Devient **`## 🧪 Comment tester`** : même section, un titre qui dit au relecteur ce qu'on attend de lui au lieu de ce qu'on a fait |
+| `# ✅ Checklist` | Gardée, cases comprises, en `## ✅ Checklist` |
 
 Rien de ce qu'un relecteur y cherche ne disparaît — nature de la PR,
-explication, captures, tests, checklist. Ce qui change est le balisage, plus la
+explication, captures, tests, checklist. Ce qui change est le balisage — nos titres, tous en `##` — plus la
 section « Contexte » que le gabarit n'avait pas.
 
 Le renommage de `# 🧭 Tests` répare précisément ce que son commentaire cassait :
@@ -52,7 +52,7 @@ où le relecteur devra chercher ce qui a bougé. Côte à côte plutôt qu'empil
 la comparaison est le but.
 
 ```markdown
-# 📸 Screenshot
+## 📸 Screenshot
 
 | Avant | Après |
 |---|---|
@@ -98,7 +98,7 @@ bon. Une ligne de prérequis en tête quand le cas demande des données
 particulières.
 
 ```markdown
-# 🧪 Comment tester
+## 🧪 Comment tester
 
 Prérequis : une annonce dont le champ `localisation` est renseigné mais dont le
 géocodage n'a pas abouti.

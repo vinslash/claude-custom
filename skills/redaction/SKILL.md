@@ -50,33 +50,33 @@ Close [SLI-XXXX](lien Linear)
 
 - [x] Bug                    ← slash-interim : la case de nature du gabarit
 
-# 🗺️ Contexte
+## 🗺️ Contexte
 2 à 3 phrases, jamais de puces. Où on est : quel module, quel écran, quel
 flux. Le relecteur ne connaît pas forcément la zone, et sans ce point d'appui
 tout ce qui suit flotte.
 
-# 🐛 Le problème
+## 🐛 Le problème
 2 à 4 phrases. Ce qui ne marchait pas, et la cause réelle — pas les symptômes.
 Un lien vers un exemple reproductible si tu en as un. Sur une feature, c'est
-« # ✨ Le besoin », et il dit ce qui manque, jamais la solution.
+« ## ✨ Le besoin », et il dit ce qui manque, jamais la solution.
 
-# 🔧 Le correctif
+## 🔧 Le correctif
 2 à 4 phrases. L'approche retenue et pourquoi elle est la bonne. Si elle
 s'appuie sur un helper ou un pattern déjà en place ailleurs, dis-le : ça
 rassure plus que n'importe quelle preuve.
 
-# 📸 Screenshot
+## 📸 Screenshot
 Seulement si l'UI bouge — et alors obligatoire. Un avant/après cadré sur la
 zone qui change.
 
-# 🧪 Comment tester
+## 🧪 Comment tester
 Les étapes que le relecteur déroule avant d'ouvrir le diff, avec l'attendu à
 chacune. Ou la phrase qui dit pourquoi il n'y en a pas.
 
-# ✅ Checklist              ← slash-interim : celle du gabarit, à cocher
+## ✅ Checklist              ← slash-interim : celle du gabarit, à cocher
 ```
 
-Tous les titres au même niveau, `#`, et un emoji par section — celui du
+Tous les titres au même niveau, `##`, et un emoji par section — celui du
 problème suit la nature de la PR, 🐛 ou ✨.
 
 Écris en **prose**. Des phrases, pas une avalanche de puces. Trois paragraphes
@@ -132,7 +132,7 @@ n'a pas été ouverte :
   CSS compte ; un renommage de variable non.
 - **Le gabarit du dépôt ne s'épouse pas** : on garde sa substance — la case de
   nature, les captures, les tests, la checklist — et nos titres, tous au niveau
-  `#`. Ses deux étiquettes sans contenu propre, `# 🎯 Description` et
+  `##`. Ses deux étiquettes sans contenu propre, `# 🎯 Description` et
   `### Explication`, disparaissent.
 ## Ce qui ne va pas dans une PR
 

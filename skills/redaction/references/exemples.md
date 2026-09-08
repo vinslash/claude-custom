@@ -88,12 +88,12 @@ ajoutée, aucune traduction perdue.
 ```markdown
 Closes [SLI-8493](...)
 
-# 🗺️ Contexte
+## 🗺️ Contexte
 
 La page de détail d'une annonce, sur le site public. Sous le titre, une pastille
 affiche la ville et le code postal de la mission.
 
-# 🐛 Le problème
+## 🐛 Le problème
 
 Elle lisait la ville uniquement dans le marqueur géocodé de `job_city`. Quand le
 géocodage échoue, il n'y a pas de marqueur : la pastille s'affichait avec l'icône
@@ -101,7 +101,7 @@ seule, alors que la ville est bien en base dans le champ `localisation`.
 
 [Exemple en prod](https://slash-interim.com/trouver-une-mission/ats-44aa.../)
 
-# 🔧 Le correctif
+## 🔧 Le correctif
 
 Le bloc passe désormais par `sla_job_location()`, le helper qui enchaîne déjà tous
 les replis (Mapbox, ancien format OSM, champ `localisation`, ville du conseiller).
@@ -111,7 +111,7 @@ ne pas y passer.
 Et quand vraiment aucune localisation n'est disponible, la pastille affiche
 « Localisation non précisée » plutôt qu'une icône orpheline.
 
-# 📸 Screenshot
+## 📸 Screenshot
 
 Même annonce, celle du lien ci-dessus.
 
@@ -119,7 +119,7 @@ Même annonce, celle du lien ci-dessus.
 |---|---|
 | ![pastille réduite à l'icône](…) | ![pastille avec ville et code postal](…) |
 
-# 🧪 Comment tester
+## 🧪 Comment tester
 
 Prérequis : une annonce dont le champ `localisation` est renseigné mais dont le
 géocodage n'a pas abouti.
@@ -199,7 +199,7 @@ d'indépendant passerait en silence ; et un échec n'interrompt pas les suivants
 ### ✅ Après — autre titre, autre destinataire
 
 ```markdown
-# 🧪 Comment tester
+## 🧪 Comment tester
 
 Prérequis : deux indépendants dans deux agences distinctes, la source détenant
 des affaires, un client, des intérimaires et des commandes ATS. Le plus rapide
@@ -236,4 +236,4 @@ tu as testé la PR » — désigne le mauvais destinataire : c'est lui qui produ
 version « avant ». On a d'abord gardé le titre en ne changeant que le lecteur,
 en tenant que le skill gouverne le contenu et pas la nomenclature. Un titre qui
 porte la mauvaise consigne la reproduit pourtant à chaque PR, quoi qu'en dise le
-skill. D'où `# 🧪 Comment tester`, qui la porte juste.
+skill. D'où `## 🧪 Comment tester`, qui la porte juste.
