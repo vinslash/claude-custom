@@ -101,7 +101,7 @@ replient dedans :
 | Section du gabarit | Ce qu'on y met |
 | --- | --- |
 | `# 🎯 Description` | Cocher `Hotfix` / `Bug` / `Feature` / `Refacto` — la case porte la nature de la PR, ne la redis pas en prose |
-| `### Explication` | Rien : le titre **disparaît**, remplacé par « Contexte », « Le problème » et « Le correctif » en `###`, à son niveau |
+| `### Explication` | Rien : le titre **disparaît**, remplacé par « Contexte », « Le problème » et « Le correctif » en `##` — leur niveau partout ailleurs, et celui qui suit un `#` sans sauter de cran |
 | `# 📸 Screenshot` | La section ci-dessous. Ce titre-là reste, singulier compris |
 | `# 🧭 Tests` | Le recettage. Ce titre-là reste. |
 
