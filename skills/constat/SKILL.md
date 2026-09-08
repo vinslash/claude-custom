@@ -141,14 +141,20 @@ encore gratuit.
 
 `<scratchpad>/SLI-XXXX-OBSERVATION.md`, court :
 
-- **Le POURQUOI, cinq lignes, avec ses mots** : ce que ça change, pour
-  qui, pourquoi c'était comme ça. Le lui faire formuler plutôt que le rédiger à
-  sa place — c'est le test de la compréhension, et c'est la matière de la PR.
+- **Le POURQUOI, cinq lignes, avec ses mots** : où ça se passe — l'écran, le
+  module, le flux —, ce que ça change, pour qui, pourquoi c'était comme ça. Le
+  lui faire formuler plutôt que le rédiger à sa place : c'est le test de la
+  compréhension, et c'est la matière des sections « Contexte » et « Le
+  problème » de la PR.
 - **Les questions pour le PM**, telles quelles.
 - **Le script de rejeu** : URL exacte, étapes, ce qu'on observe aujourd'hui, ce
   qu'on devra observer après. C'est lui qui sera rejoué en mode « après », puis
   recopié tel quel dans la section « Recettage » de la PR — l'écrire déjà comme
   des étapes numérotées avec leur attendu.
+- **La capture de l'écran fautif**, s'il y a de l'UI. Elle ne sera plus
+  reproductible une fois le correctif en place, et c'est l'« avant » de la
+  section « Screenshots » de la PR — voir `slash:redaction`. La prendre
+  maintenant ou ne pas la prendre du tout.
 - **Ce qui n'est pas validable localement**, s'il y en a.
 
 ---

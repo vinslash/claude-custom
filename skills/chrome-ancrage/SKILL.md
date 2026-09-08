@@ -41,6 +41,21 @@ profil du worktree n'existe pas encore, il le **clone depuis un profil modèle**
 `~/.cache/chrome-mcp/_modele`. C'est de là que viennent les extensions — Dashlane
 au premier chef — et leur session déjà ouverte.
 
+C'est aussi le bon endroit pour une session **GitHub** : ouverte dans le modèle,
+tous les worktrees nés ensuite l'héritent, et poser les captures d'une PR ne
+demande plus de connexion — voir `slash:redaction`, référence
+`screenshots-github.md`. Le contrôle tient en une commande, qui ne lit que des
+noms de domaine :
+
+```bash
+sqlite3 "file:$HOME/.cache/chrome-mcp/_modele/Default/Cookies?immutable=1" \
+  "select distinct host_key from cookies where host_key like '%github%';"
+```
+
+Elle doit lister `.github.com`. Vide, la connexion n'a pas été faite ou n'a pas
+été enregistrée — Chrome écrit ses cookies à la fermeture, donc fermer le modèle
+avant de vérifier.
+
 Chaque fenêtre porte enfin le nom de son ticket, dans la barre d'onglets : une
 petite extension range **tous** ses onglets dans un groupe jaune intitulé
 `SLI-8422`. Tous, et pas seulement le premier — un groupe meurt avec son dernier

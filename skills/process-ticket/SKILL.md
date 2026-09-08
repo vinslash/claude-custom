@@ -199,10 +199,11 @@ le rapport d'étape**. Un red flag non traité part en review, où il coûte un
 aller-retour sur une décision de conception, donc sur du code déjà écrit. Il se
 corrige, ou il s'assume en une ligne du rapport — jamais en silence.
 
-Les captures vont dans le scratchpad. `gh` ne sait pas uploader d'image sur
-GitHub : elles ne peuvent pas atterrir seules dans la description de PR. Dire où
-elles sont pour que l'utilisateur les colle s'il le souhaite, ou les attacher au
-ticket Linear. Ne pas promettre une PR illustrée qu'on ne peut pas produire.
+Les captures vont dans le scratchpad, avec celle de l'écran fautif prise à
+l'étape 1 : ce sont les deux images de la section « Screenshots » de la PR. Les
+poser sur GitHub demande le navigateur — `slash:redaction` et sa référence
+`screenshots-github.md` portent le geste, et le seul point d'arrêt est la
+connexion GitHub dans cette instance.
 
 **Rapport** : ce qui a été fait, ce qui a résisté, les écarts au plan. Puis la
 question : faut-il remettre le jeu de données en état pour constater la
