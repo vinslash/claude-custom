@@ -101,13 +101,21 @@ replient dedans :
 | Section du gabarit | Ce qu'on y met |
 | --- | --- |
 | `# 🎯 Description` | Cocher `Hotfix` / `Bug` / `Feature` / `Refacto` — la case porte la nature de la PR, ne la redis pas en prose |
-| `### Explication` | « Contexte », « Le problème », « Le correctif » en sous-titres `####` |
+| `### Explication` | Rien : le titre **disparaît**, remplacé par « Contexte », « Le problème » et « Le correctif » en `###`, à son niveau |
 | `# 📸 Screenshot` | La section ci-dessous. Ce titre-là reste, singulier compris |
 | `# 🧭 Tests` | Le recettage. Ce titre-là reste. |
 
-Le commentaire du gabarit ne fait pas foi : celui de `# 🧭 Tests` dit « décrire
-comment tu as testé la PR » — mauvais lecteur, et c'est exactement ce qui
-produit la version « avant » de la PR #942 dans `references/exemples.md`.
+Deux titres du gabarit ne survivent donc pas, et pour la même raison : ils
+n'annoncent rien qu'on ne sache déjà. `### Explication` dit que ce qui suit
+explique — mais les trois sections **sont** l'explication, et le garder ajoute un
+niveau d'imbrication sans ajouter une information. Éprouvé sur une vraie PR :
+c'est un cran de trop. Et `# 📸 Screenshot` se retire quand l'UI ne bouge pas,
+son propre commentaire le donnant pour conditionnel. Tous les autres restent :
+ce sont des sections à remplir, pas des étiquettes.
+
+Le commentaire du gabarit ne fait pas foi pour autant : celui de `# 🧭 Tests` dit
+« décrire comment tu as testé la PR » — mauvais lecteur, et c'est exactement ce
+qui produit la version « avant » de la PR #942 dans `references/exemples.md`.
 
 ### Ne pas écraser ce qui est déjà là
 
@@ -152,7 +160,7 @@ a été oubliée au seul moment où elle était possible.
 
 Sur slash-interim, le gabarit livre la section et son commentaire la donne
 lui-même pour conditionnelle : si l'UI ne bouge pas, la **retirer** plutôt que
-d'y écrire « N/A ». C'est le seul titre du gabarit qui se supprime.
+d'y écrire « N/A ».
 
 **L'upload, c'est nous.** `gh` ne sait pas poser d'image sur GitHub et il
 n'existe aucune API pour ça, mais le navigateur du serveur MCP `chrome` sait le
