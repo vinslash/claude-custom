@@ -16,7 +16,7 @@ ne s'y plie pas : on garde sa **substance**, pas sa mise en page.
 | Du gabarit | Ce qu'on en fait |
 | --- | --- |
 | La ligne de liaison Linear | Gardée, en tête |
-| La case `Hotfix` / `Bug` / `Feature` / `Refacto` | Gardée, nue sous la ligne Linear. Elle porte la nature de la PR : ne la redis pas en prose |
+| La liste `Hotfix` / `Bug` / `Feature` / `Refacto / Tech` | Gardée **entière**, nue sous la ligne Linear, avec la ou les cases qui s'appliquent cochées. Ne garder que la ligne cochée n'est plus une liste de cases, et prive le relecteur de ce qui a été écarté. Elle porte la nature de la PR : ne la redis pas en prose |
 | `# 🎯 Description`, `### Explication` | **Retirés.** Deux étiquettes qui n'annoncent rien qu'on ne sache déjà — les sections qu'elles contiennent *sont* la description et l'explication — et deux crans d'imbrication en trop |
 | `# 📸 Screenshot` | Gardé, au singulier du gabarit, en `## 📸 Screenshot`. Retiré quand l'UI ne bouge pas, son propre commentaire le donnant pour conditionnel |
 | `# 🧭 Tests` | Devient **`## 🧪 Comment tester`** : même section, un titre qui dit au relecteur ce qu'on attend de lui au lieu de ce qu'on a fait |

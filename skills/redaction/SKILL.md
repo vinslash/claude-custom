@@ -48,7 +48,10 @@ qui se cochent au lieu de s'écrire :
 ```markdown
 Close [SLI-XXXX](lien Linear)
 
-- [x] Bug                    ← slash-interim : la case de nature du gabarit
+- [ ] Hotfix                 ← slash-interim : la liste du gabarit, entière,
+- [x] Bug                       avec la ou les cases qui s'appliquent cochées
+- [ ] Feature
+- [ ] Refacto / Tech
 
 ## 🗺️ Contexte
 2 à 3 phrases, jamais de puces. Où on est : quel module, quel écran, quel
@@ -73,7 +76,7 @@ zone qui change.
 Les étapes que le relecteur déroule avant d'ouvrir le diff, avec l'attendu à
 chacune. Ou la phrase qui dit pourquoi il n'y en a pas.
 
-## ✅ Checklist              ← slash-interim : celle du gabarit, à cocher
+## ✅ Checklist              ← slash-interim : celle du gabarit, entière aussi
 ```
 
 Tous les titres au même niveau, `##`, et un emoji par section — celui du
