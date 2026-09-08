@@ -88,12 +88,12 @@ ajoutée, aucune traduction perdue.
 ```markdown
 Closes [SLI-8493](...)
 
-## Contexte
+# 🗺️ Contexte
 
 La page de détail d'une annonce, sur le site public. Sous le titre, une pastille
 affiche la ville et le code postal de la mission.
 
-## Le problème
+# 🐛 Le problème
 
 Elle lisait la ville uniquement dans le marqueur géocodé de `job_city`. Quand le
 géocodage échoue, il n'y a pas de marqueur : la pastille s'affichait avec l'icône
@@ -101,7 +101,7 @@ seule, alors que la ville est bien en base dans le champ `localisation`.
 
 [Exemple en prod](https://slash-interim.com/trouver-une-mission/ats-44aa.../)
 
-## Le correctif
+# 🔧 Le correctif
 
 Le bloc passe désormais par `sla_job_location()`, le helper qui enchaîne déjà tous
 les replis (Mapbox, ancien format OSM, champ `localisation`, ville du conseiller).
@@ -111,7 +111,7 @@ ne pas y passer.
 Et quand vraiment aucune localisation n'est disponible, la pastille affiche
 « Localisation non précisée » plutôt qu'une icône orpheline.
 
-## Screenshots
+# 📸 Screenshot
 
 Même annonce, celle du lien ci-dessus.
 
@@ -119,7 +119,7 @@ Même annonce, celle du lien ci-dessus.
 |---|---|
 | ![pastille réduite à l'icône](…) | ![pastille avec ville et code postal](…) |
 
-## Recettage
+# 🧪 Comment tester
 
 Prérequis : une annonce dont le champ `localisation` est renseigné mais dont le
 géocodage n'a pas abouti.
@@ -143,7 +143,7 @@ géocodage n'a pas abouti.
 - le **lien vers l'exemple en prod** — le relecteur peut constater en un clic ;
 - l'argument **« les autres rendus l'utilisent tous »** — c'est ce qui rassure
   sur le choix d'approche, bien plus qu'une preuve de test ;
-- le **script de recettage**, trois étapes avec leur attendu : le relecteur
+- le **script**, trois étapes avec leur attendu : le relecteur
   recette avant de relire, il faut qu'il sache par où passer. Les mêmes trois cas
   que le tableau du « avant », mais tournés vers ce qu'il doit faire plutôt que
   vers ce qu'on a fait — et sans les IDs d'agence, dont il n'a pas besoin ;
@@ -196,10 +196,10 @@ d'indépendant passerait en silence ; et un échec n'interrompt pas les suivants
   ses attendus chiffrés, dormait dans le fichier d'observation. Il n'y avait
   qu'à le recopier.
 
-### ✅ Après — même titre, autre destinataire
+### ✅ Après — autre titre, autre destinataire
 
 ```markdown
-# 🧭 Tests
+# 🧪 Comment tester
 
 Prérequis : deux indépendants dans deux agences distinctes, la source détenant
 des affaires, un client, des intérimaires et des commandes ATS. Le plus rapide
@@ -230,8 +230,10 @@ résolution, le script de recettage **existe déjà** — dans le fichier
 d'observation. Une section « Tests » rédigée au passé est le signe qu'on ne l'a
 pas rouvert.
 
-**Le titre ne bouge pas.** Le gabarit du dépôt intitule cette section
-`# 🧭 Tests` et on la laisse ainsi : le skill gouverne le contenu, pas le nom des
-sections d'un template. C'est le commentaire du gabarit — « décrire comment tu as
-testé la PR » — qui produit la version « avant » : il désigne le mauvais
-destinataire. La section garde son titre et change de lecteur.
+**Le titre a fini par bouger, et c'est cette PR qui l'a décidé.** Le gabarit du
+dépôt intitulait la section `# 🧭 Tests`, et son commentaire — « décrire comment
+tu as testé la PR » — désigne le mauvais destinataire : c'est lui qui produit la
+version « avant ». On a d'abord gardé le titre en ne changeant que le lecteur,
+en tenant que le skill gouverne le contenu et pas la nomenclature. Un titre qui
+porte la mauvaise consigne la reproduit pourtant à chaque PR, quoi qu'en dise le
+skill. D'où `# 🧪 Comment tester`, qui la porte juste.

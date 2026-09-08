@@ -179,7 +179,7 @@ Part of [SLI-1234](https://linear.app/slash-interim/issue/SLI-1234)
 Deuxième de trois. À merger après #4521, dont elle reprend le helper.
 ```
 
-La section **Recettage** se compte elle aussi PR par PR. Sur une pile, les PR
+La section **Comment tester** se compte elle aussi PR par PR. Sur une pile, les PR
 intermédiaires portent souvent « aucun recettage manuel nécessaire » — légitime
 tant qu'elles ne changent rien de perceptible — et la dernière porte le script
 complet. Sur des PR parallèles, chacune porte le sien.

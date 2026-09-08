@@ -5,8 +5,8 @@ description: >
   pull request, commentaires de code review, messages de commit, et livrables
   écrits longs — document de plan, handoff, analyse, dossier de décision. Impose
   une description courte, en prose et en quatre sections — contexte, problème,
-  correctif, recettage —, qui dit le POURQUOI que le diff ne dit pas.
-  Impose sur toute PR une section « Recettage » — le script que le relecteur
+  correctif, comment tester —, qui dit le POURQUOI que le diff ne dit pas.
+  Impose sur toute PR une section « Comment tester » — le script que le relecteur
   déroule avant de lire le code, ou la raison qu'il n'y en ait pas —, une
   section « Screenshots » en avant/après dès que l'UI bouge, et bannit
   les preuves de test exhaustives, les snippets recopiés du diff et les détails
@@ -41,35 +41,43 @@ est moins lue.
 
 ## Description de pull request
 
-Vise **150 à 250 mots**. Quatre sections — ni plus, ni moins —, et une
-cinquième dès que l'UI bouge :
+Vise **150 à 250 mots**. Quatre sections rédigées — ni plus, ni moins —, une
+cinquième dès que l'UI bouge, et sur slash-interim les deux pièces du gabarit
+qui se cochent au lieu de s'écrire :
 
 ```markdown
-Closes [SLI-XXXX](lien Linear)
+Close [SLI-XXXX](lien Linear)
 
-## Contexte
+- [x] Bug                    ← slash-interim : la case de nature du gabarit
+
+# 🗺️ Contexte
 2 à 3 phrases, jamais de puces. Où on est : quel module, quel écran, quel
 flux. Le relecteur ne connaît pas forcément la zone, et sans ce point d'appui
 tout ce qui suit flotte.
 
-## Le problème
+# 🐛 Le problème
 2 à 4 phrases. Ce qui ne marchait pas, et la cause réelle — pas les symptômes.
-Un lien vers un exemple reproductible si tu en as un. Sur une feature, la
-section s'intitule « Le besoin » et dit ce qui manque, jamais la solution.
+Un lien vers un exemple reproductible si tu en as un. Sur une feature, c'est
+« # ✨ Le besoin », et il dit ce qui manque, jamais la solution.
 
-## Le correctif
+# 🔧 Le correctif
 2 à 4 phrases. L'approche retenue et pourquoi elle est la bonne. Si elle
 s'appuie sur un helper ou un pattern déjà en place ailleurs, dis-le : ça
 rassure plus que n'importe quelle preuve.
 
-## Screenshots
+# 📸 Screenshot
 Seulement si l'UI bouge — et alors obligatoire. Un avant/après cadré sur la
 zone qui change. Voir ci-dessous.
 
-## Recettage
+# 🧪 Comment tester
 Les étapes que le relecteur déroule avant d'ouvrir le diff, avec l'attendu à
 chacune. Ou la phrase qui dit pourquoi il n'y en a pas. Voir ci-dessous.
+
+# ✅ Checklist              ← slash-interim : celle du gabarit, à cocher
 ```
+
+Tous les titres au même niveau, `#`, et un emoji par section — celui du
+problème suit la nature de la PR, 🐛 ou ✨.
 
 Écris en **prose**. Des phrases, pas une avalanche de puces. Trois paragraphes
 courts se lisent plus vite qu'une liste de douze items.
@@ -90,32 +98,36 @@ porteurs de logique, le problème n'est plus la description : charger
 `slash:decoupage-pr` avant de rédiger, parce qu'il y a peut-être trois PR à
 écrire et non une.
 
-### Quand le dépôt fournit un gabarit
+### Ce qu'on garde du gabarit du dépôt
 
-Ses titres et son ordre gagnent : le skill gouverne le contenu et le
-destinataire, pas la nomenclature. Sur **slash-web**, aucun gabarit — les
-quatre titres s'appliquent tels quels. Sur **slash-interim**,
-`.github/pull_request_template.md` impose ses sections, et les quatre se
-replient dedans :
+Sur **slash-web**, aucun gabarit : le format ci-dessus tel quel, sans la case de
+nature ni la checklist.
 
-| Section du gabarit | Ce qu'on y met |
+Sur **slash-interim**, `.github/pull_request_template.md` en fournit un, et on
+ne s'y plie pas : on garde sa **substance**, pas sa mise en page.
+
+| Du gabarit | Ce qu'on en fait |
 | --- | --- |
-| `# 🎯 Description` | Cocher `Hotfix` / `Bug` / `Feature` / `Refacto` — la case porte la nature de la PR, ne la redis pas en prose |
-| `### Explication` | Rien : le titre **disparaît**, remplacé par « Contexte », « Le problème » et « Le correctif » en `##` — leur niveau partout ailleurs, et celui qui suit un `#` sans sauter de cran |
-| `# 📸 Screenshot` | La section ci-dessous. Ce titre-là reste, singulier compris |
-| `# 🧭 Tests` | Le recettage. Ce titre-là reste. |
+| La ligne de liaison Linear | Gardée, en tête |
+| La case `Hotfix` / `Bug` / `Feature` / `Refacto` | Gardée, nue sous la ligne Linear. Elle porte la nature de la PR : ne la redis pas en prose |
+| `# 🎯 Description`, `### Explication` | **Retirés.** Deux étiquettes qui n'annoncent rien qu'on ne sache déjà — les sections qu'elles contiennent *sont* la description et l'explication — et deux crans d'imbrication en trop |
+| `# 📸 Screenshot` | Gardé, au singulier du gabarit. Retiré quand l'UI ne bouge pas, son propre commentaire le donnant pour conditionnel |
+| `# 🧭 Tests` | Devient **`# 🧪 Comment tester`** : même section, un titre qui dit au relecteur ce qu'on attend de lui au lieu de ce qu'on a fait |
+| `# ✅ Checklist` | Gardée telle quelle, cases comprises |
 
-Deux titres du gabarit ne survivent donc pas, et pour la même raison : ils
-n'annoncent rien qu'on ne sache déjà. `### Explication` dit que ce qui suit
-explique — mais les trois sections **sont** l'explication, et le garder ajoute un
-niveau d'imbrication sans ajouter une information. Éprouvé sur une vraie PR :
-c'est un cran de trop. Et `# 📸 Screenshot` se retire quand l'UI ne bouge pas,
-son propre commentaire le donnant pour conditionnel. Tous les autres restent :
-ce sont des sections à remplir, pas des étiquettes.
+Rien de ce qu'un relecteur y cherche ne disparaît — nature de la PR,
+explication, captures, tests, checklist. Ce qui change est le balisage, plus la
+section « Contexte » que le gabarit n'avait pas.
 
-Le commentaire du gabarit ne fait pas foi pour autant : celui de `# 🧭 Tests` dit
-« décrire comment tu as testé la PR » — mauvais lecteur, et c'est exactement ce
-qui produit la version « avant » de la PR #942 dans `references/exemples.md`.
+Le renommage de `# 🧭 Tests` répare précisément ce que son commentaire cassait :
+« décrire comment tu as testé la PR » désigne le mauvais lecteur, et c'est ce qui
+produit la version « avant » de la PR #942 dans `references/exemples.md`. Le
+titre porte maintenant la bonne consigne.
+
+**En contrepartie, tes PR ne ressemblent plus tout à fait à celles de
+l'équipe**, qui repère `# 🎯 Description` et `# 🧭 Tests`. C'est un arbitrage
+assumé, pas un oubli : si un relecteur s'en plaint, c'est le gabarit qu'il faut
+faire évoluer, pas la description qu'il faut replier dedans.
 
 ### Ne pas écraser ce qui est déjà là
 
@@ -146,7 +158,7 @@ où le relecteur devra chercher ce qui a bougé. Côte à côte plutôt qu'empil
 la comparaison est le but.
 
 ```markdown
-## Screenshots
+# 📸 Screenshot
 
 | Avant | Après |
 |---|---|
@@ -172,7 +184,7 @@ reste les captures dans le scratchpad et l'utilisateur qui les colle.
 Ce qui reste interdit dans tous les cas : pousser un `![](…)` mort, et annoncer
 une PR illustrée dont les images ne se rendent pas.
 
-### « Recettage » : la section qui ne se supprime pas
+### « Comment tester » : la section qui ne se supprime pas
 
 Chez nous, le relecteur assigné **recette d'abord et relit le code ensuite**. Il
 n'a pas constaté le bug, il n'a pas le jeu de données en tête, et il ne sait pas
@@ -192,7 +204,7 @@ bon. Une ligne de prérequis en tête quand le cas demande des données
 particulières.
 
 ```markdown
-## Recettage
+# 🧪 Comment tester
 
 Prérequis : une annonce dont le champ `localisation` est renseigné mais dont le
 géocodage n'a pas abouti.
@@ -251,7 +263,7 @@ reste interdit — il va dans l'autre ticket.
 
 - **la preuve de test exhaustive** — valeurs testées, avant/après ligne à ligne,
   IDs des fixtures. Ça, c'est ton rapport à celui qui t'a demandé le travail, pas
-  la PR. Le « Recettage » dit au relecteur **ce qu'il a à faire**, il ne lui
+  la PR. Le « Comment tester » dit au relecteur **ce qu'il a à faire**, il ne lui
   prouve pas que tu l'as fait ;
 - **le snippet recopié du diff** — le relecteur a le diff, en mieux et en couleur ;
 - **la liste des fichiers touchés** — GitHub l'affiche déjà ;
@@ -260,8 +272,8 @@ reste interdit — il va dans l'autre ticket.
 - **les valeurs de test énumérées** — les trois IDs d'agence, les slugs des
   fixtures. Sauf celles dont le relecteur a besoin pour atteindre le cas : là,
   elles sont le prérequis du script ;
-- **les sections vides** remplies pour respecter un gabarit — « Recettage »
-  comprise : une section sans attendu ne vaut pas mieux qu'une section absente ;
+- **les sections vides** remplies pour respecter un gabarit — « Comment
+  tester » comprise : une section sans attendu ne vaut pas mieux qu'une section absente ;
 - **l'auto-satisfaction** — « correctif propre et robuste », « refactoring
   élégant ». Le relecteur jugera.
 

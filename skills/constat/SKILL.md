@@ -149,7 +149,7 @@ encore gratuit.
 - **Les questions pour le PM**, telles quelles.
 - **Le script de rejeu** : URL exacte, étapes, ce qu'on observe aujourd'hui, ce
   qu'on devra observer après. C'est lui qui sera rejoué en mode « après », puis
-  recopié tel quel dans la section « Recettage » de la PR — l'écrire déjà comme
+  recopié tel quel dans la section « Comment tester » de la PR — l'écrire déjà comme
   des étapes numérotées avec leur attendu.
 - **La capture de l'écran fautif**, s'il y a de l'UI. Elle ne sera plus
   reproductible une fois le correctif en place, et c'est l'« avant » de la

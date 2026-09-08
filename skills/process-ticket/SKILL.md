@@ -299,7 +299,7 @@ POURQUOI écrites à l'étape 1, avec ses mots, sont très exactement ce que
 tard en relisant un diff. Charger `slash:redaction` **avant** de rédiger.
 
 Le **script de rejeu** du même fichier, celui que l'étape 4 vient de dérouler,
-est la section **Recettage** de la description — obligatoire sur toute PR, parce
+est la section **Comment tester** de la description — obligatoire sur toute PR, parce
 que le relecteur assigné recette avant de relire le code. Le recopier, pas le
 réinventer. Une PR qui ne change rien de perceptible porte à la place la phrase
 qui le dit, et ce qui la couvre.
