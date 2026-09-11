@@ -112,6 +112,19 @@ Claude sur le **même** worktree se disputent le même profil, et Chrome refuser
 d'en ouvrir un second. L'échec est bruyant — c'est voulu, il vaut mieux qu'un
 partage silencieux. Dans ce cas, une seule des deux sessions pilote le navigateur.
 
+**Téléverser un fichier exige qu'il soit dans le workspace root.** Le serveur
+refuse tout chemin en dehors — `Access denied: … is not within any of the
+configured workspace roots` —, et « local à la machine du navigateur » ne suffit
+donc pas : le scratchpad de session est rejeté. Copier le fichier dans un dossier
+gitignoré du dépôt (`drafts/`), puis l'y supprimer. Vaut pour n'importe quel
+téléversement, pas seulement les captures d'une PR.
+
+**`upload_file` échoue sur une zone de dépôt sans `input[type=file]`.** Plusieurs
+applications modernes, GitHub compris, n'en exposent aucun dans le DOM et
+n'ouvrent pas de sélecteur au clic. Le recours est un `drop` synthétique avec un
+`DataTransfer`, en `evaluate_script` ; `slash:captures-github` en porte le
+snippet éprouvé.
+
 **`list_pages` montre une section « Extension Service Workers ».** C'est le
 moteur du repère, et celui de Dashlane. Ce ne sont pas des pages à piloter, et
 leur absence ne veut rien dire : un service worker qui n'a rien à faire s'endort.
