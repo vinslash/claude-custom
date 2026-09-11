@@ -201,9 +201,8 @@ corrige, ou il s'assume en une ligne du rapport — jamais en silence.
 
 Les captures vont dans le scratchpad, avec celle de l'écran fautif prise à
 l'étape 1 : ce sont les deux images de la section « Screenshots » de la PR. Les
-poser sur GitHub demande le navigateur — `slash:redaction` et sa référence
-`screenshots-github.md` portent le geste, et le seul point d'arrêt est la
-connexion GitHub dans cette instance.
+poser sur GitHub demande le navigateur — **`slash:captures-github`** porte le
+geste, et le seul point d'arrêt est la connexion GitHub dans cette instance.
 
 **Rapport** : ce qui a été fait, ce qui a résisté, les écarts au plan. Puis la
 question : faut-il remettre le jeu de données en état pour constater la

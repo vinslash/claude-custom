@@ -15,7 +15,6 @@ change pas cette décision n'a rien à faire dans le document.
 | `SKILL.md` | Les règles. Chargé à la demande par Claude Code. |
 | `references/pull-request.md` | Rédiger une description : ce qu'on garde du gabarit du dépôt, la mécanique des captures, les deux formes de « Comment tester ». Lu avant toute description. |
 | `references/exemples.md` | Paires avant/après tirées de vraies PR, annotées. |
-| `references/screenshots-github.md` | Poser les captures sur une PR par le navigateur, `gh` ne sachant pas uploader d'image. Lu seulement quand une PR a des captures. |
 | `references/livrables-longs.md` | La passe d'élagage : le geste, les quatre défauts et à quoi on les reconnaît, le levier tableau/mermaid. Lu seulement quand le livrable est long. |
 | `AMORCE.md` | Quelques lignes à importer dans `CLAUDE.md` pour garantir le déclenchement. |
 

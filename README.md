@@ -59,6 +59,7 @@ enfin exister une notion de version.
 | `skills/process-ticket/` | `/slash:process-ticket` | Parcours complet d'un ticket Linear, du worktree déjà créé jusqu'à la PR ouverte — sept étapes suivies en task list, pour retrouver où on en est en revenant sur un ticket. Orchestre les autres. |
 | `skills/recette-dataset/` | `/slash:recette-dataset` | Jeu de données de recette scopé à un ticket SLI, pour constater un bug avant correction puis prouver sa résolution. |
 | `skills/redaction/` | `/slash:redaction` | Cadre de rédaction des écrits lus par un humain : descriptions de PR, commentaires de review, messages de commit, et livrables écrits longs — plan, handoff, analyse. Porte la passe d'élagage. |
+| `skills/captures-github/` | `/slash:captures-github` | Pose des images sur un écrit GitHub — description de PR, commentaire, review. `gh` ne sait pas uploader, le navigateur le fait et `gh` garde la main sur le texte. |
 | `skills/chrome-ancrage/` | `/slash:chrome-ancrage` | Règles de pilotage du navigateur quand plusieurs sessions tournent en parallèle. |
 | `skills/maj/` | `/slash:maj` | Le seul qui ne parle pas de tickets : force la mise à jour du clone installé sans attendre le tick de launchd, et depuis ce dépôt-ci plutôt que GitHub avec `--depuis-dev`, pour éprouver un skill committé sans le pousser. |
 

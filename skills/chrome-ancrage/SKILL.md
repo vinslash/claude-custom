@@ -43,9 +43,8 @@ au premier chef — et leur session déjà ouverte.
 
 C'est aussi le bon endroit pour une session **GitHub** : ouverte dans le modèle,
 tous les worktrees nés ensuite l'héritent, et poser les captures d'une PR ne
-demande plus de connexion — voir `slash:redaction`, référence
-`screenshots-github.md`. Le contrôle tient en une commande, qui ne lit que des
-noms de domaine :
+demande plus de connexion — voir `slash:captures-github`. Le contrôle tient en
+une commande, qui ne lit que des noms de domaine :
 
 ```bash
 sqlite3 "file:$HOME/.cache/chrome-mcp/_modele/Default/Cookies?immutable=1" \

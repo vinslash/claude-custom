@@ -70,10 +70,10 @@ d'y écrire « N/A ».
 
 **L'upload, c'est nous.** `gh` ne sait pas poser d'image sur GitHub et il
 n'existe aucune API pour ça, mais le navigateur du serveur MCP `chrome` sait le
-faire — la marche à suivre est dans `screenshots-github.md`, à lire
-dès qu'il y a des captures à poser. Un seul point d'arrêt : la connexion GitHub
-dans ce navigateur, qui est un geste d'utilisateur. Le repli, si ça résiste,
-reste les captures dans le scratchpad et l'utilisateur qui les colle.
+faire. Charger **`slash:captures-github`**, qui porte le geste, dès qu'il y a
+des captures à poser. Un seul point d'arrêt : la connexion GitHub dans ce
+navigateur, qui est un geste d'utilisateur. Le repli, si ça résiste, reste les
+captures dans le scratchpad et l'utilisateur qui les colle.
 
 Ce qui reste interdit dans tous les cas : pousser un `![](…)` mort, et annoncer
 une PR illustrée dont les images ne se rendent pas.

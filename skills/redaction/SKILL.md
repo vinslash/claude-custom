@@ -117,10 +117,10 @@ pas une amélioration.
 ### Avant de rédiger, lire la référence
 
 `references/pull-request.md` porte ce qui ne tient pas ici : ce qu'on garde du
-gabarit de slash-interim et ce qu'on en retire, la mécanique des captures —
-cadrage, avant/après, pose sur GitHub par le navigateur —, et les deux formes de
-« Comment tester » avec leurs exemples. **À lire avant d'écrire le texte**,
-comme `livrables-longs.md` avant de rendre un plan.
+gabarit de slash-interim et ce qu'on en retire, le cadrage des captures et leur
+avant/après, et les deux formes de « Comment tester » avec leurs exemples. **À
+lire avant d'écrire le texte**, comme `livrables-longs.md` avant de rendre un
+plan.
 
 Trois règles ne se délèguent pas à une lecture, et valent même si la référence
 n'a pas été ouverte :
@@ -132,7 +132,10 @@ n'a pas été ouverte :
   où le script manuel devient la garniture facultative.
 - **« Screenshot » existe dès que le diff touche quelque chose de visible** — un
   écran, un composant, un mail, un PDF, un export mis en forme. Un changement de
-  CSS compte ; un renommage de variable non.
+  CSS compte ; un renommage de variable non. Et **les images se posent, elles ne
+  se demandent pas** : charger `slash:captures-github`, qui porte le geste, au
+  lieu de rendre la main avec des chemins de scratchpad. Ça vaut aussi pour un
+  commentaire ou une review illustrés.
 - **Le gabarit du dépôt ne s'épouse pas** : on garde sa substance — la case de
   nature, les captures, les tests, la checklist — et nos titres, tous au niveau
   `##`. Ses deux étiquettes sans contenu propre, `# 🎯 Description` et
