@@ -74,9 +74,16 @@ exactement le geste qui a produit l'incident ci-dessus. Le navigateur appartient
 au serveur MCP, et à lui seul.
 
 Une seule exception, et elle est bornée : `bin/chrome-modele.sh`, qui ouvre le
-profil modèle pour y installer une extension. Il n'ouvre aucun port de debug, donc
-aucune session ne peut se tromper et venir piloter cette fenêtre-là. C'est un
-geste d'utilisateur, pas un geste de session.
+profil modèle pour y installer une extension et s'y connecter à GitHub. Il
+n'ouvre aucun port de debug, donc aucune session ne peut se tromper et venir
+piloter cette fenêtre-là. C'est un geste d'utilisateur, pas un geste de session.
+
+**Il exige que Chrome soit entièrement quitté** — Cmd+Q, toutes fenêtres. Sur
+macOS, lancer le binaire quand une instance tourne déjà fait main basse sur
+celle-ci : `--user-data-dir` est ignoré, la fenêtre qui s'ouvre est celle du
+profil personnel, et rien ne le signale. Le script refuse désormais de partir
+dans ce cas, parce que le symptôme est invisible : on croit avoir préparé le
+modèle, on a saisi ses identifiants dans son navigateur de tous les jours.
 
 **Ne jamais se connecter par un port.** Une configuration en `--browserUrl` vise
 un endpoint unique que toutes les sessions partagent. Celle que déclare le dépôt
