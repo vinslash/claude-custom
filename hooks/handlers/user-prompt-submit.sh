@@ -19,8 +19,8 @@ set -u
 # Chemin rapide : aucun marqueur pour personne, on sort avant même de savoir de
 # quelle session il s'agit.
 shopt -s nullglob
-marqueurs=("$SESSIONS"/*.attente)
-[ ${#marqueurs[@]} -gt 0 ] || exit 0
+markers=("$SESSIONS"/*.pending)
+[ ${#markers[@]} -gt 0 ] || exit 0
 
 sid=$(python3 -c '
 import json, sys
@@ -31,65 +31,65 @@ except Exception:
 ' 2>/dev/null)
 [ -n "${sid:-}" ] || exit 0
 
-attente="$SESSIONS/$sid.attente"
-[ -f "$attente" ] || exit 0
+pending="$SESSIONS/$sid.pending"
+[ -f "$pending" ] || exit 0
 
-a=$(instructions_permanentes)
-b=$(cablage)
+a=$(permanent_instructions)
+b=$(wiring)
 
 # Le marqueur est consommé avant de produire la sortie : si quelque chose échoue
 # après, on préfère rater un rattrapage que le rejouer à chaque message.
-modifies=$(cat "$attente")
-rm -f "$attente" "$SESSIONS/$sid.signale"
-empreinte_instructions > "$SESSIONS/$sid.empreinte" 2>/dev/null
+changed=$(cat "$pending")
+rm -f "$pending" "$SESSIONS/$sid.flagged"
+instructions_fingerprint > "$SESSIONS/$sid.fingerprint" 2>/dev/null
 
-CC_A="$a" CC_B="$b" CC_MODIFIES="$modifies" python3 -c '
+CC_A="$a" CC_B="$b" CC_CHANGED="$changed" python3 -c '
 import json, os, sys
 
-def liste(nom):
-    return [l for l in os.environ.get(nom, "").split("\n") if l.strip()]
+def env_list(name):
+    return [l for l in os.environ.get(name, "").split("\n") if l.strip()]
 
-modifies = liste("CC_MODIFIES")
-a = [f for f in liste("CC_A") if f in modifies]
-b = [f for f in liste("CC_B") if f in modifies]
+changed = env_list("CC_CHANGED")
+a = [f for f in env_list("CC_A") if f in changed]
+b = [f for f in env_list("CC_B") if f in changed]
 if not a and not b:
     sys.exit(0)
 
-PLAFOND = 40000
-bouts = []
+MAX_CHARS = 40000
+parts = []
 
 if a:
-    bouts.append(
+    parts.append(
         "La configuration `slash` a été mise à jour sur disque depuis l’ouverture de "
         "cette session. Les instructions permanentes ci-dessous ont changé : "
         "**cette version fait foi** et remplace celle chargée au démarrage."
     )
     total = 0
-    tronque = []
+    truncated = []
     for f in a:
         try:
             with open(f, encoding="utf-8") as fh:
-                contenu = fh.read()
+                content = fh.read()
         except FileNotFoundError:
-            bouts.append("--- %s ---\n(supprimé)" % f)
+            parts.append("--- %s ---\n(supprimé)" % f)
             continue
         except OSError:
             continue
-        if total + len(contenu) > PLAFOND:
-            tronque.append(f)
+        if total + len(content) > MAX_CHARS:
+            truncated.append(f)
             continue
-        total += len(contenu)
-        bouts.append("--- %s ---\n%s" % (f, contenu.strip()))
-    if tronque:
+        total += len(content)
+        parts.append("--- %s ---\n%s" % (f, content.strip()))
+    if truncated:
         # Réinjecter sans limite ferait exploser le contexte le jour où une amorce
         # grossit. Mieux vaut une lecture explicite qu’un contexte noyé.
-        bouts.append(
+        parts.append(
             "Trop volumineux pour être réinjecté, à lire avec l’outil Read avant "
-            "de t’en servir : " + ", ".join(tronque)
+            "de t’en servir : " + ", ".join(truncated)
         )
 
 if b:
-    bouts.append(
+    parts.append(
         "Le câblage du plugin a changé (%s). Il ne peut pas être rechargé à chaud : "
         "dis à l’utilisateur de lancer `/reload-plugins` s’il est dans le terminal, "
         "ou d’ouvrir une nouvelle session s’il est dans l’extension VSCode, qui "
@@ -97,7 +97,7 @@ if b:
         % ", ".join(os.path.basename(f) for f in b)
     )
 
-bouts.append(
+parts.append(
     "Annonce-le à l’utilisateur en une ligne — il doit savoir pourquoi ton "
     "comportement peut changer — puis continue sur sa demande."
 )
@@ -105,7 +105,7 @@ bouts.append(
 print(json.dumps({
     "hookSpecificOutput": {
         "hookEventName": "UserPromptSubmit",
-        "additionalContext": "\n\n".join(bouts),
+        "additionalContext": "\n\n".join(parts),
     }
 }))
 '

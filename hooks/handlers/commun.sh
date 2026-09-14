@@ -23,24 +23,24 @@
 # réinjecter ces fichiers : ce serait payer des tokens pour du contenu déjà à
 # jour, à chaque mise à jour, dans toutes les sessions.
 
-ETAT="$HOME/.claude/slash-etat"
-SESSIONS="$ETAT/sessions"
+STATE="$HOME/.claude/slash-etat"
+SESSIONS="$STATE/sessions"
 
 # L'état ne vit jamais dans le dépôt installé : le moindre fichier écrit dedans
 # salit le clone et fait échouer le `merge --ff-only`, ce qui gèlerait les mises
 # à jour en silence — exactement la panne qu'on cherche à éviter.
 mkdir -p "$SESSIONS" 2>/dev/null
 
-racine() { printf '%s' "${CLAUDE_PLUGIN_ROOT:-$HOME/.claude/skills/slash}"; }
+plugin_root() { printf '%s' "${CLAUDE_PLUGIN_ROOT:-$HOME/.claude/skills/slash}"; }
 
-somme() { if command -v md5 >/dev/null 2>&1; then md5 -q; else md5sum | cut -d' ' -f1; fi; }
+checksum() { if command -v md5 >/dev/null 2>&1; then md5 -q; else md5sum | cut -d' ' -f1; fi; }
 
 # Ensemble A. On lit les imports de `CLAUDE.md` au lieu de globber `skills/*/AMORCE.md` :
 # ce qui compte n'est pas qu'un fichier existe, c'est qu'il soit importé. Une
 # amorce désimportée cesse d'être une instruction permanente le jour même.
-instructions_permanentes() {
+permanent_instructions() {
   local root claudemd ref p
-  root="$(racine)"
+  root="$(plugin_root)"
   claudemd="$root/CLAUDE.md"
   [ -f "$claudemd" ] || return 0
   printf '%s\n' "$claudemd"
@@ -58,19 +58,19 @@ instructions_permanentes() {
 }
 
 # Ensemble B.
-cablage() {
+wiring() {
   local root
-  root="$(racine)"
+  root="$(plugin_root)"
   printf '%s\n%s\n' "$root/hooks/hooks.json" "$root/.mcp.json"
 }
 
 # Empreinte du contenu de A, chemins compris — pour qu'un renommage compte comme
 # un changement. Sert au seul cas que `FileChanged` ne couvre pas : une session
 # reprise avec `--resume`, dont le transcript rejoué contient la version d'avant.
-empreinte_instructions() {
+instructions_fingerprint() {
   local f
-  instructions_permanentes | while IFS= read -r f; do
+  permanent_instructions | while IFS= read -r f; do
     printf '%s\n' "$f"
     [ -f "$f" ] && cat "$f"
-  done | somme
+  done | checksum
 }

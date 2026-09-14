@@ -23,14 +23,14 @@ set -u
 #
 # La liste surveillée peut par ailleurs contenir des chemins posés par d'autres
 # sources : ce qui n'est pas à nous est ignoré.
-lu=$(CC_A="$(instructions_permanentes)" CC_B="$(cablage)" python3 -c '
+payload=$(CC_A="$(permanent_instructions)" CC_B="$(wiring)" python3 -c '
 import json, os, sys
 
-def normalise(p):
+def normalize(p):
     p = os.path.realpath(os.path.expanduser(p))
-    prefixe = "/System/Volumes/Data"
-    if p.startswith(prefixe + "/"):
-        p = p[len(prefixe):]
+    prefix = "/System/Volumes/Data"
+    if p.startswith(prefix + "/"):
+        p = p[len(prefix):]
     return p
 
 try:
@@ -38,45 +38,45 @@ try:
 except Exception:
     sys.exit(1)
 sid = d.get("session_id") or ""
-vu = d.get("file_path") or ""
-if not sid or not vu:
+seen = d.get("file_path") or ""
+if not sid or not seen:
     sys.exit(1)
 
-vu = normalise(vu)
-for nom in ("CC_A", "CC_B"):
-    for f in os.environ.get(nom, "").split("\n"):
-        if f.strip() and normalise(f) == vu:
-            print("%s\t%s\t%s" % (sid, f, "a" if nom == "CC_A" else "b"))
+seen = normalize(seen)
+for name in ("CC_A", "CC_B"):
+    for f in os.environ.get(name, "").split("\n"):
+        if f.strip() and normalize(f) == seen:
+            print("%s\t%s\t%s" % (sid, f, "a" if name == "CC_A" else "b"))
             sys.exit(0)
 sys.exit(1)
 ' 2>/dev/null) || exit 0
 
-IFS=$'\t' read -r sid fichier categorie <<< "$lu"
-[ -n "${sid:-}" ] && [ -n "${fichier:-}" ] || exit 0
+IFS=$'\t' read -r sid file category <<< "$payload"
+[ -n "${sid:-}" ] && [ -n "${file:-}" ] || exit 0
 
-attente="$SESSIONS/$sid.attente"
-grep -qxF "$fichier" "$attente" 2>/dev/null || printf '%s\n' "$fichier" >> "$attente"
+pending="$SESSIONS/$sid.pending"
+grep -qxF "$file" "$pending" 2>/dev/null || printf '%s\n' "$file" >> "$pending"
 
 # Une mise à jour touche plusieurs fichiers, et ce hook part une fois par
 # fichier : sans ça, un `pull` de trois fichiers afficherait trois fois le même
 # message. Le premier parle, les suivants accumulent en silence — et le
 # rattrapage, lui, sera précis.
-signale="$SESSIONS/$sid.signale"
-if [ -f "$signale" ]; then
-  pose=$(stat -f %m "$signale" 2>/dev/null || stat -c %Y "$signale" 2>/dev/null || echo 0)
-  [ $(($(date +%s) - pose)) -lt 15 ] && exit 0
+flagged="$SESSIONS/$sid.flagged"
+if [ -f "$flagged" ]; then
+  stamp=$(stat -f %m "$flagged" 2>/dev/null || stat -c %Y "$flagged" 2>/dev/null || echo 0)
+  [ $(($(date +%s) - stamp)) -lt 15 ] && exit 0
 fi
-: > "$signale"
+: > "$flagged"
 
 # `/reload-plugins` ne concerne que le câblage. Ne le dire que quand c'est vrai :
 # un avertissement affiché à chaque modification de skill serait ignoré au bout
 # de deux jours, et ne servirait plus le jour où il compte.
-recharger=0
+reload_needed=0
 while IFS= read -r f; do
-  [ -n "$f" ] && grep -qxF "$f" "$attente" 2>/dev/null && recharger=1
-done < <(cablage)
+  [ -n "$f" ] && grep -qxF "$f" "$pending" 2>/dev/null && reload_needed=1
+done < <(wiring)
 
-if [ "$recharger" = 1 ]; then
+if [ "$reload_needed" = 1 ]; then
   # Les deux gestes, parce que le hook ne sait pas d'où il parle : la commande
   # /reload-plugins n'est pas exposée par l'extension VSCode, où il faut ouvrir
   # une nouvelle session. Voir docs/propagation.md.

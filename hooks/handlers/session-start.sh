@@ -19,28 +19,28 @@ set -u
 # shellcheck source=./commun.sh
 . "$(dirname "${BASH_SOURCE[0]}")/commun.sh"
 
-lu=$(python3 -c '
+payload=$(python3 -c '
 import json, sys
 try:
     d = json.load(sys.stdin)
 except Exception:
     d = {}
 print("%s\t%s" % (d.get("session_id", ""), d.get("session_start_reason", "")))
-' 2>/dev/null) || lu=""
-IFS=$'\t' read -r sid raison <<< "${lu:-}"
+' 2>/dev/null) || payload=""
+IFS=$'\t' read -r sid reason <<< "${payload:-}"
 
 ctx=""
-saut=$'\n\n'
-ajoute() { if [ -n "$ctx" ]; then ctx="$ctx$saut$1"; else ctx="$1"; fi; }
+gap=$'\n\n'
+append() { if [ -n "$ctx" ]; then ctx="$ctx$gap$1"; else ctx="$1"; fi; }
 
 # -------------------------------------------------------------- ticket SLI --
 root=$(git rev-parse --show-toplevel 2>/dev/null) || root=""
 if [ -n "$root" ]; then
-  branche=$(git -C "$root" rev-parse --abbrev-ref HEAD 2>/dev/null) || branche=""
-  num=$(printf '%s' "$branche" | grep -oiE 'sli-?[0-9]{3,}' | head -1 | grep -oE '[0-9]{3,}')
+  branch=$(git -C "$root" rev-parse --abbrev-ref HEAD 2>/dev/null) || branch=""
+  num=$(printf '%s' "$branch" | grep -oiE 'sli-?[0-9]{3,}' | head -1 | grep -oE '[0-9]{3,}')
   if [ -n "${num:-}" ]; then
-    ajoute "Cette session est ouverte dans le worktree du ticket **SLI-${num}**
-(branche \`${branche}\`, racine \`${root}\`).
+    append "Cette session est ouverte dans le worktree du ticket **SLI-${num}**
+(branche \`${branch}\`, racine \`${root}\`).
 
 L'identifiant du ticket se lit dans la branche : ne pas le redemander.
 Le parcours de traitement de bout en bout est le skill \`slash:process-ticket\`."
@@ -54,31 +54,31 @@ fi
 # l'empreinte du disque à celle enregistrée au dernier passage, et on ne
 # réinjecte que si elle a bougé — sinon on paierait des tokens à chaque reprise.
 if [ -n "${sid:-}" ]; then
-  actuelle=$(empreinte_instructions 2>/dev/null)
-  precedente=$(cat "$SESSIONS/$sid.empreinte" 2>/dev/null || printf '')
-  if [ "${raison:-}" = "resume" ] && [ -n "$precedente" ] && [ "$actuelle" != "$precedente" ]; then
+  current=$(instructions_fingerprint 2>/dev/null)
+  previous=$(cat "$SESSIONS/$sid.fingerprint" 2>/dev/null || printf '')
+  if [ "${reason:-}" = "resume" ] && [ -n "$previous" ] && [ "$current" != "$previous" ]; then
     while IFS= read -r f; do
       [ -f "$f" ] || continue
-      ajoute "--- $f ---
+      append "--- $f ---
 $(cat "$f")"
-    done < <(instructions_permanentes)
+    done < <(permanent_instructions)
     ctx="Les instructions permanentes de la configuration \`slash\` ont changé pendant que cette session était fermée. La version ci-dessous fait foi et remplace celle que le transcript rejoué contient.
 
 $ctx"
   fi
-  printf '%s' "$actuelle" > "$SESSIONS/$sid.empreinte" 2>/dev/null
+  printf '%s' "$current" > "$SESSIONS/$sid.fingerprint" 2>/dev/null
 fi
 
 # Balayage de l'état laissé par les sessions mortes. Sans ça, `sessions/` grossit
 # d'un fichier par session et par jour, pour toujours.
 find "$SESSIONS" -type f -mtime +7 -delete 2>/dev/null
 
-CC_PATHS="$(instructions_permanentes; cablage)" python3 - "$ctx" <<'PY'
+CC_PATHS="$(permanent_instructions; wiring)" python3 - "$ctx" <<'PY'
 import json, os, sys
 ctx = sys.argv[1] if len(sys.argv) > 1 else ""
 paths = [p for p in os.environ.get("CC_PATHS", "").split("\n") if p.strip()]
-sortie = {"hookEventName": "SessionStart", "watchPaths": paths}
+out = {"hookEventName": "SessionStart", "watchPaths": paths}
 if ctx.strip():
-    sortie["additionalContext"] = ctx
-print(json.dumps({"hookSpecificOutput": sortie}))
+    out["additionalContext"] = ctx
+print(json.dumps({"hookSpecificOutput": out}))
 PY
