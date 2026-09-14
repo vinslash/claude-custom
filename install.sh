@@ -25,7 +25,7 @@ REPO="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 CLAUDE_DIR="$HOME/.claude"
 SKILLS_DIR="$CLAUDE_DIR/skills"
 CLONE="$SKILLS_DIR/slash"
-ETAT="$CLAUDE_DIR/slash-etat"
+STATE="$CLAUDE_DIR/slash-etat"
 LABEL="com.slash.claude-custom.maj"
 PLIST="$HOME/Library/LaunchAgents/$LABEL.plist"
 IMPORT="@~/.claude/skills/slash/CLAUDE.md"
@@ -37,7 +37,7 @@ die()  { printf '  \033[31mx\033[0m %s\n' "$1" >&2; exit 1; }
 step() { printf '\n\033[1m%s\033[0m\n' "$1"; }
 
 [ -f "$REPO/.claude-plugin/plugin.json" ] || die "$REPO ne ressemble pas à ce dépôt (pas de .claude-plugin/plugin.json)."
-mkdir -p "$SKILLS_DIR" "$ETAT"
+mkdir -p "$SKILLS_DIR" "$STATE"
 
 backup() { # $1 = fichier à sauvegarder ; renvoie le chemin de la sauvegarde
   local src="$1" dst="$1.bak-$STAMP"
@@ -74,13 +74,13 @@ offer_recovery() { # $1 = sauvegarde, $2 = fichier du dépôt, $3 = étiquette
 
 # ------------------------------------------------------------ dépôt installé --
 step "Dépôt installé"
-branche="$(git -C "$REPO" symbolic-ref --quiet --short HEAD)" || die "le dépôt de dev est sur une HEAD détachée."
+branch="$(git -C "$REPO" symbolic-ref --quiet --short HEAD)" || die "le dépôt de dev est sur une HEAD détachée."
 url="$(git -C "$REPO" remote get-url origin 2>/dev/null || true)"
 
 if [ -L "$CLONE" ]; then
-  ancien="$(readlink "$CLONE")"
+  previous="$(readlink "$CLONE")"
   rm "$CLONE"
-  ok "ancien lien symbolique retiré (pointait sur $ancien)."
+  ok "ancien lien symbolique retiré (pointait sur $previous)."
 fi
 
 if [ -d "$CLONE/.git" ]; then
@@ -90,17 +90,17 @@ elif [ -e "$CLONE" ]; then
 else
   # --no-hardlinks : sans ça, git partage les fichiers d'objets entre les deux
   # dépôts. Un `gc` dans le dépôt de dev pourrait alors casser le clone installé.
-  git clone --quiet --no-hardlinks --branch "$branche" "$REPO" "$CLONE"
-  ok "cloné depuis le dépôt de dev (branche $branche)."
+  git clone --quiet --no-hardlinks --branch "$branch" "$REPO" "$CLONE"
+  ok "cloné depuis le dépôt de dev (branche $branch)."
 fi
 
 # L'origine du clone doit être GitHub, pas le dépôt de dev : c'est ce qui fait
 # marcher la propagation entre machines, et ce qui rend `--depuis-dev` explicite.
 if [ -n "$url" ]; then
   git -C "$CLONE" remote set-url origin "$url"
-  if git -C "$CLONE" fetch --quiet origin "$branche" 2>/dev/null; then
-    git -C "$CLONE" branch --quiet --set-upstream-to="origin/$branche" "$branche" 2>/dev/null || true
-    ok "origine : $url (branche suivie : $branche)."
+  if git -C "$CLONE" fetch --quiet origin "$branch" 2>/dev/null; then
+    git -C "$CLONE" branch --quiet --set-upstream-to="origin/$branch" "$branch" 2>/dev/null || true
+    ok "origine : $url (branche suivie : $branch)."
   else
     warn "origine posée sur $url mais injoignable — la mise à jour retentera d'elle-même."
   fi
@@ -108,8 +108,8 @@ else
   warn "le dépôt de dev n'a pas d'origine : le clone ne pourra être mis à jour qu'avec --depuis-dev."
 fi
 
-sale="$(git -C "$CLONE" status --porcelain)"
-[ -z "$sale" ] || warn "le clone installé contient des modifications — elles gèleront les mises à jour :"$'\n'"$sale"
+dirty="$(git -C "$CLONE" status --porcelain)"
+[ -z "$dirty" ] || warn "le clone installé contient des modifications — elles gèleront les mises à jour :"$'\n'"$dirty"
 
 # ---------------------------------------------------------------- CLAUDE.md --
 # Un fichier ordinaire d'une seule ligne, et non plus un lien vers le dépôt.
@@ -130,10 +130,10 @@ step "CLAUDE.md"
 target="$CLAUDE_DIR/CLAUDE.md"
 
 if [ -L "$target" ]; then
-  ancien="$(readlink "$target")"
+  previous="$(readlink "$target")"
   rm "$target"
   printf '%s\n' "$IMPORT" > "$target"
-  ok "lien vers $ancien remplacé par l'import (le contenu vit toujours dans le dépôt)."
+  ok "lien vers $previous remplacé par l'import (le contenu vit toujours dans le dépôt)."
 elif [ -f "$target" ]; then
   if grep -qxF "$IMPORT" "$target"; then
     ok "import déjà en place."
@@ -238,7 +238,7 @@ cat > "$PLIST" <<EOF
   <key>LowPriorityIO</key>      <true/>
   <key>Nice</key>               <integer>5</integer>
   <key>StandardOutPath</key>    <string>/dev/null</string>
-  <key>StandardErrorPath</key>  <string>$ETAT/launchd-erreurs.log</string>
+  <key>StandardErrorPath</key>  <string>$STATE/launchd-erreurs.log</string>
   <key>EnvironmentVariables</key>
   <dict>
     <key>HOME</key>             <string>$HOME</string>
@@ -248,14 +248,14 @@ cat > "$PLIST" <<EOF
 EOF
 ok "agent écrit : $PLIST (toutes les 120 s)."
 
-domaine="gui/$(id -u)"
-launchctl bootout "$domaine/$LABEL" >/dev/null 2>&1 || true
-if launchctl bootstrap "$domaine" "$PLIST" >/dev/null 2>&1; then
+domain="gui/$(id -u)"
+launchctl bootout "$domain/$LABEL" >/dev/null 2>&1 || true
+if launchctl bootstrap "$domain" "$PLIST" >/dev/null 2>&1; then
   ok "agent chargé."
 elif launchctl load -w "$PLIST" >/dev/null 2>&1; then
   ok "agent chargé (ancienne syntaxe launchctl)."
 else
-  warn "chargement de l'agent refusé — le lancer à la main : launchctl bootstrap $domaine $PLIST"
+  warn "chargement de l'agent refusé — le lancer à la main : launchctl bootstrap $domain $PLIST"
 fi
 
 # ------------------------------------------------------------- vérifications --
@@ -283,19 +283,19 @@ done < <(grep -oE '^@[^[:space:]]+' "$CLONE/CLAUDE.md" 2>/dev/null || true)
 
 # Le tick launchd vient d'être chargé (`RunAtLoad`) et tient peut-être le verrou :
 # on retente, plutôt que de conclure sur une exécution qui n'a rien fait.
-essais=0
+attempts=0
 while :; do
-  sortie="$(bash "$CLONE/bin/mise-a-jour.sh" 2>&1)" && { ok "mise à jour opérationnelle : $sortie"; break; }
+  out="$(bash "$CLONE/bin/mise-a-jour.sh" 2>&1)" && { ok "mise à jour opérationnelle : $out"; break; }
   code=$?
-  if [ "$code" = 3 ] && [ "$essais" -lt 5 ]; then
-    essais=$((essais + 1)); sleep 2; continue
+  if [ "$code" = 3 ] && [ "$attempts" -lt 5 ]; then
+    attempts=$((attempts + 1)); sleep 2; continue
   fi
-  warn "la mise à jour a signalé : $sortie"
+  warn "la mise à jour a signalé : $out"
   break
 done
 
-launchctl print "$domaine/$LABEL" >/dev/null 2>&1 && ok "agent actif dans $domaine." \
-  || warn "agent absent de $domaine — vérifier avec : launchctl print $domaine/$LABEL"
+launchctl print "$domain/$LABEL" >/dev/null 2>&1 && ok "agent actif dans $domain." \
+  || warn "agent absent de $domain — vérifier avec : launchctl print $domain/$LABEL"
 
 step "Inventaire et coût"
 claude plugin details slash@skills-dir 2>/dev/null || warn "plugin pas encore chargé — il le sera à la prochaine session."
