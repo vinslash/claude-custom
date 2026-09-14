@@ -45,7 +45,7 @@ se met jamais à jour :
 
 | Ce qui a changé | Le fichier à confronter | Ce qu'on vérifie |
 | --- | --- | --- |
-| Un skill ajouté, retiré, renommé | `README.md` | La table des skills : une ligne par dossier de `skills/`, ni plus ni moins |
+| Un skill ajouté, retiré, renommé | `README.md` | La liste des skills : une entrée par dossier de `skills/`, ni plus ni moins |
 | Un fichier du montage ajouté ou déplacé | `docs/montage.md` | Aucune pièce du montage absente de l'inventaire, tous les chemins cités qui existent |
 | `install.sh` ou `bin/mise-a-jour.sh` | `docs/installation.md`, et `README.md` si les commandes d'installation bougent | Les comportements décrits conformes au script, pas à l'intention |
 | Un hook, `hooks.json`, `.mcp.json` | `docs/propagation.md` | Ce qui se recharge à chaud contre ce qui exige `/reload-plugins` — vérifié, jamais supposé |
