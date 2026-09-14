@@ -13,8 +13,8 @@ description: >
   est contrôlé — un CI rouge qui ne se voit pas dans le diff. Délègue la
   compréhension et le constat à `slash:constat`, le jeu de données à
   `slash:recette-dataset`, les commits et la PR aux skills du dépôt slash-interim
-  (`slash-commit`, `slash-create-pr`), la taille de la PR et son découpage
-  éventuel à `slash:decoupage-pr`, et le contenu rédigé des écrits GitHub à
+  (`slash-commit`, `slash-create-pr`), ce que la PR doit livrer de constatable à
+  `slash:scope`, et le contenu rédigé des écrits GitHub à
   `slash:redaction`.
   Use when the user says « mission : traiter ce ticket », « traite le ticket »,
   « on attaque SLI-XXXX », « je viens de créer le worktree », or
@@ -163,16 +163,22 @@ service dans son controller, ce que le même skill interdit ailleurs. Nommer le
 modèle rend le choix arbitrable en dix secondes ; le taire le laisse surgir en
 review, sur du code déjà écrit.
 
-### Une PR ou plusieurs — ça se tranche ici
+### Ce que la PR va livrer — ça se tranche ici
 
-Si le plan laisse prévoir un diff au-delà de **400 lignes ou 15 fichiers**
-porteurs de logique, charger **`slash:decoupage-pr`** et faire arbitrer le
-découpage **dans le même plan** que l'approche.
+Charger **`slash:scope`** et faire arbitrer **dans le même plan** que l'approche
+ce que la PR livrera de **constatable** : ce qu'on pourra mettre devant
+quelqu'un, et montrer.
 
-Découper maintenant coûte le choix d'un ordre d'implémentation. Découper à
-l'étape 7 coûte des cherry-picks et des rebases sur du code déjà écrit : c'est le
-même travail à dix fois le prix. Un lot arbitré ici fixe aussi l'ordre des
-commits, ce qui rend le découpage des branches mécanique le moment venu.
+La taille n'entre pas dans cette décision — une PR qui livre une fonctionnalité
+entière est le cas nominal, et c'est la review qu'on découpe en blocs. Ce qui se
+décide ici, c'est qu'il y ait quelque chose à constater. Un lot dont rien n'est
+observable ne donne au relecteur aucune intention contre quoi juger, et la
+relecture part dans le détail technique sans fin.
+
+Le moment n'est pas indifférent : ici, le périmètre ne coûte que le choix d'un
+ordre d'implémentation ; à l'étape 7 il coûterait des cherry-picks sur du code
+déjà écrit. Il n'y a donc pas de rattrapage plus tard — ce qui est délimité ici
+est ce qui part.
 
 ## Étape 3 — Implémentation et vérification
 
@@ -252,9 +258,6 @@ Trois points de vigilance :
 - **rebaser avant d'ouvrir la PR, jamais après.** `/slash-rebase` finit sur un
   `git push --force-with-lease` ; un force-push sur une PR déjà relue replie les
   commentaires ancrés en *outdated* ;
-- **rebaser avant de découper en plusieurs branches.** Le re-timestampage d'une
-  migration amende l'historique (`--fixup` puis `--autosquash`) : fait après le
-  découpage, il faut le refaire dans chaque branche de la pile ;
 - **si le rebase ramène un changement de `develop` dans la zone touchée**, le
   constat de résolution validé à l'étape 4 ne vaut plus tout à fait. Le dire, et
   rejouer le script d'observation si le conflit était réel — pas si le rebase
@@ -273,24 +276,18 @@ dépôt slash-interim, et on ne le court-circuite pas.
 
 ### Re-vérifier le volume avant d'ouvrir la PR
 
-Mesurer le diff réel avant d'appeler `slash-create-pr`. La branche de base se
-déduit, elle ne s'écrit pas en dur — `slash-interim` est sur `develop` et n'a
-**pas** de `main` :
+La branche de base se déduit, elle ne s'écrit pas en dur — `slash-interim` est
+sur `develop` et n'a **pas** de `main`, donc un `--base main` y échoue sur un
+`fatal: bad revision` :
 
 ```bash
 BASE=$(git symbolic-ref --short refs/remotes/origin/HEAD | sed 's|^origin/||')
-git diff "$BASE"...HEAD --shortstat -- . \
-  ':(exclude)*.lock' ':(exclude)**/*.snap' ':(exclude)**/migrations/**' \
-  ':(exclude)**/locales/**' ':(exclude)**/*.generated.*' ':(exclude)**/generated/**'
 ```
 
-Au-delà de **400 lignes ou 15 fichiers**, charger **`slash:decoupage-pr`**. Si le
-découpage a déjà été arbitré à l'étape 2, il ne reste que sa mécanique à dérouler ;
-sinon c'est un rattrapage, et il faut le dire comme tel. Le découpage vient
-**après** le rebase de l'étape 6, jamais avant.
-
-Un dépassement ne se contourne pas en silence : soit on découpe, soit
-l'utilisateur assume une PR unique en connaissance de cause.
+Le périmètre, lui, a été arbitré à l'étape 2 et ne se rejoue pas ici. La seule
+chose à vérifier est qu'il a tenu : si le lot n'a finalement rien de
+constatable, le dire à l'utilisateur plutôt que de rattraper d'autorité sur une
+branche déjà écrite.
 
 **La description part du fichier d'observation**, pas du diff. Les cinq lignes de
 POURQUOI écrites à l'étape 1, avec ses mots, sont très exactement ce que

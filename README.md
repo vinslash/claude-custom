@@ -11,9 +11,9 @@ casse et je reprends sans conséquence pour personne.
 **Un chemin vers l'équipe, ensuite.** Ce qui a fait ses preuves est destiné à
 migrer vers `slash-interim/.claude/`. C'est pour ça que chaque skill est écrit
 pour rester lisible hors de son contexte d'origine, et que les surcharges d'un
-skill du dépôt vivent ici en attendant. `skills/decoupage-pr/` en est l'exemple
-courant : il surcharge `slash-create-pr` sans y toucher, le temps de vérifier que
-ses règles tiennent.
+skill du dépôt vivent ici en attendant. `skills/scope/` en est l'exemple courant :
+il surcharge `slash-create-pr` sur la branche de base sans y toucher, le temps de
+vérifier que la correction tient.
 
 **Tout versionné, d'où le montage.** `~/.claude` mélange la config écrite à la
 main et l'état runtime — sessions, historique, `.credentials.json` : le dossier
@@ -63,8 +63,8 @@ flowchart TD
 <td>Fait constater le problème par la personne qui traite le ticket, plutôt que de lui rapporter un constat — phase didactique avant implémentation, vérification de la résolution après.</td>
 </tr>
 <tr>
-<td nowrap><samp>/slash:decoupage-pr</samp></td>
-<td>Garde-fou sur la taille des PR, et mécanique d'ouverture de plusieurs PR pour un ticket — en parallèle ou empilées. Surcharge <code>slash-create-pr</code>.</td>
+<td nowrap><samp>/slash:scope</samp></td>
+<td>Ce qu'une PR doit livrer pour être relisible : un lot <strong>constatable</strong>, qu'on peut mettre devant quelqu'un. Se tranche à l'analyse. Surcharge <code>slash-create-pr</code> sur la branche de base.</td>
 </tr>
 <tr>
 <td nowrap><samp>/slash:process-ticket</samp></td>
@@ -101,25 +101,24 @@ flowchart TD
     co["/slash:constat"]
     re["/slash:redaction"]
     rd["/slash:recette-dataset"]
-    dp["/slash:decoupage-pr"]
+    sc["/slash:scope"]
     cg["/slash:captures-github"]
     ca["/slash:chrome-ancrage"]
 
     pt --> co
     pt --> re
-    pt --> dp
+    pt --> sc
     co --> rd
     co --> ca
-    re --> dp
     re --> cg
     cg --> ca
 ```
 
-`process-ticket` orchestre ; `chrome-ancrage` et `decoupage-pr` sont des
-feuilles chargées par plusieurs, application de la règle du fait général qui vit
-dans le skill général ([`docs/contribuer.md`](docs/contribuer.md)). `maj` n'y
-figure pas : il n'appelle personne et personne ne l'appelle. Personne n'appelle
-`process-ticket` non plus — c'est un point d'entrée.
+`process-ticket` orchestre, et personne ne l'appelle : c'est le point d'entrée.
+`chrome-ancrage` est à l'autre bout, chargé par deux skills — application de la
+règle du fait général qui vit dans le skill général
+([`docs/contribuer.md`](docs/contribuer.md)). `maj` n'y figure pas : il
+n'appelle personne et personne ne l'appelle.
 
 Le nom du plugin sert de **namespace** : c'est pourquoi les dossiers de
 `skills/` ne portent plus le préfixe `slash-`, qui ferait doublon. Attention à ne

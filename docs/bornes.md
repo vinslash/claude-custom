@@ -23,25 +23,26 @@ Le domicile unique de tous les chiffres annoncés par cet atelier : chacun doit
 | Le POURQUOI d'un ticket | **cinq lignes**, avec les mots de l'utilisateur | C'est la matière première de la description de PR, pas une analyse. |
 | Message de commit (slash-interim) | **titre seul, sans corps** | Convention du dépôt, portée par `slash-commit`. |
 
-Les 150 à 250 mots se comptent hors script de recettage, et valent **par PR**,
-jamais par lot : trois PR font trois descriptions et trois recettages. Ils
+Les 150 à 250 mots se comptent hors script de recettage, et ne montent pas avec
+le diff : une PR qui livre une fonctionnalité entière se décrit dans les mêmes
+250 mots qu'un correctif, parce qu'elle doit dire le POURQUOI et non l'inventaire. Ils
 n'ont pas monté quand la section « Contexte » s'est ajoutée aux trois autres :
 ce qui situait le lecteur était déjà écrit, il a seulement changé de section.
 
 ## La taille d'une pull request
 
-| Borne | Mesure | Au-delà |
-| --- | --- | --- |
-| **400 lignes** ajoutées + supprimées, **ou 15 fichiers** | Hors fichiers générés — lockfiles, migrations, snapshots, i18n, `generated/` | Arbitrage : une PR ou plusieurs. Ni contournement silencieux, ni découpage d'autorité. |
-| **3 PR** dans une pile | Nombre d'étages empilés | Le coût d'intendance — un rebase par fusion amont — dépasse le gain de relecture. |
+**Il n'y en a plus.** L'équipe a arbitré qu'une PR livre une fonctionnalité ou un
+correctif entier, et que c'est la **review** qu'on découpe en blocs — découper la
+livraison coûtait des rebases en cascade pour un bénéfice que la review par blocs
+donne sans eux.
 
-Ces seuils sont un **déclencheur de conversation**, pas une loi : 500 lignes d'un
-même pattern répété se relisent mieux que 200 lignes de logique dense.
+Ce qui remplace la borne n'est pas un chiffre mais un critère, porté par
+**`slash:scope`** : une PR livre quelque chose de **constatable**, qu'on peut
+mettre devant quelqu'un. Il se tranche à l'analyse, et ne se mesure pas.
 
-À ne pas confondre avec le seuil de **`slash-commit`**, dans le dépôt
-slash-interim : 500 lignes ou 10 fichiers, qui découpe en **commits** et non en
-PR. Les deux se cumulent — des commits bien découpés peuvent très bien partir
-dans une PR unique et énorme, ce que la borne ci-dessus existe pour empêcher.
+Reste le seuil de **`slash-commit`**, dans le dépôt slash-interim : 500 lignes ou
+10 fichiers, qui découpe en **commits** et non en PR. Il n'a pas bougé, et c'est
+lui qui rend une grosse PR relisible bloc par bloc.
 
 ## Les contrôles mécaniques
 

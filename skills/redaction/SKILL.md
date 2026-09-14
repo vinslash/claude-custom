@@ -96,18 +96,17 @@ plafond ne monte pas parce qu'une section s'ajoute. Une partie de ce qu'on
 simplement d'un cran. Le script de recettage se compte à part, en étapes : cinq
 au plus.
 
-Ces bornes valent **par PR**. Si le diff dépasse 400 lignes ou 15 fichiers
-porteurs de logique, le problème n'est plus la description : charger
-`slash:decoupage-pr` avant de rédiger, parce qu'il y a peut-être trois PR à
-écrire et non une.
+Ces bornes valent **par PR**, et ne montent pas avec le diff : une PR qui livre
+une fonctionnalité entière se décrit dans les mêmes 250 mots qu'un correctif,
+parce que ce qu'elle doit dire est le POURQUOI, pas l'inventaire.
 
 ### Ne pas écraser ce qui est déjà là
 
 Une description se régénère souvent sur une PR déjà ouverte. Avant tout
 `gh pr edit --body`, relire le corps en place et reporter dans le nouveau :
 
-- la **ligne de liaison Linear** en tête — `Close`, `Ref` ou `Part of` selon le
-  cas, et `slash:decoupage-pr` tranche lequel sur une pile ;
+- la **ligne de liaison Linear** en tête — `Close` en règle générale, `Ref`
+  quand la PR ne referme pas le ticket à elle seule ;
 - ce que l'auteur a **écrit à la main** et que le diff ne redonne pas : captures
   d'écran, lien de déploiement, note de rollout. Sous son titre d'origine.
 
