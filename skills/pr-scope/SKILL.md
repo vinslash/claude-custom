@@ -7,17 +7,16 @@ description: >
   de pouvoir jouer un « après » sur le lot. Se tranche à l'analyse, où le
   périmètre ne coûte que le choix d'un ordre d'implémentation, et non après
   l'implémentation, où la même décision coûte des cherry-picks. Donne les
-  frontières qui marchent, les cas qui ne livrent rien d'observable, et la
-  branche de base déduite du remote plutôt que `main` codé en dur.
+  frontières qui marchent et les cas qui ne livrent rien d'observable.
   Use at the analysis or planning step of a ticket, before any code is written —
   step 2 of `slash:process-ticket`; when the user says « qu'est-ce qu'on livre
   dans cette PR ? », « on met tout dans une seule PR ? », « par où on commence »,
   « est-ce que ça se constate », « ça se teste comment », or `/slash:pr-scope`.
-  Also before `gh pr create` when nothing in the branch can be demonstrated.
-  Ne PAS utiliser pour découper les commits d'une PR (→ `slash-commit`), pour
-  rédiger une description (→ `slash:writing`), ni pour arbitrer la **taille**
-  d'une PR : une grosse PR qui livre un lot constatable est le cas nominal, et
-  ce skill n'a rien à en dire.
+  Ne PAS utiliser au moment d'ouvrir la PR — à l'étape 7 le périmètre est déjà
+  écrit et ce skill n'a plus de prise —, ni pour découper les commits
+  (→ `slash-commit`), ni pour rédiger une description (→ `slash:writing`), ni
+  pour arbitrer la **taille** d'une PR : une grosse PR qui livre un lot
+  constatable est le cas nominal, et ce skill n'a rien à en dire.
 ---
 
 # Le périmètre d'une pull request
@@ -100,35 +99,3 @@ Il n'y a donc **pas de rattrapage à l'ouverture de la PR** : ce qui a été
 délimité au plan est ce qui part. Si le lot s'avère ne rien livrer de
 constatable, c'est une conversation à avoir avec l'utilisateur, pas un découpage
 à faire d'autorité sur une branche déjà écrite.
-
-## La branche de base n'est pas `main` partout
-
-`slash-interim` a pour branche par défaut **`develop`** — et `main` n'y existe
-pas, même pas sur le remote. `slash-web` est bien sur `main`. Un `main` écrit en
-dur échoue donc sur un dépôt sur deux, avec un `fatal: bad revision`.
-
-La déduire, une fois, et la réutiliser partout ensuite :
-
-```bash
-BASE=$(git symbolic-ref --short refs/remotes/origin/HEAD | sed 's|^origin/||')
-```
-
-Si la commande ne renvoie rien (remote HEAD jamais résolu), `git remote set-head
-origin --auto` puis retenter. En dernier recours, demander à l'utilisateur
-plutôt que de parier sur `main`.
-
-## Surcharge de `slash-create-pr`
-
-Ce skill ne remplace pas `slash-create-pr`. On garde tout ce qu'il fait —
-l'extraction du SLI depuis la branche, le titre tiré du ticket Linear, le
-template du dépôt, `--body-file` plutôt qu'un heredoc, l'interdiction d'échapper
-les backticks, le `--draft` et le `--assignee @me`. Deux substitutions :
-
-| Chez `slash-create-pr` | Ici |
-| --- | --- |
-| `--base main` codé en dur (étape 4), et `git diff main...HEAD` à l'étape 1.6 | `$BASE` déduit du remote — `develop` sur slash-interim, où `main` n'existe pas |
-| « intègre un diagramme mermaid », description « aussi claire et informative que possible » (étape 6) | **ne s'applique pas** — `slash:writing` gouverne : 150 à 250 mots, en prose, pas de mermaid décoratif |
-
-La première ligne n'est pas une préférence, c'est un **bug** de `slash-create-pr`
-qui échoue sur slash-interim. Elle a vocation à remonter en PR sur le dépôt
-d'équipe, et cette surcharge à disparaître avec.

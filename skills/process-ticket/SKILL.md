@@ -277,7 +277,7 @@ extrait le SLI de la branche, remplit le template, choisit le magic word Linear
 (`Close`, `Part of`, `Ref`), pousse et ouvre la PR en draft. C'est un skill du
 dépôt slash-interim, et on ne le court-circuite pas.
 
-### Re-vérifier le volume avant d'ouvrir la PR
+### La branche de base, et le périmètre qui a tenu
 
 La branche de base se déduit, elle ne s'écrit pas en dur — `slash-interim` est
 sur `develop` et n'a **pas** de `main`, donc un `--base main` y échoue sur un
@@ -286,6 +286,10 @@ sur `develop` et n'a **pas** de `main`, donc un `--base main` y échoue sur un
 ```bash
 BASE=$(git symbolic-ref --short refs/remotes/origin/HEAD | sed 's|^origin/||')
 ```
+
+C'est un **bug** de `slash-create-pr`, qui code `--base main` en dur à son étape
+4, et non une préférence : il a vocation à remonter en PR sur slash-interim, et
+cette surcharge à disparaître avec. Elle vit ici, et nulle part ailleurs.
 
 Le périmètre, lui, a été arbitré à l'étape 2 et ne se rejoue pas ici. La seule
 chose à vérifier est qu'il a tenu : si le lot n'a finalement rien de

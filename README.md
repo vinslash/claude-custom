@@ -11,9 +11,10 @@ casse et je reprends sans conséquence pour personne.
 **Un chemin vers l'équipe, ensuite.** Ce qui a fait ses preuves est destiné à
 migrer vers `slash-interim/.claude/`. C'est pour ça que chaque skill est écrit
 pour rester lisible hors de son contexte d'origine, et que les surcharges d'un
-skill du dépôt vivent ici en attendant. `skills/pr-scope/` en est l'exemple courant :
-il surcharge `slash-create-pr` sur la branche de base sans y toucher, le temps de
-vérifier que la correction tient.
+skill du dépôt vivent ici en attendant. L'exemple courant est l'étape 7 de
+`skills/process-ticket/`, qui déduit la branche de base au lieu du `--base main`
+codé en dur par `slash-create-pr` — sans toucher à celui-ci, le temps de vérifier
+que la correction tient avant de la lui proposer.
 
 **Tout versionné, d'où le montage.** `~/.claude` mélange la config écrite à la
 main et l'état runtime — sessions, historique, `.credentials.json` : le dossier
@@ -64,7 +65,7 @@ flowchart TD
 </tr>
 <tr>
 <td nowrap><samp>/slash:pr-scope</samp></td>
-<td>Ce qu'une PR doit livrer pour être relisible : un lot <strong>constatable</strong>, qu'on peut mettre devant quelqu'un. Se tranche à l'analyse. Surcharge <code>slash-create-pr</code> sur la branche de base.</td>
+<td>Ce qu'une PR doit livrer pour être relisible : un lot <strong>constatable</strong>, qu'on peut mettre devant quelqu'un. Se tranche à l'analyse, jamais au moment d'ouvrir la PR.</td>
 </tr>
 <tr>
 <td nowrap><samp>/slash:process-ticket</samp></td>

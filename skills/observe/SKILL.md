@@ -74,7 +74,7 @@ a changé » — et c'est la première chose qu'un reviewer demandera.
 
 Trois questions, avant d'engager quoi que ce soit :
 
-1. **Y a-t-il quelque chose d'observable ?** Non (refactor, renommage, migration
+1. **Y a-t-il quelque chose d'observable ?** Non (refactor pur, renommage, migration
    de typage) → pas de phase didactique. Dire ce que fait le ticket en trois
    lignes et rendre la main.
 2. **L'utilisateur connaît-il déjà cette zone du produit ?** S'il la pratique
