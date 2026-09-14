@@ -64,30 +64,62 @@ n'importe quel pilotage.
    avant de toucher à quoi que ce soit : un commentaire parti sur la PR d'un
    autre worktree est irrattrapable.
 3. **Déposer les fichiers dans la zone de nouveau commentaire** — jamais dans un
-   éditeur de description, jamais dans un champ de review ouvert. Le geste évident
-   échoue : voir ci-dessous.
+   éditeur de description, jamais dans un champ de review ouvert. Les deux
+   captures d'un avant/après partent ensemble ; le DOM réserve des surprises,
+   voir ci-dessous.
 4. **Récolter les URL** que GitHub vient d'insérer dans la zone.
 5. **Vider la zone sans la soumettre.** Le dépôt a eu lieu, les URL vivent, le
    commentaire n'a aucune raison d'exister.
 6. **Réécrire le fichier de corps avec les URL** et le repousser par `gh`.
 
-## Déposer : les trois pièges, tous éprouvés
+## Déposer : les pièges, tous éprouvés
 
-Cette section a été écrite après avoir déroulé le geste pour de vrai, le
-2026-09-11, sur le formulaire de nouvelle issue de `vinslash/claude-custom`.
-Chacun des trois points est un échec rencontré, pas une précaution supposée.
+Cette section a été écrite en déroulant le geste pour de vrai — le 2026-09-11 sur
+le formulaire de nouvelle issue de `vinslash/claude-custom`, puis le 2026-09-14
+sur `slash-interim/slash-interim#1064`. Chaque point est un échec rencontré, pas
+une précaution supposée.
+
+Entre ces deux dates l'éditeur de GitHub avait changé, et ce fichier affirmait
+une absence constatée un jour donné comme si elle valait toujours. D'où la règle
+qui commande cette section : **constater le DOM avant d'agir**, ne jamais se
+fier à ce qui est décrit ici comme à un état permanent.
 
 **Le fichier doit être dans le workspace root, pas dans le scratchpad.** Le
 serveur MCP refuse tout chemin en dehors — `Access denied: … is not within any
 of the configured workspace roots` —, et « local à la machine du navigateur » ne
-suffit donc pas. Copier les captures dans un dossier gitignoré du dépôt
-(`drafts/` y est déjà) et les supprimer après.
+suffit donc pas. Copier les captures dans un dossier gitignoré du dépôt et les
+supprimer après ; sur slash-interim, `screenshots/` l'est déjà, inutile d'en
+créer un autre.
 
-**`upload_file` ne marche pas sur la zone de dépôt.** L'éditeur que GitHub sert
-aujourd'hui n'a **aucun `input[type=file]` dans le DOM**, et cliquer le bouton
-« Paste, drop, or click to add files » n'ouvre pas de sélecteur — l'outil rend
-`The element could not accept the file directly`. Le chemin qui marche est un
-`drop` synthétique, à passer en `evaluate_script` avec le fichier en base64 :
+**Chercher un `input[type=file]` avant toute autre chose.** C'est le chemin
+nominal, et le seul qui ne coûte rien : le navigateur lit le fichier lui-même.
+
+```js
+[...document.querySelectorAll('input[type=file]')].map(e => ({ id: e.id, accept: e.accept }));
+```
+
+Le 2026-09-14 la page en exposait deux, cachés, un par éditeur —
+`#fc-issue-<id>-body` pour la description, `#fc-new_comment_field` pour la zone
+de nouveau commentaire. C'est le second qu'on veut, conformément au principe :
+on dépose dans la zone de commentaire, pas dans un éditeur de description.
+
+Caché, l'input n'apparaît pas dans le snapshot a11y et n'a donc pas de `uid` à
+donner à `upload_file`. Le démasquer suffit :
+
+```js
+const input = document.querySelector('#fc-new_comment_field');
+input.removeAttribute('hidden');
+input.style.cssText = 'display:block!important;position:fixed;top:0;left:0;z-index:99999;width:300px;height:40px';
+input.setAttribute('aria-label', 'DEPOT-CAPTURES');
+```
+
+Puis `take_snapshot`, et `upload_file` sur le `uid` ainsi obtenu. **Les deux
+captures d'un avant/après passent d'un seul appel**, les deux chemins dans
+`filePaths`.
+
+**Sans input : le `drop` synthétique, en repli.** Si la recherche ne rend rien —
+le DOM de GitHub a déjà changé deux fois —, il reste à fabriquer l'événement à
+la main, avec le fichier inliné en base64 dans l'`evaluate_script` :
 
 ```js
 const bin = atob(b64);
@@ -102,6 +134,11 @@ ta.focus();
 for (const type of ["dragenter", "dragover", "drop"])
   ta.dispatchEvent(new DragEvent(type, { bubbles: true, cancelable: true, dataTransfer: dt }));
 ```
+
+Ce chemin fait transiter le fichier entier par l'appel d'outil, donc par le
+contexte de la session : une capture de 350 Ko pèse ~470 000 caractères en
+base64, soit des dizaines de milliers de tokens — deux fois sur un avant/après —
+pour un geste qui n'en demande aucun. C'est un recours, pas une méthode.
 
 **GitHub insère du HTML, pas du markdown.** La zone reçoit d'abord
 `<!-- Uploading "avant.png"... -->`, puis, une fois le dépôt fini :
@@ -162,7 +199,19 @@ await new Promise(r => {
 corps poussé, recharger la page et **regarder les images se rendre** — c'est le
 seul contrôle qui couvre aussi le markdown qu'on vient d'écrire.
 
-## Le repli, qui n'a jamais cessé d'exister
+**Ce contrôle final ne se fait pas sur l'URL qu'on a écrite.** Au rendu, GitHub
+réécrit les `https://github.com/user-attachments/assets/<uuid>` en URL signées
+`private-user-images.githubusercontent.com`. Un contrôle qui filtre les `<img>`
+sur `user-attachments` rend donc **zéro image sur un dépôt parfaitement
+réussi** — exactement le faux négatif que ce skill cherche à éviter partout
+ailleurs. Prendre tous les `<img>` du `.markdown-body` de la description, sans
+filtrer sur la source, et regarder leur `naturalWidth` :
+
+```js
+[...document.querySelectorAll('.markdown-body img')].map(i => ({ src: i.src, w: i.naturalWidth }));
+```
+
+## Le repli humain, qui n'a jamais cessé d'exister
 
 Si le rendu est cassé, le dire plutôt que réessayer en boucle. Les captures sont
 dans le scratchpad : l'utilisateur les colle en dix secondes depuis l'interface
