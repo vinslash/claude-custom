@@ -1,5 +1,5 @@
 ---
-name: chrome-ancrage
+name: chrome-isolation
 description: >
   Garantit qu'une session Claude pilote SON navigateur et pas celui d'une autre,
   quand plusieurs sessions tournent en parallèle sur des worktrees différents.
@@ -43,7 +43,7 @@ au premier chef — et leur session déjà ouverte.
 
 C'est aussi le bon endroit pour une session **GitHub** : ouverte dans le modèle,
 tous les worktrees nés ensuite l'héritent, et poser les captures d'une PR ne
-demande plus de connexion — voir `slash:captures-github`. Le contrôle tient en
+demande plus de connexion — voir `slash:github-screenshots`. Le contrôle tient en
 une commande, qui ne lit que des noms de domaine :
 
 ```bash
@@ -100,7 +100,7 @@ s'identifie par son `--user-data-dir`. On ne tue que celle de son propre
 worktree, jamais une autre, et jamais son Chrome personnel.
 
 **Laisser la fenêtre ouverte quand l'utilisateur doit constater.** C'est ce que
-demandent `slash:constat` et `slash:process-ticket` : le navigateur est là pour
+demandent `slash:observe` et `slash:process-ticket` : le navigateur est là pour
 qu'il manipule lui-même, pas seulement pour produire des captures.
 
 ## Ce qu'il faut savoir en pratique
@@ -130,7 +130,7 @@ reconnaissable —, reprendre un `take_snapshot`, puis téléverser dessus. Plus
 fichiers passent d'un seul appel.
 
 Quand la recherche ne rend vraiment rien, le recours est un `drop` synthétique
-avec un `DataTransfer`, en `evaluate_script` ; `slash:captures-github` en porte le
+avec un `DataTransfer`, en `evaluate_script` ; `slash:github-screenshots` en porte le
 snippet éprouvé. C'est bien un recours : il fait transiter le fichier en base64
 dans l'appel d'outil, à des dizaines de milliers de tokens la capture.
 

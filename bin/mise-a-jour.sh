@@ -3,7 +3,7 @@
 # Met à jour le dépôt INSTALLÉ (`~/.claude/skills/slash`) depuis son origine.
 #
 # Tiré toutes les deux minutes par un agent launchd, et à la demande par le skill
-# `slash:maj`. Volontairement hors de Claude Code : une mise à jour qui dépend
+# `slash:force-update`. Volontairement hors de Claude Code : une mise à jour qui dépend
 # d'une session ouverte n'est pas une mise à jour automatique, c'est un geste
 # manuel déguisé. Ici, aucun process Claude n'est requis, et rien n'est facturé.
 #
@@ -69,7 +69,7 @@ alerter() {
 }
 
 # Verrou : deux exécutions concurrentes sur le même clone (le tick launchd et un
-# `slash:maj` lancé à la main) se marcheraient dessus au milieu d'un merge.
+# `slash:force-update` lancé à la main) se marcheraient dessus au milieu d'un merge.
 if ! mkdir "$VERROU" 2>/dev/null; then
   pose=$(stat -f %m "$VERROU" 2>/dev/null || echo 0)
   if [ $(($(date +%s) - pose)) -lt 300 ]; then

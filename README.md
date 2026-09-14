@@ -11,7 +11,7 @@ casse et je reprends sans conséquence pour personne.
 **Un chemin vers l'équipe, ensuite.** Ce qui a fait ses preuves est destiné à
 migrer vers `slash-interim/.claude/`. C'est pour ça que chaque skill est écrit
 pour rester lisible hors de son contexte d'origine, et que les surcharges d'un
-skill du dépôt vivent ici en attendant. `skills/scope/` en est l'exemple courant :
+skill du dépôt vivent ici en attendant. `skills/pr-scope/` en est l'exemple courant :
 il surcharge `slash-create-pr` sur la branche de base sans y toucher, le temps de
 vérifier que la correction tient.
 
@@ -59,11 +59,11 @@ flowchart TD
 </thead>
 <tbody>
 <tr>
-<td nowrap><samp>/slash:constat</samp></td>
+<td nowrap><samp>/slash:observe</samp></td>
 <td>Fait constater le problème par la personne qui traite le ticket, plutôt que de lui rapporter un constat — phase didactique avant implémentation, vérification de la résolution après. Porte bloquante sur le <strong>ticket périmé</strong> : faire confirmer ou réaligner par le PM, jamais réinterpréter.</td>
 </tr>
 <tr>
-<td nowrap><samp>/slash:scope</samp></td>
+<td nowrap><samp>/slash:pr-scope</samp></td>
 <td>Ce qu'une PR doit livrer pour être relisible : un lot <strong>constatable</strong>, qu'on peut mettre devant quelqu'un. Se tranche à l'analyse. Surcharge <code>slash-create-pr</code> sur la branche de base.</td>
 </tr>
 <tr>
@@ -71,23 +71,23 @@ flowchart TD
 <td>Parcours complet d'un ticket Linear, du worktree déjà créé jusqu'à la PR ouverte — sept étapes suivies en task list, pour retrouver où on en est en revenant sur un ticket. Orchestre les autres.</td>
 </tr>
 <tr>
-<td nowrap><samp>/slash:recette-dataset</samp></td>
+<td nowrap><samp>/slash:case-dataset</samp></td>
 <td>Jeu de données de recette scopé à un ticket SLI, pour constater un bug avant correction puis prouver sa résolution.</td>
 </tr>
 <tr>
-<td nowrap><samp>/slash:redaction</samp></td>
+<td nowrap><samp>/slash:writing</samp></td>
 <td>Cadre de rédaction des écrits lus par un humain : descriptions de PR, commentaires de review, messages de commit, et livrables écrits longs — plan, handoff, analyse. Porte la passe d'élagage.</td>
 </tr>
 <tr>
-<td nowrap><samp>/slash:captures-github</samp></td>
+<td nowrap><samp>/slash:github-screenshots</samp></td>
 <td>Pose des images sur un écrit GitHub — description de PR, commentaire, review. <code>gh</code> ne sait pas uploader, le navigateur le fait et <code>gh</code> garde la main sur le texte.</td>
 </tr>
 <tr>
-<td nowrap><samp>/slash:chrome-ancrage</samp></td>
+<td nowrap><samp>/slash:chrome-isolation</samp></td>
 <td>Règles de pilotage du navigateur quand plusieurs sessions tournent en parallèle.</td>
 </tr>
 <tr>
-<td nowrap><samp>/slash:maj</samp></td>
+<td nowrap><samp>/slash:force-update</samp></td>
 <td>Le seul qui ne parle pas de tickets : force la mise à jour du clone installé sans attendre le tick de launchd, et depuis ce dépôt-ci plutôt que GitHub avec <code>--depuis-dev</code>, pour éprouver un skill committé sans le pousser.</td>
 </tr>
 </tbody>
@@ -98,12 +98,12 @@ Qui charge qui — une flèche se lit « charge » :
 ```mermaid
 flowchart TD
     pt["/slash:process-ticket"]
-    co["/slash:constat"]
-    re["/slash:redaction"]
-    rd["/slash:recette-dataset"]
-    sc["/slash:scope"]
-    cg["/slash:captures-github"]
-    ca["/slash:chrome-ancrage"]
+    co["/slash:observe"]
+    re["/slash:writing"]
+    rd["/slash:case-dataset"]
+    sc["/slash:pr-scope"]
+    cg["/slash:github-screenshots"]
+    ca["/slash:chrome-isolation"]
 
     pt --> co
     pt --> re
@@ -115,9 +115,9 @@ flowchart TD
 ```
 
 `process-ticket` orchestre, et personne ne l'appelle : c'est le point d'entrée.
-`chrome-ancrage` est à l'autre bout, chargé par deux skills — application de la
+`chrome-isolation` est à l'autre bout, chargé par deux skills — application de la
 règle du fait général qui vit dans le skill général
-([`docs/contribuer.md`](docs/contribuer.md)). `maj` n'y figure pas : il
+([`docs/contribuer.md`](docs/contribuer.md)). `force-update` n'y figure pas : il
 n'appelle personne et personne ne l'appelle.
 
 Le nom du plugin sert de **namespace** : c'est pourquoi les dossiers de
@@ -126,7 +126,7 @@ pas les confondre avec les skills du dépôt slash-interim (`slash-commit`,
 `slash-create-pr`), qui gardent le leur.
 
 Taper la commande reste l'exception : un skill part surtout **de lui-même**, sur
-sa description. `redaction` et `chrome-ancrage` s'appuient en plus sur une amorce
+sa description. `writing` et `chrome-isolation` s'appuient en plus sur une amorce
 dans `CLAUDE.md`, parce que leur déclenchement ne peut pas dépendre du hasard.
 
 ## Installation
@@ -142,7 +142,7 @@ cd ~/Development/claude-custom && ./install.sh
 ```
 
 Le chemin n'est pas indifférent : `bin/mise-a-jour.sh` code `~/Development/claude-custom`
-en dur pour son option `--depuis-dev`. Cloner ailleurs marche, mais `/slash:maj`
+en dur pour son option `--depuis-dev`. Cloner ailleurs marche, mais `/slash:force-update`
 ne saura plus tirer d'ici sans passer par GitHub.
 
 L'installateur pose le clone à `~/.claude/skills/slash`, la ligne d'import dans

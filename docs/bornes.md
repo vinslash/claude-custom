@@ -37,7 +37,7 @@ livraison coûtait des rebases en cascade pour un bénéfice que la review par b
 donne sans eux.
 
 Ce qui remplace la borne n'est pas un chiffre mais un critère, porté par
-**`slash:scope`** : une PR livre quelque chose de **constatable**, qu'on peut
+**`slash:pr-scope`** : une PR livre quelque chose de **constatable**, qu'on peut
 mettre devant quelqu'un. Il se tranche à l'analyse, et ne se mesure pas.
 
 Reste le seuil de **`slash-commit`**, dans le dépôt slash-interim : 500 lignes ou
@@ -62,7 +62,7 @@ calibrent donc leur profondeur avant de s'engager :
 
 | Skill | Porte |
 | --- | --- |
-| `constat` | **Trois questions** : y a-t-il quelque chose d'observable, l'utilisateur connaît-il déjà la zone, un challenge est-il probable. Rien d'observable — refactor, renommage — c'est trois lignes et rendre la main. |
-| `recette-dataset` | **Trois questions**, et dès qu'une réponse coupe, on s'arrête. Un jeu de données ne prouve rien sans **au moins deux lignes qui divergent** sur la dimension testée. |
+| `observe` | **Trois questions** : y a-t-il quelque chose d'observable, l'utilisateur connaît-il déjà la zone, un challenge est-il probable. Rien d'observable — refactor, renommage — c'est trois lignes et rendre la main. |
+| `case-dataset` | **Trois questions**, et dès qu'une réponse coupe, on s'arrête. Un jeu de données ne prouve rien sans **au moins deux lignes qui divergent** sur la dimension testée. |
 
 Le coût en tokens est lui aussi borné — voir [`contribuer.md`](contribuer.md).

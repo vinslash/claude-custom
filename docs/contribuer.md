@@ -8,7 +8,7 @@ premier `pull`, et hors versionnement en attendant.
 
 Il devient actif quand le clone le reçoit : commit puis push, et le tick suivant
 l'apporte — dans les deux minutes, sans redémarrer aucune session. Pour l'éprouver
-sans le pousser, `/slash:maj` sait tirer depuis ce dépôt-ci.
+sans le pousser, `/slash:force-update` sait tirer depuis ce dépôt-ci.
 
 Vérifier son coût avant de le laisser vivre :
 
@@ -61,7 +61,7 @@ le monde, il se domicilie dans le skill **le plus général**, et le spécifique
 n'en garde que son application.
 
 Le sens du renvoi se déduit, il ne s'arbitre pas : le spécifique charge déjà le
-général — `captures-github` impose `chrome-ancrage` avant sa première action
+général — `github-screenshots` impose `chrome-isolation` avant sa première action
 navigateur —, donc c'est le spécifique qui renvoie. L'inverse ferait un cycle, et
 priverait du fait toute session qui ne passe pas par le cas spécifique : une
 session qui téléverse un CV dans l'ATS ne chargera jamais un skill dont la
@@ -69,9 +69,9 @@ description dit « sur un écrit GitHub ».
 
 Ce que ça donne sur le téléversement : le refus des chemins hors workspace root
 et l'`input[type=file]` caché à chercher puis démasquer vivent dans
-`chrome-ancrage` — ce sont des propriétés du serveur MCP et des éditeurs web ;
+`chrome-isolation` — ce sont des propriétés du serveur MCP et des éditeurs web ;
 les identifiants de GitHub, la zone à viser et le snippet de repli vivent dans
-`captures-github`.
+`github-screenshots`.
 
 Le coût de l'oubli est mesuré : une affirmation fausse sur l'absence
 d'`input[type=file]` a vécu dans les deux fichiers, et sa correction a failli

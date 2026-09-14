@@ -1,5 +1,5 @@
 ---
-name: scope
+name: pr-scope
 description: >
   Ce qu'une pull request doit embrasser pour être relisible : un lot
   **constatable** — quelque chose qu'on peut mettre devant quelqu'un et montrer
@@ -12,10 +12,10 @@ description: >
   Use at the analysis or planning step of a ticket, before any code is written —
   step 2 of `slash:process-ticket`; when the user says « qu'est-ce qu'on livre
   dans cette PR ? », « on met tout dans une seule PR ? », « par où on commence »,
-  « est-ce que ça se constate », « ça se teste comment », or `/slash:scope`.
+  « est-ce que ça se constate », « ça se teste comment », or `/slash:pr-scope`.
   Also before `gh pr create` when nothing in the branch can be demonstrated.
   Ne PAS utiliser pour découper les commits d'une PR (→ `slash-commit`), pour
-  rédiger une description (→ `slash:redaction`), ni pour arbitrer la **taille**
+  rédiger une description (→ `slash:writing`), ni pour arbitrer la **taille**
   d'une PR : une grosse PR qui livre un lot constatable est le cas nominal, et
   ce skill n'a rien à en dire.
 ---
@@ -47,9 +47,9 @@ périmètre est **mauvais** — pas trop gros, mauvais.
 Ce critère est déjà le prérequis de deux autres skills, ce qui est la meilleure
 preuve qu'il est le bon :
 
-- `slash:constat` en mode « après » rejoue le script critère par critère. Il n'a
+- `slash:observe` en mode « après » rejoue le script critère par critère. Il n'a
   aucune prise sur un lot dont rien n'est observable ;
-- `slash:redaction` impose une section **« Comment tester »** sur toute PR. Un lot
+- `slash:writing` impose une section **« Comment tester »** sur toute PR. Un lot
   sans rien de constatable ne peut en produire que la forme dégénérée — celle qui
   dit pourquoi il n'y en a pas.
 
@@ -59,8 +59,8 @@ rédiger.
 
 ## Les cas qui ne livrent rien d'observable
 
-Ils existent, et ils sont nommés à l'identique dans `slash:constat` et
-`slash:recette-dataset` : **refactor pur, renommage, migration de typage.**
+Ils existent, et ils sont nommés à l'identique dans `slash:observe` et
+`slash:case-dataset` : **refactor pur, renommage, migration de typage.**
 
 Là, les tests tiennent lieu de constat, et « Comment tester » le dit franchement
 plutôt que de mimer un script. Deux conséquences :
@@ -127,7 +127,7 @@ les backticks, le `--draft` et le `--assignee @me`. Deux substitutions :
 | Chez `slash-create-pr` | Ici |
 | --- | --- |
 | `--base main` codé en dur (étape 4), et `git diff main...HEAD` à l'étape 1.6 | `$BASE` déduit du remote — `develop` sur slash-interim, où `main` n'existe pas |
-| « intègre un diagramme mermaid », description « aussi claire et informative que possible » (étape 6) | **ne s'applique pas** — `slash:redaction` gouverne : 150 à 250 mots, en prose, pas de mermaid décoratif |
+| « intègre un diagramme mermaid », description « aussi claire et informative que possible » (étape 6) | **ne s'applique pas** — `slash:writing` gouverne : 150 à 250 mots, en prose, pas de mermaid décoratif |
 
 La première ligne n'est pas une préférence, c'est un **bug** de `slash-create-pr`
 qui échoue sur slash-interim. Elle a vocation à remonter en PR sur le dépôt

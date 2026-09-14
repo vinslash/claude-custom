@@ -2,13 +2,13 @@
 # Ouvre le profil modèle dont chaque profil de worktree sera cloné.
 #
 # C'est la seule et unique fois où l'on lance Chrome à la main — voir le skill
-# `chrome-ancrage`, qui l'interdit partout ailleurs. Ce lancement-ci est sûr :
+# `chrome-isolation`, qui l'interdit partout ailleurs. Ce lancement-ci est sûr :
 # aucun port de debug n'est ouvert, donc aucune session Claude ne peut se
 # tromper de navigateur et venir piloter celui-ci.
 #
 # À faire dans cette fenêtre, deux choses et non une : installer Dashlane depuis
 # le Chrome Web Store et s'y connecter, ET se connecter à GitHub — c'est ce qui
-# dispense les worktrees à naître du point d'arrêt de `slash:captures-github`.
+# dispense les worktrees à naître du point d'arrêt de `slash:github-screenshots`.
 # Puis fermer la fenêtre. Tout profil de worktree créé ensuite partira de cet
 # état.
 #

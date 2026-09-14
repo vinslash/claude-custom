@@ -70,7 +70,7 @@ panne du montage qu'on ne verrait pas venir, d'où la notification macOS
 « Config slash — mise à jour bloquée », posée au plus une fois par heure.
 
 Pour développer, on écrit dans le dépôt de développement et on pousse ; le clone
-suit. Pour éprouver un commit non poussé, `/slash:maj` sait tirer depuis le dépôt
+suit. Pour éprouver un commit non poussé, `/slash:force-update` sait tirer depuis le dépôt
 de développement.
 
 ## Vérifier

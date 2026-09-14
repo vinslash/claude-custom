@@ -1,4 +1,4 @@
-# slash:redaction
+# slash:writing
 
 Cadre de rédaction des écrits destinés à un relecteur humain : descriptions de
 pull request, commentaires de code review, messages de commit, et livrables
@@ -21,13 +21,13 @@ change pas cette décision n'a rien à faire dans le document.
 ## Installation
 
 Rien à faire séparément : ce skill fait partie du plugin `slash`, monté par
-`install.sh` à la racine du dépôt. Il s'invoque `/slash:redaction`.
+`install.sh` à la racine du dépôt. Il s'invoque `/slash:writing`.
 
 L'import de l'amorce dans `CLAUDE.md` est en revanche essentiel, et
 `install.sh` vérifie qu'il résout :
 
 ```
-@~/.claude/skills/slash/skills/redaction/AMORCE.md
+@~/.claude/skills/slash/skills/writing/AMORCE.md
 ```
 
 Il n'est pas cosmétique. Sans lui, le skill ne se déclenche que si le modèle

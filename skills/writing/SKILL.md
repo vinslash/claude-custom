@@ -1,5 +1,5 @@
 ---
-name: redaction
+name: writing
 description: >
   Cadre de rédaction des écrits destinés à un relecteur humain : descriptions de
   pull request, commentaires de code review, messages de commit, et livrables
@@ -132,7 +132,7 @@ n'a pas été ouverte :
 - **« Screenshot » existe dès que le diff touche quelque chose de visible** — un
   écran, un composant, un mail, un PDF, un export mis en forme. Un changement de
   CSS compte ; un renommage de variable non. Et **les images se posent, elles ne
-  se demandent pas** : charger `slash:captures-github`, qui porte le geste, au
+  se demandent pas** : charger `slash:github-screenshots`, qui porte le geste, au
   lieu de rendre la main avec des chemins de scratchpad. Ça vaut aussi pour un
   commentaire ou une review illustrés.
 - **Le gabarit du dépôt ne s'épouse pas** : on garde sa substance — la case de

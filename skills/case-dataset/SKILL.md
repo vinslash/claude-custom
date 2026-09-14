@@ -1,5 +1,5 @@
 ---
-name: recette-dataset
+name: case-dataset
 description: >
   Fabrique un jeu de données de recette scopé à un ticket SLI dans un worktree
   slash-interim, pour pouvoir CONSTATER le problème avant implémentation puis
@@ -13,7 +13,7 @@ description: >
   Use when the user says « jeu de données », « dataset de recette », « fixture »,
   « prépare la recette de SLI-XXXX », « je veux constater le bug avant de le
   corriger », « peuple la base pour ce ticket », « baseline avant implémentation »,
-  or `/slash:recette-dataset SLI-XXXX`. À proposer aussi de manière proactive au
+  or `/slash:case-dataset SLI-XXXX`. À proposer aussi de manière proactive au
   démarrage d'un ticket dont la recette dépend de données absentes de la base
   clonée. Ne PAS utiliser pour écrire des tests automatisés (→ `slash-e2e-generate`,
   tests Jest) ni pour rédiger des scénarios de test fonctionnels (→
@@ -161,7 +161,7 @@ n'apparaît pas, ne pas continuer : le dataset est inopérant.
 
 ## Phase 3 — La baseline « avant »
 
-**Appelé par `slash:constat`, s'arrêter ici** et le lui rendre la main : la
+**Appelé par `slash:observe`, s'arrêter ici** et le lui rendre la main : la
 baseline se constate avec l'utilisateur, c'est précisément son travail et non le
 nôtre. Se contenter de dire que le cas est visible, et où.
 

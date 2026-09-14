@@ -70,7 +70,7 @@ d'y écrire « N/A ».
 
 **L'upload, c'est nous.** `gh` ne sait pas poser d'image sur GitHub et il
 n'existe aucune API pour ça, mais le navigateur du serveur MCP `chrome` sait le
-faire. Charger **`slash:captures-github`**, qui porte le geste, dès qu'il y a
+faire. Charger **`slash:github-screenshots`**, qui porte le geste, dès qu'il y a
 des captures à poser. Un seul point d'arrêt : la connexion GitHub dans ce
 navigateur, qui est un geste d'utilisateur. Le repli, si ça résiste, reste les
 captures dans le scratchpad et l'utilisateur qui les colle.
@@ -110,7 +110,7 @@ géocodage n'a pas abouti.
 3. Ouvrir une annonce sans aucune localisation → « Localisation non précisée ».
 ```
 
-Ce script ne s'invente pas au moment de la PR : c'est celui de `slash:constat`
+Ce script ne s'invente pas au moment de la PR : c'est celui de `slash:observe`
 mode « après », déroulé à la validation de la résolution. Le recopier, pas le
 refaire.
 

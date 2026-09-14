@@ -1,5 +1,5 @@
 ---
-name: constat
+name: observe
 description: >
   Fait CONSTATER un ticket SLI à l'utilisateur lui-même, plutôt que de lui
   rapporter un constat. Deux modes : « avant », qui explique le ticket côté
@@ -9,14 +9,14 @@ description: >
   POURQUOI du ticket avec ses mots — la matière première de la description de
   PR —, les questions à poser au PM et un script de rejeu. Porte bloquante sur
   le **ticket périmé** : faire confirmer ou réaligner par le PM, jamais
-  réinterpréter. Délègue le jeu de données à `slash:recette-dataset`.
+  réinterpréter. Délègue le jeu de données à `slash:case-dataset`.
   Use when the user says « fais-moi constater », « explique-moi le ticket »,
   « je veux comprendre SLI-XXXX », « montre-moi le problème », « on vérifie la
   résolution », « ce ticket a l'air périmé », « ça ne se reproduit pas », or
-  `/slash:constat SLI-XXXX`; and as the first step of `slash:process-ticket`.
+  `/slash:observe SLI-XXXX`; and as the first step of `slash:process-ticket`.
   Utile aussi hors parcours : avant un affinage, quand un PM challenge un
   ticket, avant de relire la PR d'un collègue. Ne PAS utiliser pour fabriquer
-  des données (→ `slash:recette-dataset`), pour implémenter, ni pour un ticket
+  des données (→ `slash:case-dataset`), pour implémenter, ni pour un ticket
   sans rien d'observable.
 ---
 
@@ -37,7 +37,7 @@ objection.
 
 Corollaire : ce qui sort d'ici n'est pas un compte rendu de l'agent, c'est **la
 compréhension de l'utilisateur, écrite avec ses mots**. C'est aussi ce que
-`slash:redaction` réclamera à l'heure de la PR — le POURQUOI que le diff ne dit
+`slash:writing` réclamera à l'heure de la PR — le POURQUOI que le diff ne dit
 pas — et qu'on ne sait plus reconstituer après coup à partir du diff.
 
 ## Quel mode
@@ -58,7 +58,7 @@ Ne jamais le deviner en silence.
 
 Lire le ticket **une seule fois mais à fond** — description, commentaires, liens
 (Sentry, PR précédente, capture, document) réellement ouverts. C'est la seule
-lecture du ticket de tout le parcours : `slash:recette-dataset` et
+lecture du ticket de tout le parcours : `slash:case-dataset` et
 `slash:process-ticket` s'appuient sur celle-ci, ne pas les laisser recommencer.
 
 Localiser le code concerné **via un sous-agent d'exploration**, qui rend la
@@ -135,7 +135,7 @@ Puis s'arrêter pour de bon. Ce qui suit dépend de la réponse :
 ## 4. Les données
 
 Juger si le cas est dans la base clonée. S'il manque, appeler
-**`slash:recette-dataset`**, qui s'arrêtera une fois le cas visible à l'écran :
+**`slash:case-dataset`**, qui s'arrêtera une fois le cas visible à l'écran :
 la baseline se constate ici, avec l'utilisateur.
 
 Il signale aussi les critères qui dépendent d'un service externe non mocké. Si le
@@ -145,7 +145,7 @@ constat en dépend, le remonter tout de suite.
 
 Le navigateur est celui du serveur MCP `chrome` : une instance dédiée au
 worktree, que l'utilisateur voit et dans laquelle il peut cliquer. Charger
-`slash:chrome-ancrage` avant la première action.
+`slash:chrome-isolation` avant la première action.
 
 Quatre règles, dans cet ordre.
 
@@ -197,7 +197,7 @@ encore gratuit.
   des étapes numérotées avec leur attendu.
 - **La capture de l'écran fautif**, s'il y a de l'UI. Elle ne sera plus
   reproductible une fois le correctif en place, et c'est l'« avant » de la
-  section « Screenshots » de la PR — voir `slash:redaction`. La prendre
+  section « Screenshots » de la PR — voir `slash:writing`. La prendre
   maintenant ou ne pas la prendre du tout.
 - **Ce qui n'est pas validable localement**, s'il y en a.
 - **Ce que le PM a répondu**, si la porte du ticket périmé s'est ouverte —

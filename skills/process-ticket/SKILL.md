@@ -11,16 +11,16 @@ description: >
   validation de la résolution. Impose l'appel explicite de la commande
   `/slash-rebase` avant toute PR, seul endroit où l'ordre des migrations TypeORM
   est contrôlé — un CI rouge qui ne se voit pas dans le diff. Délègue la
-  compréhension et le constat à `slash:constat`, le jeu de données à
-  `slash:recette-dataset`, les commits et la PR aux skills du dépôt slash-interim
+  compréhension et le constat à `slash:observe`, le jeu de données à
+  `slash:case-dataset`, les commits et la PR aux skills du dépôt slash-interim
   (`slash-commit`, `slash-create-pr`), ce que la PR doit livrer de constatable à
-  `slash:scope`, et le contenu rédigé des écrits GitHub à
-  `slash:redaction`.
+  `slash:pr-scope`, et le contenu rédigé des écrits GitHub à
+  `slash:writing`.
   Use when the user says « mission : traiter ce ticket », « traite le ticket »,
   « on attaque SLI-XXXX », « je viens de créer le worktree », or
   `/slash:process-ticket SLI-XXXX`; and at the start of any session whose cwd is
   an `sli-XXXX-*` worktree. Ne PAS utiliser pour reprendre une PR déjà ouverte
-  (→ `slash:redaction`), pour une review, ni pour un travail sans ticket
+  (→ `slash:writing`), pour une review, ni pour un travail sans ticket
   Linear — exploration, question, correctif ponctuel demandé dans le chat.
 ---
 
@@ -52,7 +52,7 @@ identifiant — le dire et s'arrêter plutôt que d'improviser un périmètre.
 Avant l'étape 1, matérialiser le parcours en **task list** : une tâche par étape,
 sept en tout, dans l'ordre, en reprenant les intitulés des titres d'étape
 ci-dessous pour que deux tickets se lisent pareil. Pas plus fin — les phases
-internes de `slash:constat` ou `slash:recette-dataset` n'y entrent pas, elles
+internes de `slash:observe` ou `slash:case-dataset` n'y entrent pas, elles
 transformeraient la liste en bruit.
 
 C'est ce qui permet de reprendre un ticket après en avoir traité un autre :
@@ -90,7 +90,7 @@ Pas de tableau, pas de recopie du diff, pas de liste de fichiers touchés, pas d
 récapitulatif étape par étape. Si le rapport ne tient pas en cinq lignes, c'est
 qu'il contient autre chose qu'un rapport.
 
-Ne pas charger `slash:redaction` pour ces rapports : il exclut explicitement la
+Ne pas charger `slash:writing` pour ces rapports : il exclut explicitement la
 rédaction destinée au chat. Il gouverne en revanche le **document de plan** de
 l'étape 2 et les écrits GitHub de l'étape 7 — un rapport de cinq lignes et un
 plan soumis à arbitrage ne sont pas le même écrit.
@@ -107,9 +107,9 @@ cours — et on continue. L'utilisateur décidera s'il en fait un ticket.
 
 ## Étape 1 — Constat partagé
 
-Appeler **`slash:constat`** en mode « avant ». Il possède tout le bloc «
+Appeler **`slash:observe`** en mode « avant ». Il possède tout le bloc «
 comprendre » : la lecture du ticket — **la seule de tout le parcours**, ne pas
-la refaire ensuite —, la localisation du code, l'appel à `slash:recette-dataset`
+la refaire ensuite —, la localisation du code, l'appel à `slash:case-dataset`
 si le cas manque en base, la phase où l'utilisateur reproduit le problème de ses
 propres mains, et la répétition des challenges du PM et des reviewers.
 
@@ -118,7 +118,7 @@ l'utilisateur, les questions restées ouvertes, et le script de rejeu. **Ce fich
 voyage jusqu'à la dernière étape** — c'est de lui que sortira la description de
 PR, et non du diff.
 
-`slash:constat` porte deux portes qui peuvent terminer l'étape sans passer à la
+`slash:observe` porte deux portes qui peuvent terminer l'étape sans passer à la
 suivante : celle de l'anti-overkill, et celle du **ticket périmé** — produit qui a
 bougé depuis la rédaction, comportement qui ne se reproduit pas ou se reproduit
 autrement. La seconde est **bloquante** : le parcours s'arrête jusqu'à ce que le
@@ -132,7 +132,7 @@ effets de bord attendus, ce qu'on laisse volontairement de côté. Une alternati
 ne se présente que si le choix change quelque chose pour l'utilisateur ; sinon,
 recommander et avancer.
 
-**Charger `slash:redaction` avant de rédiger le plan.** Un plan est un livrable
+**Charger `slash:writing` avant de rédiger le plan.** Un plan est un livrable
 long relu par un humain, et c'est ce skill qui en porte la forme : 200 lignes au
 plus, la passe d'élagage avant de soumettre, pas de plaidoirie sur des décisions
 que personne ne conteste, et le hors-périmètre réduit à une ligne de renvoi.
@@ -168,7 +168,7 @@ review, sur du code déjà écrit.
 
 ### Ce que la PR va livrer — ça se tranche ici
 
-Charger **`slash:scope`** et faire arbitrer **dans le même plan** que l'approche
+Charger **`slash:pr-scope`** et faire arbitrer **dans le même plan** que l'approche
 ce que la PR livrera de **constatable** : ce qu'on pourra mettre devant
 quelqu'un, et montrer.
 
@@ -210,7 +210,7 @@ corrige, ou il s'assume en une ligne du rapport — jamais en silence.
 
 Les captures vont dans le scratchpad, avec celle de l'écran fautif prise à
 l'étape 1 : ce sont les deux images de la section « Screenshots » de la PR. Les
-poser sur GitHub demande le navigateur — **`slash:captures-github`** porte le
+poser sur GitHub demande le navigateur — **`slash:github-screenshots`** porte le
 geste, et le seul point d'arrêt est la connexion GitHub dans cette instance.
 
 **Rapport** : ce qui a été fait, ce qui a résisté, les écarts au plan. Puis la
@@ -219,7 +219,7 @@ résolution ?
 
 ## Étape 4 — Constat de la résolution (point d'arrêt bloquant)
 
-Appeler **`slash:constat`** en mode « après ». Il rejoue le script à l'identique
+Appeler **`slash:observe`** en mode « après ». Il rejoue le script à l'identique
 et reprend les critères d'acceptation un par un, avec l'utilisateur aux
 commandes — c'est lui qui devra affirmer en review que ça marche.
 
@@ -233,7 +233,7 @@ un déplacement de l'autre. Un commit qui mélange les deux est illisible en
 
 **Dans slash-interim, passer par `slash-commit`** — gitmoji, référence SLI, mode
 découpage, et il ne stage jamais rien sans demander. Il impose un **titre seul,
-sans corps** : `slash:redaction` ne s'applique donc pas aux messages de commit de
+sans corps** : `slash:writing` ne s'applique donc pas aux messages de commit de
 ce dépôt.
 
 Ne pas committer les artefacts de recette : scripts de seed jetables, captures,
@@ -294,8 +294,8 @@ branche déjà écrite.
 
 **La description part du fichier d'observation**, pas du diff. Les cinq lignes de
 POURQUOI écrites à l'étape 1, avec ses mots, sont très exactement ce que
-`slash:redaction` réclame et que personne ne sait reconstituer deux jours plus
-tard en relisant un diff. Charger `slash:redaction` **avant** de rédiger.
+`slash:writing` réclame et que personne ne sait reconstituer deux jours plus
+tard en relisant un diff. Charger `slash:writing` **avant** de rédiger.
 
 Le **script de rejeu** du même fichier, celui que l'étape 4 vient de dérouler,
 est la section **Comment tester** de la description — obligatoire sur toute PR, parce
@@ -304,14 +304,14 @@ réinventer. Une PR qui ne change rien de perceptible porte à la place la phras
 qui le dit, et ce qui la couvre.
 
 Là où les deux se croisent, `slash-create-pr` donne la structure et la mécanique,
-`slash:redaction` la façon d'écrire — une description qui remplit
+`slash:writing` la façon d'écrire — une description qui remplit
 consciencieusement le template en recopiant le diff n'est pas conforme pour
 autant. En particulier, l'étape 6 de `slash-create-pr`, qui réclame un diagramme
 mermaid et une description « aussi claire et informative que possible », **ne
-s'applique pas** : c'est `slash:redaction` qui tranche, 150 à 250 mots en prose.
+s'applique pas** : c'est `slash:writing` qui tranche, 150 à 250 mots en prose.
 
 Dans slash-web, qui n'a pas ces skills de dépôt, la PR se crée à la main et
-`slash:redaction` gouverne seul.
+`slash:writing` gouverne seul.
 
 Enfin, vérifier que la référence Linear figure bien dans la description — c'est ce
 qui referme le ticket.

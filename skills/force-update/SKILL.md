@@ -1,5 +1,5 @@
 ---
-name: maj
+name: force-update
 description: >
   Force la mise à jour de la configuration `slash` installée
   (`~/.claude/skills/slash`) sans attendre le tick de launchd, et dit ce qui a
@@ -7,7 +7,7 @@ description: >
   le pousser sur GitHub, avec `--depuis-dev`. La mise à jour est normalement
   automatique : ce skill n'existe que pour ne pas attendre.
   Use when the user says « force la maj », « mets à jour la config »,
-  « tire tout de suite », « teste ma modif sans pousser », or `/slash:maj`.
+  « tire tout de suite », « teste ma modif sans pousser », or `/slash:force-update`.
   Ne PAS utiliser pour installer le montage la première fois (→ `install.sh`),
   ni pour recharger le câblage du plugin (→ la commande `/reload-plugins`).
 ---

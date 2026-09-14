@@ -1,5 +1,5 @@
 ---
-name: captures-github
+name: github-screenshots
 description: >
   Pose des images — captures avant/après, schéma, trace d'exécution — sur un
   écrit GitHub : description de pull request, commentaire de PR ou de ticket,
@@ -16,7 +16,7 @@ description: >
   screenshots », « illustre la PR », « colle l'image dans le commentaire »,
   « sers-toi du champ de commentaire pour les URL ».
   Ne PAS utiliser pour décider s'il faut des captures ni pour les cadrer
-  (→ `slash:redaction`), ni pour les prendre (→ `slash:chrome-ancrage`).
+  (→ `slash:writing`), ni pour les prendre (→ `slash:chrome-isolation`).
 ---
 
 # Poser des images sur un écrit GitHub
@@ -54,7 +54,7 @@ suivants dans ce worktree ne redemandent rien.
 
 ## Le geste
 
-Charger `slash:chrome-ancrage` avant la première action navigateur, comme pour
+Charger `slash:chrome-isolation` avant la première action navigateur, comme pour
 n'importe quel pilotage.
 
 1. **Écrire le texte sans les images** et le pousser par `gh` — `pr edit
@@ -84,7 +84,7 @@ une absence constatée un jour donné comme si elle valait toujours. D'où la r�
 qui commande cette section : **constater le DOM avant d'agir**, ne jamais se
 fier à ce qui est décrit ici comme à un état permanent.
 
-`chrome-ancrage`, chargé au premier pas du geste, porte déjà les deux
+`chrome-isolation`, chargé au premier pas du geste, porte déjà les deux
 contraintes génériques du téléversement : le fichier doit être dans le workspace
 root — le scratchpad est rejeté —, et l'`input[type=file]` d'un éditeur moderne
 est caché, donc à chercher puis démasquer avant tout `upload_file`. Ce qui suit
@@ -111,7 +111,7 @@ Ces identifiants sont datés, pas garantis : chercher, ne jamais les supposer.
 
 **Le `drop` synthétique, en repli.** Si la recherche ne rend rien — le DOM de
 GitHub a déjà changé deux fois —, voici le snippet éprouvé auquel renvoie
-`chrome-ancrage`, avec le fichier inliné en base64 :
+`chrome-isolation`, avec le fichier inliné en base64 :
 
 ```js
 const bin = atob(b64);
@@ -209,5 +209,5 @@ web, et c'est une issue acceptable.
 
 Ce qui ne l'est pas : pousser un `![](…)` mort, et annoncer un écrit illustré
 dont les images ne se rendent pas. Une capture qui a l'air d'une preuve est pire
-qu'une absence de capture — c'est la règle de `slash:chrome-ancrage`, elle vaut
+qu'une absence de capture — c'est la règle de `slash:chrome-isolation`, elle vaut
 aussi une fois l'image sur GitHub.
