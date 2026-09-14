@@ -4,23 +4,20 @@ description: >
   Fait CONSTATER un ticket SLI à l'utilisateur lui-même, plutôt que de lui
   rapporter un constat. Deux modes : « avant », qui explique le ticket côté
   métier, le lui fait reproduire de ses propres mains dans le navigateur et
-  répète avec lui les
-  challenges du PM et des reviewers ; « après », qui rejoue le même script critère
-  par critère pour vérifier la résolution. Le mode se déduit de l'existence du
-  fichier d'observation. Produit le POURQUOI du ticket avec ses mots — la
-  matière première de la description de PR — la liste des questions à poser au PM,
-  et un script de rejeu. Porte une **porte bloquante sur le ticket périmé** : quand
-  le produit a bougé depuis la rédaction du ticket, on s'arrête et on fait
-  confirmer ou réaligner par le PM, sans jamais réinterpréter. Délègue le jeu de données à `slash:recette-dataset` et la
-  localisation du code à un sous-agent d'exploration.
+  répète avec lui les challenges du PM et des reviewers ; « après », qui rejoue
+  le même script critère par critère pour vérifier la résolution. Produit le
+  POURQUOI du ticket avec ses mots — la matière première de la description de
+  PR —, les questions à poser au PM et un script de rejeu. Porte bloquante sur
+  le **ticket périmé** : faire confirmer ou réaligner par le PM, jamais
+  réinterpréter. Délègue le jeu de données à `slash:recette-dataset`.
   Use when the user says « fais-moi constater », « explique-moi le ticket »,
   « je veux comprendre SLI-XXXX », « montre-moi le problème », « on vérifie la
-  résolution », « ce ticket a l'air périmé », « ça ne se reproduit pas », « je
-  crois que c'est déjà corrigé », or `/slash:constat SLI-XXXX`; and as the first step of
-  `slash:process-ticket`. Utile aussi hors parcours : avant un affinage, quand un
-  PM challenge un ticket, avant de relire la PR d'un collègue. Ne PAS utiliser
-  pour fabriquer des données (→ `slash:recette-dataset`), pour implémenter, ni
-  pour un ticket sans rien d'observable.
+  résolution », « ce ticket a l'air périmé », « ça ne se reproduit pas », or
+  `/slash:constat SLI-XXXX`; and as the first step of `slash:process-ticket`.
+  Utile aussi hors parcours : avant un affinage, quand un PM challenge un
+  ticket, avant de relire la PR d'un collègue. Ne PAS utiliser pour fabriquer
+  des données (→ `slash:recette-dataset`), pour implémenter, ni pour un ticket
+  sans rien d'observable.
 ---
 
 # Constater le ticket, à deux
