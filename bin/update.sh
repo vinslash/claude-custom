@@ -12,7 +12,7 @@
 #
 # Usage :
 #   update.sh                    depuis origin
-#   update.sh --depuis-dev       depuis ~/Development/claude-custom
+#   update.sh --from-dev       depuis ~/Development/claude-custom
 #   update.sh --clone <chemin>   viser un autre clone installé
 
 set -u
@@ -26,13 +26,13 @@ export PATH
 CLONE="$HOME/.claude/skills/slash"
 DEV="$HOME/Development/claude-custom"
 SOURCE=origin
-STATE="$HOME/.claude/slash-etat"   # même dossier que les handlers de hook
-LOG="$STATE/mise-a-jour.log"
+STATE="$HOME/.claude/slash-state"   # même dossier que les handlers de hook
+LOG="$STATE/update.log"
 LOCK="$STATE/verrou"
 
 while [ $# -gt 0 ]; do
   case "$1" in
-    --depuis-dev) SOURCE="$DEV"; shift ;;
+    --from-dev) SOURCE="$DEV"; shift ;;
     --clone)      CLONE="${2:?--clone attend un chemin}"; shift 2 ;;
     *) printf 'option inconnue : %s\n' "$1" >&2; exit 2 ;;
   esac
@@ -58,7 +58,7 @@ trim_log() {
 # donc ignorée le jour où elle signale une panne.
 alert() {
   command -v osascript >/dev/null 2>&1 || return 0
-  local seen="$STATE/.alerte-vue"
+  local seen="$STATE/.alert-seen"
   if [ -f "$seen" ]; then
     local stamp
     stamp=$(stat -f %m "$seen" 2>/dev/null || echo 0)
@@ -107,7 +107,7 @@ fi
 # garder jusqu'à la prochaine mise à jour effective rendrait muette une vraie
 # panne survenant dans l'heure — une alerte qu'on étouffe soi-même est pire que
 # pas d'alerte.
-rm -f "$STATE/.alerte-vue"
+rm -f "$STATE/.alert-seen"
 
 local_sha=$(git -C "$CLONE" rev-parse HEAD 2>/dev/null)
 

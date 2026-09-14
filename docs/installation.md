@@ -33,7 +33,7 @@ l'avoir sauvegardé à côté sous `.bak-<horodatage>`.
 | `~/.claude/RTK.md` | N'est plus lu par personne une fois l'import en place : versé dans le dépôt s'il n'y est pas, retiré s'il est identique, sauvegardé et retiré s'il diffère — avec proposition d'en verser le contenu dans le dépôt. |
 | Anciens liens `~/.claude/skills/slash-*` | Retire **seulement** ceux qui pointent vers ce dépôt. Les autres sont laissés, avec un avertissement. |
 | `~/.claude/settings.json` | Ajoute une seule clé : `disabledMcpjsonServers: ["chrome-devtools"]` — voir [`../settings.snippet.json`](../settings.snippet.json). Ne sauvegarde que s'il modifie vraiment. |
-| L'agent launchd | Écrit `~/Library/LaunchAgents/com.slash.claude-custom.maj.plist` et le charge. |
+| L'agent launchd | Écrit `~/Library/LaunchAgents/com.slash.claude-custom.update.plist` et le charge. |
 
 Il finit par des vérifications : manifeste de plugin valide, import en place,
 chaque référence `@` de `CLAUDE.md` qui résout pour de vrai, mise à jour
@@ -76,7 +76,7 @@ de développement.
 ## Vérifier
 
 ```bash
-launchctl print gui/$(id -u)/com.slash.claude-custom.maj | head -5   # agent chargé
+launchctl print gui/$(id -u)/com.slash.claude-custom.update | head -5   # agent chargé
 bash ~/.claude/skills/slash/bin/update.sh                        # « déjà à jour (abc1234) »
 git -C ~/.claude/skills/slash status --short                          # doit être VIDE
 claude plugin details slash@skills-dir                                # les skills et leur coût
@@ -84,9 +84,9 @@ claude plugin details slash@skills-dir                                # les skil
 
 Puis ouvrir une nouvelle session et taper `/slash:` — les skills doivent
 apparaître. Le journal des mises à jour vit dans
-`~/.claude/slash-etat/mise-a-jour.log`, et n'est écrit qu'aux anomalies et aux
+`~/.claude/slash-state/update.log`, et n'est écrit qu'aux anomalies et aux
 mises à jour effectives ; les erreurs de launchd lui-même vont dans
-`~/.claude/slash-etat/launchd-erreurs.log`.
+`~/.claude/slash-state/launchd-erreurs.log`.
 
 ## Une fois pour toutes : le profil Chrome modèle
 
@@ -114,14 +114,14 @@ le navigateur est fourni par le serveur MCP `chrome`.
 | `/reload-plugins` répond « isn't available in this environment » | Vous êtes dans l'extension VSCode | Nouvelle session. |
 | Rien du dépôt n'est chargé, sans erreur | Un import `@` qui ne résout pas échoue **en silence** | Relancer `./install.sh` : il vérifie chaque référence et nomme celles qui manquent. |
 | `source injoignable` dans le journal | Pas d'accès SSH à GitHub, ou le réseau | `git -C ~/.claude/skills/slash ls-remote origin` pour voir l'erreur réelle. |
-| L'agent launchd a été refusé au chargement | Politique de la machine | `launchctl bootstrap gui/$(id -u) ~/Library/LaunchAgents/com.slash.claude-custom.maj.plist` |
+| L'agent launchd a été refusé au chargement | Politique de la machine | `launchctl bootstrap gui/$(id -u) ~/Library/LaunchAgents/com.slash.claude-custom.update.plist` |
 
 ## Désinstaller
 
 ```bash
-launchctl bootout gui/$(id -u)/com.slash.claude-custom.maj
-rm ~/Library/LaunchAgents/com.slash.claude-custom.maj.plist
-rm -rf ~/.claude/skills/slash ~/.claude/slash-etat
+launchctl bootout gui/$(id -u)/com.slash.claude-custom.update
+rm ~/Library/LaunchAgents/com.slash.claude-custom.update.plist
+rm -rf ~/.claude/skills/slash ~/.claude/slash-state
 ```
 
 Reste à retirer à la main la ligne `@~/.claude/skills/slash/CLAUDE.md` en tête de

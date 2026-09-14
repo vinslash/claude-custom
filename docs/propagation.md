@@ -49,7 +49,7 @@ l'extension lançant un process par session, elle repart d'un état frais. Ne pa
 annoncer `/reload-plugins` sans dire l'alternative : l'utilisateur travaille dans
 VSCode, et une consigne qui échoue sous ses yeux discrédite les suivantes.
 
-L'état des hooks vit dans `~/.claude/slash-etat/` — un marqueur par session, le
+L'état des hooks vit dans `~/.claude/slash-state/` — un marqueur par session, le
 journal des mises à jour. Jamais dans le clone, qui doit rester impeccable.
 
 `claude plugin validate` avertit que le `CLAUDE.md` de la racine « n'est pas

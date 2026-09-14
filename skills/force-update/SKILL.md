@@ -4,7 +4,7 @@ description: >
   Force la mise à jour de la configuration `slash` installée
   (`~/.claude/skills/slash`) sans attendre le tick de launchd, et dit ce qui a
   changé. Sert surtout à éprouver un skill qu'on vient de committer sans avoir à
-  le pousser sur GitHub, avec `--depuis-dev`. La mise à jour est normalement
+  le pousser sur GitHub, avec `--from-dev`. La mise à jour est normalement
   automatique : ce skill n'existe que pour ne pas attendre.
   Use when the user says « force la maj », « mets à jour la config »,
   « tire tout de suite », « teste ma modif sans pousser », or `/slash:force-update`.
@@ -30,7 +30,7 @@ Depuis le dépôt de développement, pour éprouver quelque chose de **committé
 pas poussé** :
 
 ```bash
-bash ~/.claude/skills/slash/bin/update.sh --depuis-dev
+bash ~/.claude/skills/slash/bin/update.sh --from-dev
 ```
 
 Il n'existe aucun raccourci pour du non-committé, et c'est volontaire : c'est
@@ -47,7 +47,7 @@ Deux conséquences à ne pas taire :
   lancer `/reload-plugins` **dans le terminal**, ou d'**ouvrir une nouvelle
   session** s'il est dans l'extension VSCode, qui n'expose pas cette commande. Le
   câblage vit dans la mémoire du process et rien ne peut le recharger à sa place ;
-- si la sortie dit **`Not possible to fast-forward`** après un `--depuis-dev`,
+- si la sortie dit **`Not possible to fast-forward`** après un `--from-dev`,
   c'est qu'un commit déjà tiré par le clone a été réécrit depuis — un `--amend`,
   un rebase. Le clone n'est pas sali pour autant : le vérifier
   (`git -C ~/.claude/skills/slash status --short` doit être vide), puis le

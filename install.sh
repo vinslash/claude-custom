@@ -25,8 +25,10 @@ REPO="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 CLAUDE_DIR="$HOME/.claude"
 SKILLS_DIR="$CLAUDE_DIR/skills"
 CLONE="$SKILLS_DIR/slash"
-STATE="$CLAUDE_DIR/slash-etat"
-LABEL="com.slash.claude-custom.maj"
+STATE="$CLAUDE_DIR/slash-state"
+LEGACY_STATE="$CLAUDE_DIR/slash-etat"
+LEGACY_LABEL="com.slash.claude-custom.maj"
+LABEL="com.slash.claude-custom.update"
 PLIST="$HOME/Library/LaunchAgents/$LABEL.plist"
 IMPORT="@~/.claude/skills/slash/CLAUDE.md"
 STAMP="$(date +%Y%m%d-%H%M%S)"
@@ -38,6 +40,23 @@ step() { printf '\n\033[1m%s\033[0m\n' "$1"; }
 
 [ -f "$REPO/.claude-plugin/plugin.json" ] || die "$REPO ne ressemble pas à ce dépôt (pas de .claude-plugin/plugin.json)."
 mkdir -p "$SKILLS_DIR" "$STATE"
+
+# L'état a changé de nom. Les hooks du clone écrivent peut-être déjà dans le
+# nouveau dossier avant qu'on passe ici, d'où le `mv -n` : on déplace sans jamais
+# écraser, et on ne retire l'ancien que s'il finit vide.
+if [ -d "$LEGACY_STATE" ]; then
+  [ -f "$LEGACY_STATE/mise-a-jour.log" ] && [ ! -f "$LEGACY_STATE/update.log" ] \
+    && mv "$LEGACY_STATE/mise-a-jour.log" "$LEGACY_STATE/update.log"
+  for x in "$LEGACY_STATE"/* "$LEGACY_STATE"/.[!.]*; do
+    [ -e "$x" ] || continue
+    mv -n "$x" "$STATE/" 2>/dev/null || true
+  done
+  if rmdir "$LEGACY_STATE" 2>/dev/null; then
+    ok "état migré : slash-etat → slash-state."
+  else
+    warn "slash-etat n'a pas pu être vidé — des fichiers y restent, à regarder."
+  fi
+fi
 
 backup() { # $1 = fichier à sauvegarder ; renvoie le chemin de la sauvegarde
   local src="$1" dst="$1.bak-$STAMP"
@@ -95,7 +114,7 @@ else
 fi
 
 # L'origine du clone doit être GitHub, pas le dépôt de dev : c'est ce qui fait
-# marcher la propagation entre machines, et ce qui rend `--depuis-dev` explicite.
+# marcher la propagation entre machines, et ce qui rend `--from-dev` explicite.
 if [ -n "$url" ]; then
   git -C "$CLONE" remote set-url origin "$url"
   if git -C "$CLONE" fetch --quiet origin "$branch" 2>/dev/null; then
@@ -105,7 +124,7 @@ if [ -n "$url" ]; then
     warn "origine posée sur $url mais injoignable — la mise à jour retentera d'elle-même."
   fi
 else
-  warn "le dépôt de dev n'a pas d'origine : le clone ne pourra être mis à jour qu'avec --depuis-dev."
+  warn "le dépôt de dev n'a pas d'origine : le clone ne pourra être mis à jour qu'avec --from-dev."
 fi
 
 dirty="$(git -C "$CLONE" status --porcelain)"
@@ -218,7 +237,7 @@ fi
 #
 # stdout part au néant : le script dit « déjà à jour » à chaque tick, soit 720
 # lignes par jour. Ce qui compte est journalisé par le script lui-même, avec
-# rotation, dans slash-etat/mise-a-jour.log.
+# rotation, dans slash-state/update.log.
 step "Mise à jour automatique (launchd)"
 mkdir -p "$(dirname "$PLIST")"
 cat > "$PLIST" <<EOF
@@ -249,6 +268,16 @@ EOF
 ok "agent écrit : $PLIST (toutes les 120 s)."
 
 domain="gui/$(id -u)"
+
+# L'agent a changé de label. Sans cette éviction, l'ancien survivrait en pointant
+# sur un script qui n'existe plus, et deux agents tourneraient en parallèle.
+legacy_plist="$HOME/Library/LaunchAgents/$LEGACY_LABEL.plist"
+if [ -e "$legacy_plist" ]; then
+  launchctl bootout "$domain/$LEGACY_LABEL" >/dev/null 2>&1 || true
+  rm -f "$legacy_plist"
+  ok "ancien agent $LEGACY_LABEL retiré."
+fi
+
 launchctl bootout "$domain/$LABEL" >/dev/null 2>&1 || true
 if launchctl bootstrap "$domain" "$PLIST" >/dev/null 2>&1; then
   ok "agent chargé."

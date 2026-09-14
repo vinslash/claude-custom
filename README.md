@@ -88,7 +88,7 @@ flowchart TD
 </tr>
 <tr>
 <td nowrap><samp>/slash:force-update</samp></td>
-<td>Le seul qui ne parle pas de tickets : force la mise à jour du clone installé sans attendre le tick de launchd, et depuis ce dépôt-ci plutôt que GitHub avec <code>--depuis-dev</code>, pour éprouver un skill committé sans le pousser.</td>
+<td>Le seul qui ne parle pas de tickets : force la mise à jour du clone installé sans attendre le tick de launchd, et depuis ce dépôt-ci plutôt que GitHub avec <code>--from-dev</code>, pour éprouver un skill committé sans le pousser.</td>
 </tr>
 </tbody>
 </table>
@@ -142,7 +142,7 @@ cd ~/Development/claude-custom && ./install.sh
 ```
 
 Le chemin n'est pas indifférent : `bin/update.sh` code `~/Development/claude-custom`
-en dur pour son option `--depuis-dev`. Cloner ailleurs marche, mais `/slash:force-update`
+en dur pour son option `--from-dev`. Cloner ailleurs marche, mais `/slash:force-update`
 ne saura plus tirer d'ici sans passer par GitHub.
 
 L'installateur pose le clone à `~/.claude/skills/slash`, la ligne d'import dans

@@ -23,7 +23,7 @@
 # réinjecter ces fichiers : ce serait payer des tokens pour du contenu déjà à
 # jour, à chaque mise à jour, dans toutes les sessions.
 
-STATE="$HOME/.claude/slash-etat"
+STATE="$HOME/.claude/slash-state"
 SESSIONS="$STATE/sessions"
 
 # L'état ne vit jamais dans le dépôt installé : le moindre fichier écrit dedans
