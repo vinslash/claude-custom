@@ -230,7 +230,7 @@ cat > "$PLIST" <<EOF
   <key>ProgramArguments</key>
   <array>
     <string>/bin/bash</string>
-    <string>$CLONE/bin/mise-a-jour.sh</string>
+    <string>$CLONE/bin/update.sh</string>
   </array>
   <key>StartInterval</key>      <integer>120</integer>
   <key>RunAtLoad</key>          <true/>
@@ -285,7 +285,7 @@ done < <(grep -oE '^@[^[:space:]]+' "$CLONE/CLAUDE.md" 2>/dev/null || true)
 # on retente, plutôt que de conclure sur une exécution qui n'a rien fait.
 attempts=0
 while :; do
-  out="$(bash "$CLONE/bin/mise-a-jour.sh" 2>&1)" && { ok "mise à jour opérationnelle : $out"; break; }
+  out="$(bash "$CLONE/bin/update.sh" 2>&1)" && { ok "mise à jour opérationnelle : $out"; break; }
   code=$?
   if [ "$code" = 3 ] && [ "$attempts" -lt 5 ]; then
     attempts=$((attempts + 1)); sleep 2; continue

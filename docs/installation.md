@@ -54,7 +54,7 @@ cas de contradiction, c'est à vous de trancher : rien n'arbitre à votre place.
 
 ## La mise à jour automatique
 
-L'agent launchd lance `~/.claude/skills/slash/bin/mise-a-jour.sh` toutes les
+L'agent launchd lance `~/.claude/skills/slash/bin/update.sh` toutes les
 **120 secondes**, hors de Claude Code — donc sans session ouverte et sans rien
 facturer. Le script fait un `git pull --ff-only` sur le clone installé, et
 n'écrit dans `.git/` que s'il y a vraiment du neuf.
@@ -77,7 +77,7 @@ de développement.
 
 ```bash
 launchctl print gui/$(id -u)/com.slash.claude-custom.maj | head -5   # agent chargé
-bash ~/.claude/skills/slash/bin/mise-a-jour.sh                        # « déjà à jour (abc1234) »
+bash ~/.claude/skills/slash/bin/update.sh                        # « déjà à jour (abc1234) »
 git -C ~/.claude/skills/slash status --short                          # doit être VIDE
 claude plugin details slash@skills-dir                                # les skills et leur coût
 ```

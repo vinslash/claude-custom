@@ -23,14 +23,14 @@ pour éprouver une modification avant de la pousser.
 Depuis GitHub, ce qui est le cas normal :
 
 ```bash
-bash ~/.claude/skills/slash/bin/mise-a-jour.sh
+bash ~/.claude/skills/slash/bin/update.sh
 ```
 
 Depuis le dépôt de développement, pour éprouver quelque chose de **committé mais
 pas poussé** :
 
 ```bash
-bash ~/.claude/skills/slash/bin/mise-a-jour.sh --depuis-dev
+bash ~/.claude/skills/slash/bin/update.sh --depuis-dev
 ```
 
 Il n'existe aucun raccourci pour du non-committé, et c'est volontaire : c'est

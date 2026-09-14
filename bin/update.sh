@@ -11,9 +11,9 @@
 # personne : c'est ce qui permet de tirer en `--ff-only` sans jamais rien perdre.
 #
 # Usage :
-#   mise-a-jour.sh                    depuis origin
-#   mise-a-jour.sh --depuis-dev       depuis ~/Development/claude-custom
-#   mise-a-jour.sh --clone <chemin>   viser un autre clone installé
+#   update.sh                    depuis origin
+#   update.sh --depuis-dev       depuis ~/Development/claude-custom
+#   update.sh --clone <chemin>   viser un autre clone installé
 
 set -u
 

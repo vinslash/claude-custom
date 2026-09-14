@@ -141,7 +141,7 @@ git clone git@github.com:vinslash/claude-custom.git ~/Development/claude-custom
 cd ~/Development/claude-custom && ./install.sh
 ```
 
-Le chemin n'est pas indifférent : `bin/mise-a-jour.sh` code `~/Development/claude-custom`
+Le chemin n'est pas indifférent : `bin/update.sh` code `~/Development/claude-custom`
 en dur pour son option `--depuis-dev`. Cloner ailleurs marche, mais `/slash:force-update`
 ne saura plus tirer d'ici sans passer par GitHub.
 
@@ -167,7 +167,7 @@ connecter à GitHub dans le profil dont chaque worktree clonera le sien.
 
 Le clone installé ne doit **jamais** être édité. Un seul fichier modifié dedans et
 le `merge --ff-only` échoue : les mises à jour s'arrêteraient, et en silence.
-C'est pour ça que `bin/mise-a-jour.sh` le vérifie à chaque passage et le notifie à
+C'est pour ça que `bin/update.sh` le vérifie à chaque passage et le notifie à
 l'écran — c'est la seule panne du montage qu'on ne verrait pas venir.
 
 ## La doc
