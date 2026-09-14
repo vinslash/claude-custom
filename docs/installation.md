@@ -33,6 +33,8 @@ l'avoir sauvegardé à côté sous `.bak-<horodatage>`.
 | `~/.claude/RTK.md` | N'est plus lu par personne une fois l'import en place : versé dans le dépôt s'il n'y est pas, retiré s'il est identique, sauvegardé et retiré s'il diffère — avec proposition d'en verser le contenu dans le dépôt. |
 | Anciens liens `~/.claude/skills/slash-*` | Retire **seulement** ceux qui pointent vers ce dépôt. Les autres sont laissés, avec un avertissement. |
 | `~/.claude/settings.json` | Ajoute une seule clé : `disabledMcpjsonServers: ["chrome-devtools"]` — voir [`../settings.snippet.json`](../settings.snippet.json). Ne sauvegarde que s'il modifie vraiment. |
+| `~/.claude/slash-etat/` — l'état sous son ancien nom | Déplace son contenu vers `slash-state/` **sans jamais écraser** ce qui s'y trouve déjà, puis ne retire l'ancien dossier que s'il finit vide, et le dit s'il reste quelque chose. |
+| Un agent launchd sous l'ancien label `…​.maj` | L'évince et supprime son plist **avant** de charger le nouveau. Sans ça, deux agents tourneraient, dont un pointant sur un script qui n'existe plus. |
 | L'agent launchd | Écrit `~/Library/LaunchAgents/com.slash.claude-custom.update.plist` et le charge. |
 
 Il finit par des vérifications : manifeste de plugin valide, import en place,
@@ -113,6 +115,7 @@ le navigateur est fourni par le serveur MCP `chrome`.
 | Un skill modifié n'a aucun effet | `hooks.json` ou `.mcp.json` a bougé : le câblage vit dans la mémoire du process | `/reload-plugins` dans le terminal ; dans l'extension VSCode, qui n'expose pas la commande, ouvrir une **nouvelle session**. |
 | `/reload-plugins` répond « isn't available in this environment » | Vous êtes dans l'extension VSCode | Nouvelle session. |
 | Rien du dépôt n'est chargé, sans erreur | Un import `@` qui ne résout pas échoue **en silence** | Relancer `./install.sh` : il vérifie chaque référence et nomme celles qui manquent. |
+| La mise à jour automatique s'est arrêtée après une mise à jour du dépôt | Le plist code le chemin **absolu** du script ; si le dépôt l'a renommé, l'agent tire dans le vide — visible seulement dans `launchd-erreurs.log` | Relancer `./install.sh`, qui réécrit le plist. C'est le geste à faire sur toute machine installée avant un renommage. |
 | `source injoignable` dans le journal | Pas d'accès SSH à GitHub, ou le réseau | `git -C ~/.claude/skills/slash ls-remote origin` pour voir l'erreur réelle. |
 | L'agent launchd a été refusé au chargement | Politique de la machine | `launchctl bootstrap gui/$(id -u) ~/Library/LaunchAgents/com.slash.claude-custom.update.plist` |
 
