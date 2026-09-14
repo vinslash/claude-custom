@@ -53,3 +53,26 @@ se met jamais à jour :
 
 Un chiffre qui vit dans deux fichiers est un bug : `docs/bornes.md` est son seul
 domicile, les autres y renvoient.
+
+### Entre deux skills, le fait général vit dans le skill général
+
+Même règle, autre axe. Quand un fait éprouvé en faisant X sert en réalité à tout
+le monde, il se domicilie dans le skill **le plus général**, et le spécifique
+n'en garde que son application.
+
+Le sens du renvoi se déduit, il ne s'arbitre pas : le spécifique charge déjà le
+général — `captures-github` impose `chrome-ancrage` avant sa première action
+navigateur —, donc c'est le spécifique qui renvoie. L'inverse ferait un cycle, et
+priverait du fait toute session qui ne passe pas par le cas spécifique : une
+session qui téléverse un CV dans l'ATS ne chargera jamais un skill dont la
+description dit « sur un écrit GitHub ».
+
+Ce que ça donne sur le téléversement : le refus des chemins hors workspace root
+et l'`input[type=file]` caché à chercher puis démasquer vivent dans
+`chrome-ancrage` — ce sont des propriétés du serveur MCP et des éditeurs web ;
+les identifiants de GitHub, la zone à viser et le snippet de repli vivent dans
+`captures-github`.
+
+Le coût de l'oubli est mesuré : une affirmation fausse sur l'absence
+d'`input[type=file]` a vécu dans les deux fichiers, et sa correction a failli
+n'en toucher qu'un.

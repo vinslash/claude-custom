@@ -84,27 +84,17 @@ une absence constatée un jour donné comme si elle valait toujours. D'où la r�
 qui commande cette section : **constater le DOM avant d'agir**, ne jamais se
 fier à ce qui est décrit ici comme à un état permanent.
 
-**Le fichier doit être dans le workspace root, pas dans le scratchpad.** Le
-serveur MCP refuse tout chemin en dehors — `Access denied: … is not within any
-of the configured workspace roots` —, et « local à la machine du navigateur » ne
-suffit donc pas. Copier les captures dans un dossier gitignoré du dépôt et les
-supprimer après ; sur slash-interim, `screenshots/` l'est déjà, inutile d'en
-créer un autre.
+`chrome-ancrage`, chargé au premier pas du geste, porte déjà les deux
+contraintes génériques du téléversement : le fichier doit être dans le workspace
+root — le scratchpad est rejeté —, et l'`input[type=file]` d'un éditeur moderne
+est caché, donc à chercher puis démasquer avant tout `upload_file`. Ce qui suit
+n'est que leur application à GitHub.
 
-**Chercher un `input[type=file]` avant toute autre chose.** C'est le chemin
-nominal, et le seul qui ne coûte rien : le navigateur lit le fichier lui-même.
-
-```js
-[...document.querySelectorAll('input[type=file]')].map(e => ({ id: e.id, accept: e.accept }));
-```
-
-Le 2026-09-14 la page en exposait deux, cachés, un par éditeur —
+**Quel input viser.** Le 2026-09-14 la page en exposait deux, un par éditeur :
 `#fc-issue-<id>-body` pour la description, `#fc-new_comment_field` pour la zone
-de nouveau commentaire. C'est le second qu'on veut, conformément au principe :
-on dépose dans la zone de commentaire, pas dans un éditeur de description.
-
-Caché, l'input n'apparaît pas dans le snapshot a11y et n'a donc pas de `uid` à
-donner à `upload_file`. Le démasquer suffit :
+de nouveau commentaire. C'est le second qu'on veut, conformément au principe —
+on dépose dans la zone de commentaire, jamais dans un éditeur de description.
+Le démasquage tient en quatre lignes :
 
 ```js
 const input = document.querySelector('#fc-new_comment_field');
@@ -117,9 +107,11 @@ Puis `take_snapshot`, et `upload_file` sur le `uid` ainsi obtenu. **Les deux
 captures d'un avant/après passent d'un seul appel**, les deux chemins dans
 `filePaths`.
 
-**Sans input : le `drop` synthétique, en repli.** Si la recherche ne rend rien —
-le DOM de GitHub a déjà changé deux fois —, il reste à fabriquer l'événement à
-la main, avec le fichier inliné en base64 dans l'`evaluate_script` :
+Ces identifiants sont datés, pas garantis : chercher, ne jamais les supposer.
+
+**Le `drop` synthétique, en repli.** Si la recherche ne rend rien — le DOM de
+GitHub a déjà changé deux fois —, voici le snippet éprouvé auquel renvoie
+`chrome-ancrage`, avec le fichier inliné en base64 :
 
 ```js
 const bin = atob(b64);
@@ -135,10 +127,8 @@ for (const type of ["dragenter", "dragover", "drop"])
   ta.dispatchEvent(new DragEvent(type, { bubbles: true, cancelable: true, dataTransfer: dt }));
 ```
 
-Ce chemin fait transiter le fichier entier par l'appel d'outil, donc par le
-contexte de la session : une capture de 350 Ko pèse ~470 000 caractères en
-base64, soit des dizaines de milliers de tokens — deux fois sur un avant/après —
-pour un geste qui n'en demande aucun. C'est un recours, pas une méthode.
+Une capture de 350 Ko y pèse ~470 000 caractères de contexte, deux fois sur un
+avant/après. C'est un recours, pas une méthode.
 
 **GitHub insère du HTML, pas du markdown.** La zone reçoit d'abord
 `<!-- Uploading "avant.png"... -->`, puis, une fois le dépôt fini :
