@@ -118,9 +118,12 @@ l'utilisateur, les questions restées ouvertes, et le script de rejeu. **Ce fich
 voyage jusqu'à la dernière étape** — c'est de lui que sortira la description de
 PR, et non du diff.
 
-**Si le problème ne se reproduit pas, s'arrêter là.** Ou le ticket décrit mal le
-problème, ou l'environnement ne correspond pas : dans les deux cas, coder est
-prématuré.
+`slash:constat` porte deux portes qui peuvent terminer l'étape sans passer à la
+suivante : celle de l'anti-overkill, et celle du **ticket périmé** — produit qui a
+bougé depuis la rédaction, comportement qui ne se reproduit pas ou se reproduit
+autrement. La seconde est **bloquante** : le parcours s'arrête jusqu'à ce que le
+PM confirme ou réaligne. Ne pas enchaîner sur l'étape 2 en attendant, et ne pas
+réinterpréter le ticket pour le rendre implémentable.
 
 ## Étape 2 — Plan et arbitrage (point d'arrêt bloquant)
 

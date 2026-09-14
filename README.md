@@ -60,7 +60,7 @@ flowchart TD
 <tbody>
 <tr>
 <td nowrap><samp>/slash:constat</samp></td>
-<td>Fait constater le problème par la personne qui traite le ticket, plutôt que de lui rapporter un constat — phase didactique avant implémentation, vérification de la résolution après.</td>
+<td>Fait constater le problème par la personne qui traite le ticket, plutôt que de lui rapporter un constat — phase didactique avant implémentation, vérification de la résolution après. Porte bloquante sur le <strong>ticket périmé</strong> : faire confirmer ou réaligner par le PM, jamais réinterpréter.</td>
 </tr>
 <tr>
 <td nowrap><samp>/slash:scope</samp></td>

@@ -9,11 +9,14 @@ description: >
   par critère pour vérifier la résolution. Le mode se déduit de l'existence du
   fichier d'observation. Produit le POURQUOI du ticket avec ses mots — la
   matière première de la description de PR — la liste des questions à poser au PM,
-  et un script de rejeu. Délègue le jeu de données à `slash:recette-dataset` et la
+  et un script de rejeu. Porte une **porte bloquante sur le ticket périmé** : quand
+  le produit a bougé depuis la rédaction du ticket, on s'arrête et on fait
+  confirmer ou réaligner par le PM, sans jamais réinterpréter. Délègue le jeu de données à `slash:recette-dataset` et la
   localisation du code à un sous-agent d'exploration.
   Use when the user says « fais-moi constater », « explique-moi le ticket »,
   « je veux comprendre SLI-XXXX », « montre-moi le problème », « on vérifie la
-  résolution », or `/slash:constat SLI-XXXX`; and as the first step of
+  résolution », « ce ticket a l'air périmé », « ça ne se reproduit pas », « je
+  crois que c'est déjà corrigé », or `/slash:constat SLI-XXXX`; and as the first step of
   `slash:process-ticket`. Utile aussi hors parcours : avant un affinage, quand un
   PM challenge un ticket, avant de relire la PR d'un collègue. Ne PAS utiliser
   pour fabriquer des données (→ `slash:recette-dataset`), pour implémenter, ni
@@ -88,7 +91,51 @@ en deux minutes » est une réponse légitime. Un skill qui impose quinze minute
 socratisme sur un libellé mal orthographié se fait contourner, et un skill
 contourné ne sert plus à rien.
 
-## 3. Les données
+## 3. La porte du ticket périmé
+
+Un ticket peut avoir vieilli : le produit a bougé depuis sa rédaction, une autre
+PR est passée sur la zone, la règle métier a changé. **C'est le seul cas où
+continuer coûte plus cher que s'arrêter.**
+
+Les signaux, par ordre de force :
+
+- le comportement décrit **ne se reproduit pas** — il a l'air déjà corrigé ;
+- il se reproduit, mais **autrement** que ce que dit le ticket ;
+- le `git log -S` de l'étape 1 sort une PR **postérieure au ticket** qui a changé
+  cette zone délibérément ;
+- le ticket nomme un écran, un champ ou un libellé **qui n'existe plus** ;
+- un critère d'acceptation **contredit** une règle en place aujourd'hui.
+
+Le premier signal peut n'apparaître qu'en 5, pendant que l'utilisateur reproduit.
+La porte reste donc ouverte jusque-là — ce n'est pas une case cochée une fois.
+
+**Ne pas trancher, et surtout ne pas réinterpréter.** Un agent qui « adapte » un
+ticket périmé à ce qu'il croit être l'intention implémente une spécification que
+personne n'a écrite : elle passera la review, puisqu'elle est cohérente, et
+personne ne verra qu'elle ne correspond à aucune demande. C'est pire que de
+s'arrêter.
+
+**Remonter au PM**, avec trois lignes factuelles et rien de plus :
+
+1. ce que le ticket demande, **cité** ;
+2. ce qu'on observe aujourd'hui, avec la preuve — le commit ou la PR qui a
+   changé la zone, et sa date ;
+3. la question, binaire : **le ticket tient-il tel quel, ou faut-il le
+   réaligner ?**
+
+Pas d'analyse, pas de proposition de correctif : proposer une solution invite le
+PM à valider la nôtre au lieu de dire son besoin. Préparer le message et le
+**laisser envoyer par l'utilisateur** — ou le poster en commentaire Linear s'il
+le demande, jamais de sa propre initiative.
+
+Puis s'arrêter pour de bon. Ce qui suit dépend de la réponse :
+
+- **le PM confirme** → reprendre le constat, et écrire sa réponse dans le fichier
+  d'observation : c'est elle qui fera le POURQUOI de la PR ;
+- **le PM réaligne** → le ticket a changé, donc il se relit. C'est la seule
+  exception à la lecture unique de l'étape 1.
+
+## 4. Les données
 
 Juger si le cas est dans la base clonée. S'il manque, appeler
 **`slash:recette-dataset`**, qui s'arrêtera une fois le cas visible à l'écran :
@@ -97,7 +144,7 @@ la baseline se constate ici, avec l'utilisateur.
 Il signale aussi les critères qui dépendent d'un service externe non mocké. Si le
 constat en dépend, le remonter tout de suite.
 
-## 4. La phase didactique
+## 5. La phase didactique
 
 Le navigateur est celui du serveur MCP `chrome` : une instance dédiée au
 worktree, que l'utilisateur voit et dans laquelle il peut cliquer. Charger
@@ -125,7 +172,7 @@ pour le PM). Un agent qui enseigne un modèle métier faux est pire qu'un agent
 muet : l'utilisateur le répétera. La liste des inconnues est un livrable —
 arriver chez le PM avec trois questions précises, c'est exactement l'objectif.
 
-## 5. La répétition du challenge
+## 6. La répétition du challenge
 
 Faire jouer le PM puis le reviewer par un **sous-agent naïf**, qui ne reçoit que
 le texte du ticket et les quelques lignes d'explication de l'utilisateur —
@@ -137,7 +184,7 @@ Trois questions suffisent. Celles auxquelles l'utilisateur ne sait pas répondre
 sont les trous à combler — repérés avant qu'une ligne soit écrite, quand c'est
 encore gratuit.
 
-## 6. Ce qu'on écrit
+## 7. Ce qu'on écrit
 
 `<scratchpad>/SLI-XXXX-OBSERVATION.md`, court :
 
@@ -156,6 +203,8 @@ encore gratuit.
   section « Screenshots » de la PR — voir `slash:redaction`. La prendre
   maintenant ou ne pas la prendre du tout.
 - **Ce qui n'est pas validable localement**, s'il y en a.
+- **Ce que le PM a répondu**, si la porte du ticket périmé s'est ouverte —
+  telle quelle, avec sa date. C'est elle qui fait foi contre le ticket.
 
 ---
 
@@ -187,5 +236,7 @@ main : la correction relève de l'étape d'implémentation, pas d'ici.
   l'agent extrapole le plus.
 - Donner au sous-agent qui joue le PM autre chose que le ticket et les mots de
   l'utilisateur.
+- **Réinterpréter un ticket périmé** pour le rendre implémentable, au lieu de
+  le renvoyer au PM.
 - Enchaîner sur le plan ou l'implémentation : ce skill s'arrête au constat.
 - Écrire le POURQUOI à la place de l'utilisateur.
