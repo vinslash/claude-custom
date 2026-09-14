@@ -33,21 +33,22 @@ peut pas tirer dans le worktree où l'on est en train d'écrire. Cette séparati
 est donc à la fois ce qui rend la mise à jour automatique possible, et ce qui fait
 enfin exister une notion de version.
 
-```
-  claude-custom/              ← ici : on écrit, on commit, on pousse
-        │  git push
-        ▼
-     GitHub
-        │  git pull --ff-only, toutes les 2 min (agent launchd)
-        ▼
-  ~/.claude/skills/slash/     ← le clone installé, édité par personne
-        │
-        ├── skills/, hooks/, .mcp.json    le plugin « slash »
-        └── CLAUDE.md ◀─── importé par ─── ~/.claude/CLAUDE.md
-                                           (fichier d'une ligne, pas un lien)
+```mermaid
+flowchart TD
+    dev["claude-custom/<br/>ici : on écrit, on commit, on pousse"]
+    gh["GitHub"]
+    global["~/.claude/CLAUDE.md<br/>fichier d'une ligne, pas un lien"]
+    equipe["slash-interim/.claude/skills/"]
 
-                    ▼  ce qui a fait ses preuves
-              slash-interim/.claude/skills/
+    subgraph clone["~/.claude/skills/slash/ — le clone installé, édité par personne"]
+        plugin["skills/ · hooks/ · .mcp.json<br/>le plugin « slash »"]
+        cmd["CLAUDE.md"]
+    end
+
+    dev -->|git push| gh
+    gh -->|"git pull --ff-only, toutes les 2 min (agent launchd)"| clone
+    global -->|importe| cmd
+    dev -.->|ce qui a fait ses preuves| equipe
 ```
 
 ## Les skills
@@ -74,14 +75,39 @@ dans `CLAUDE.md`, parce que leur déclenchement ne peut pas dépendre du hasard.
 
 ## Installation
 
+**Prérequis** : macOS, `git`, `python3`, la CLI `claude`, et un accès SSH en
+lecture à `vinslash/claude-custom` — c'est de là que le clone installé tirera ses
+mises à jour. Le détail, et ce qui est seulement facultatif, est dans
+[`docs/installation.md`](docs/installation.md).
+
 ```bash
 git clone git@github.com:vinslash/claude-custom.git ~/Development/claude-custom
 cd ~/Development/claude-custom && ./install.sh
 ```
 
-`install.sh` est idempotent et ne supprime jamais un fichier sans l'avoir
-sauvegardé. Le détail de ce qu'il pose et de ce qu'il vérifie est dans
-[`docs/montage.md`](docs/montage.md).
+Le chemin n'est pas indifférent : `bin/mise-a-jour.sh` code `~/Development/claude-custom`
+en dur pour son option `--depuis-dev`. Cloner ailleurs marche, mais `/slash:maj`
+ne saura plus tirer d'ici sans passer par GitHub.
+
+L'installateur pose le clone à `~/.claude/skills/slash`, la ligne d'import dans
+`~/.claude/CLAUDE.md`, et l'agent launchd qui tire toutes les deux minutes. Il
+est idempotent et ne supprime jamais un fichier sans l'avoir sauvegardé.
+
+**Une configuration déjà en place n'est pas écrasée.** L'import est ajouté
+*au-dessus* d'un `~/.claude/CLAUDE.md` existant, dont le contenu est conservé ; la
+seule entrée touchée dans `settings.json` est la neutralisation d'un serveur MCP
+inutilisable sur l'hôte ; et vos skills personnels, vos hooks et vos autres
+plugins ne sont pas touchés. Cas par cas dans
+[`docs/installation.md`](docs/installation.md).
+
+**Vérifier** : ouvrir une nouvelle session et taper `/slash:`. Dans une session
+déjà ouverte, une fois : `/reload-plugins` dans le terminal, ou une nouvelle
+session dans l'extension VSCode, qui n'expose pas cette commande.
+
+Qui se servira du navigateur — captures sur une PR, constat dans l'application —
+a une étape à faire une fois pour toutes :
+`bash ~/.claude/skills/slash/bin/chrome-modele.sh`, pour installer Dashlane et se
+connecter à GitHub dans le profil dont chaque worktree clonera le sien.
 
 Le clone installé ne doit **jamais** être édité. Un seul fichier modifié dedans et
 le `merge --ff-only` échoue : les mises à jour s'arrêteraient, et en silence.
@@ -92,7 +118,8 @@ l'écran — c'est la seule panne du montage qu'on ne verrait pas venir.
 
 | Fichier | Pour répondre à |
 | --- | --- |
-| [`docs/montage.md`](docs/montage.md) | Où vit quoi, ce que pose `install.sh`, et les deux pièges qui ont coûté cher |
+| [`docs/installation.md`](docs/installation.md) | Installer chez soi : prérequis, ce qu'il advient d'une config existante, vérifier, désinstaller |
+| [`docs/montage.md`](docs/montage.md) | Où vit quoi, et les deux pièges qui ont coûté cher |
 | [`docs/propagation.md`](docs/propagation.md) | Quand un changement prend effet — ce qui se recharge à chaud, ce qui exige `/reload-plugins` |
 | [`docs/bornes.md`](docs/bornes.md) | Quelle borne s'applique : ce qu'on écrit, la taille d'une PR, les portes anti-overkill |
 | [`docs/contribuer.md`](docs/contribuer.md) | Ajouter un skill, vérifier son coût, et tenir cette doc à jour |

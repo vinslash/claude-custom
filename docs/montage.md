@@ -1,7 +1,8 @@
 # Le montage, fichier par fichier
 
-Où vit quoi, ce que l'installateur pose, et les deux pièges qui ont coûté cher.
-Pour savoir *quand* un changement prend effet, c'est [`propagation.md`](propagation.md).
+Où vit quoi, et les deux pièges qui ont coûté cher. Pour *installer*, c'est
+[`installation.md`](installation.md) ; pour savoir *quand* un changement prend
+effet, [`propagation.md`](propagation.md).
 
 ## Le montage
 
@@ -30,19 +31,8 @@ Pour savoir *quand* un changement prend effet, c'est [`propagation.md`](propagat
 
 ## Ce que fait `install.sh`
 
-`install.sh` est idempotent et ne supprime jamais un fichier sans l'avoir
-sauvegardé. Il clone le dépôt vers `~/.claude/skills/slash` et fait pointer
-son origine sur GitHub, remplace `~/.claude/CLAUDE.md` par le fichier d'une ligne
-qui importe celui du clone, verse un `CLAUDE.md` ou un `RTK.md` local dans le
-dépôt en proposant d'en récupérer le contenu, retire les anciens liens par skill,
-neutralise le serveur MCP `chrome-devtools` de slash-interim, pose l'agent
-launchd, puis vérifie : manifeste valide, imports `@` qui résolvent, mise à jour
-opérationnelle, agent chargé, et l'inventaire des composants avec leur coût en
-tokens.
-
-Rien à déclarer côté marketplace : un dossier de `~/.claude/skills/` qui contient
-un `.claude-plugin/plugin.json` est chargé comme plugin complet — skills, hooks,
-serveur MCP.
+Son inventaire cas par cas est dans [`installation.md`](installation.md), avec
+les prérequis, la vérification et la désinstallation.
 
 ## Deux pièges vérifiés à la dure
 
