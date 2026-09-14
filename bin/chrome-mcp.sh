@@ -19,36 +19,36 @@
 # script est relu à chaque lancement. Même raison que pour `hooks/hooks.json`.
 set -eu
 
-base="${HOME}/.cache/chrome-mcp"
-modele="${base}/_modele"
+base_dir="${HOME}/.cache/chrome-mcp"
+template="${base_dir}/_modele"
 
-racine=$(git rev-parse --show-toplevel 2>/dev/null || pwd)
-profil="${base}/$(basename "$racine")"
+workspace_root=$(git rev-parse --show-toplevel 2>/dev/null || pwd)
+profile="${base_dir}/$(basename "$workspace_root")"
 
-if [ ! -d "$profil" ] && [ -d "$modele" ]; then
+if [ ! -d "$profile" ] && [ -d "$template" ]; then
   # Passer par un dossier temporaire : un clone interrompu ne doit pas laisser
   # derrière lui un profil à moitié rempli, que le lancement suivant prendrait
   # pour un profil valide et n'amorcerait donc jamais.
-  chantier="${profil}.chantier.$$"
-  rm -rf "$chantier"
+  workdir="${profile}.workdir.$$"
+  rm -rf "$workdir"
 
   # -c demande un clone APFS : instantané, et le disque n'est payé qu'au fur et
   # à mesure que le profil diverge du modèle. Le repli couvre les volumes qui
   # ne savent pas cloner.
-  cp -Rc "$modele" "$chantier" 2>/dev/null || cp -R "$modele" "$chantier"
+  cp -Rc "$template" "$workdir" 2>/dev/null || cp -R "$template" "$workdir"
 
   # Les verrous d'instance sont des liens symboliques vers le Chrome qui tenait
   # le modèle. Recopiés tels quels, ils feraient croire au profil neuf qu'il est
   # déjà ouvert ailleurs, et Chrome refuserait de démarrer.
-  rm -rf "$chantier/SingletonLock" "$chantier/SingletonCookie" "$chantier/SingletonSocket"
+  rm -rf "$workdir/SingletonLock" "$workdir/SingletonCookie" "$workdir/SingletonSocket"
 
   # Caches : reconstruits seuls, et ils pèsent l'essentiel du profil.
-  rm -rf "$chantier/Default/Cache" "$chantier/Default/Code Cache" \
-         "$chantier/Default/GPUCache" "$chantier/Default/DawnGraphiteCache" \
-         "$chantier/Default/DawnWebGPUCache" "$chantier/GraphiteDawnCache" \
-         "$chantier/GPUPersistentCache"
+  rm -rf "$workdir/Default/Cache" "$workdir/Default/Code Cache" \
+         "$workdir/Default/GPUCache" "$workdir/Default/DawnGraphiteCache" \
+         "$workdir/Default/DawnWebGPUCache" "$workdir/GraphiteDawnCache" \
+         "$workdir/GPUPersistentCache"
 
-  mv "$chantier" "$profil"
+  mv "$workdir" "$profile"
 fi
 
 # Le repère. Une dizaine de sessions en parallèle, donc une dizaine de fenêtres
@@ -76,16 +76,16 @@ fi
 # `install_extension` refuse tout chemin hors des roots MCP — vérifié, y compris
 # avec `--allowUnrestrictedPaths`, qui ne couvre que le cas où le client n'en
 # déclare aucune. Or une session Claude déclare toujours son worktree.
-ici=$(cd "$(dirname "$0")" && pwd)
-atelier="${racine}/.chrome-repere"
+here=$(cd "$(dirname "$0")" && pwd)
+marker_dir="${workspace_root}/.chrome-repere"
 
-etiquette=$(basename "$racine")
-case "$etiquette" in
+label=$(basename "$workspace_root")
+case "$label" in
   sli-[0-9]*)
-    numero=${etiquette#sli-}
-    etiquette="SLI-${numero%%-*}"
-    case "$(basename "$racine")" in
-      *-review) etiquette="$etiquette · review" ;;
+    number=${label#sli-}
+    label="SLI-${number%%-*}"
+    case "$(basename "$workspace_root")" in
+      *-review) label="$label · review" ;;
     esac
     ;;
 esac
@@ -93,17 +93,17 @@ esac
 # Écraser les fichiers un à un plutôt que refaire le dossier : deux sessions sur
 # le même worktree se marcheraient dessus, et Chrome tient l'extension ouverte
 # depuis ce chemin.
-mkdir -p "$atelier"
-cp "$ici/extension-repere/manifest.json" "$ici/extension-repere/worker.js" "$atelier/"
-printf 'globalThis.ETIQUETTE = "%s";\n' "$etiquette" > "$atelier/etiquette.js"
+mkdir -p "$marker_dir"
+cp "$here/extension-repere/manifest.json" "$here/extension-repere/worker.js" "$marker_dir/"
+printf 'globalThis.LABEL = "%s";\n' "$label" > "$marker_dir/label.js"
 
 # Git ne doit pas voir passer ce dossier. L'exclusion va dans le fichier local du
 # dépôt, jamais dans le `.gitignore` versionné : c'est de l'outillage de poste,
 # il n'a rien à faire dans l'historique de l'équipe.
-if commun=$(git -C "$racine" rev-parse --path-format=absolute --git-common-dir 2>/dev/null); then
-  mkdir -p "$commun/info"
-  grep -qxF '.chrome-repere/' "$commun/info/exclude" 2>/dev/null \
-    || echo '.chrome-repere/' >> "$commun/info/exclude"
+if commun=$(git -C "$workspace_root" rev-parse --path-format=absolute --git-common-dir 2>/dev/null); then
+  mkdir -p "$git_common/info"
+  grep -qxF '.chrome-repere/' "$git_common/info/exclude" 2>/dev/null \
+    || echo '.chrome-repere/' >> "$git_common/info/exclude"
 fi
 
 # `--use-mock-keychain` fait passer OSCrypt sur un trousseau simulé. Sur macOS,
@@ -119,9 +119,9 @@ fi
 # du vrai trousseau, comme le Chrome personnel. Il n'accède pas pour autant à son
 # profil, qui vit ailleurs. C'est le prix d'une session Dashlane utilisable, qui
 # est précisément ce qu'on cherche.
-exec python3 "$ici/chrome-repere-proxy.py" "$atelier" \
+exec python3 "$here/chrome-repere-proxy.py" "$marker_dir" \
   npx -y chrome-devtools-mcp@latest \
-  --userDataDir="$profil" \
+  --userDataDir="$profile" \
   --viewport 1440x820 \
   --categoryExtensions \
   --ignore-default-chrome-arg='--disable-extensions' \

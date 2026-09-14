@@ -17,13 +17,13 @@
 # est prêt ou laissé à moitié écrit.
 set -eu
 
-modele="${HOME}/.cache/chrome-mcp/_modele"
+template="${HOME}/.cache/chrome-mcp/_modele"
 
-for candidat in \
+for candidate in \
   "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome" \
   "${HOME}/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"
 do
-  [ -x "$candidat" ] && chrome="$candidat" && break
+  [ -x "$candidate" ] && chrome="$candidate" && break
 done
 
 if [ -z "${chrome:-}" ]; then
@@ -43,9 +43,9 @@ if pgrep -x "Google Chrome" >/dev/null 2>&1; then
   exit 1
 fi
 
-mkdir -p "$modele"
+mkdir -p "$template"
 
-echo "Profil modèle : $modele"
+echo "Profil modèle : $template"
 echo
 echo "Dans la fenêtre qui s'ouvre, DEUX choses :"
 echo "  1. installer Dashlane depuis le Chrome Web Store, et s'y connecter ;"
@@ -59,36 +59,36 @@ echo "Les profils de worktree DÉJÀ créés ne changent pas. Pour qu'un ticket 
 echo "cours reparte du modèle, supprimer son dossier dans ~/.cache/chrome-mcp/."
 echo
 
-"$chrome" --user-data-dir="$modele" --no-first-run --no-default-browser-check \
+"$chrome" --user-data-dir="$template" --no-first-run --no-default-browser-check \
   "https://chromewebstore.google.com/detail/fdjamakpfbbddfjaooikfcpapjohcfmg" \
   "https://github.com/login" || true
 
 # Chrome est sorti. Les verrous d'instance sont des liens symboliques vers le
 # process qui vient de mourir ; `chrome-mcp.sh` les jette de toute façon à chaque
 # clonage, mais les laisser ici rendrait le modèle inouvrable à la main.
-rm -f "$modele/SingletonLock" "$modele/SingletonCookie" "$modele/SingletonSocket"
+rm -f "$template/SingletonLock" "$template/SingletonCookie" "$template/SingletonSocket"
 
 echo
-manque=""
+missing=""
 
-[ -d "$modele/Default/Extensions/fdjamakpfbbddfjaooikfcpapjohcfmg" ] \
-  || manque="$manque Dashlane"
+[ -d "$template/Default/Extensions/fdjamakpfbbddfjaooikfcpapjohcfmg" ] \
+  || manque="$missing Dashlane"
 
 # Le fichier dépend de la version de Chrome : les deux emplacements connus.
-github=0
-for base in "$modele/Default/Cookies" "$modele/Default/Network/Cookies"; do
+github_ok=0
+for base in "$template/Default/Cookies" "$template/Default/Network/Cookies"; do
   [ -f "$base" ] || continue
   n=$(sqlite3 "file:$base?immutable=1" \
         "select count(*) from cookies where host_key like '%github%';" 2>/dev/null || true)
   case "$n" in ''|*[!0-9]*) n=0 ;; esac
-  if [ "$n" -gt "$github" ]; then github="$n"; fi
+  if [ "$n" -gt "$github_ok" ]; then github="$n"; fi
 done
-[ "$github" -gt 0 ] || manque="$manque GitHub"
+[ "$github_ok" -gt 0 ] || manque="$missing GitHub"
 
-if [ -z "$manque" ]; then
+if [ -z "$missing" ]; then
   echo "Modèle prêt : Dashlane installé, session GitHub enregistrée."
   echo "Les prochains worktrees en hériteront."
 else
-  echo "Attention, il manque :$manque — relancer ce script."
+  echo "Attention, il manque :$missing — relancer ce script."
   echo "Si c'est GitHub : Chrome n'écrit ses cookies qu'en quittant par Cmd+Q."
 fi
