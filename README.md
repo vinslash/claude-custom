@@ -93,6 +93,35 @@ flowchart TD
 </tbody>
 </table>
 
+Qui charge qui — une flèche se lit « charge » :
+
+```mermaid
+flowchart TD
+    pt["/slash:process-ticket"]
+    co["/slash:constat"]
+    re["/slash:redaction"]
+    rd["/slash:recette-dataset"]
+    dp["/slash:decoupage-pr"]
+    cg["/slash:captures-github"]
+    ca["/slash:chrome-ancrage"]
+    maj["/slash:maj"]
+
+    pt --> co
+    pt --> re
+    pt --> dp
+    co --> rd
+    co --> ca
+    re --> dp
+    re --> cg
+    cg --> ca
+```
+
+`process-ticket` orchestre, `chrome-ancrage` et `decoupage-pr` sont des feuilles
+chargées par plusieurs — c'est la règle du fait général qui vit dans le skill
+général, décrite dans [`docs/contribuer.md`](docs/contribuer.md). `maj` ne touche
+à personne. Aucun skill n'appelle `process-ticket` : il n'est qu'un point
+d'entrée.
+
 Le nom du plugin sert de **namespace** : c'est pourquoi les dossiers de
 `skills/` ne portent plus le préfixe `slash-`, qui ferait doublon. Attention à ne
 pas les confondre avec les skills du dépôt slash-interim (`slash-commit`,
