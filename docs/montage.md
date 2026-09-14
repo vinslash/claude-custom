@@ -16,15 +16,15 @@ effet, [`propagation.md`](propagation.md).
 | `hooks/handlers/session-start.sh` | Déclare les `watchPaths` à surveiller, et injecte le ticket lu dans le nom de branche quand la session s'ouvre dans un worktree SLI. |
 | `hooks/handlers/file-changed.sh` | `FileChanged` : se déclenche seul quand un fichier de config bouge sur disque, prévient à l'écran, pose un marqueur. |
 | `hooks/handlers/user-prompt-submit.sh` | Consomme le marqueur au message suivant et réinjecte les instructions permanentes modifiées. |
-| `hooks/handlers/commun.sh` | Les deux ensembles de fichiers qui fondent tout le rattrapage : instructions permanentes contre câblage. |
+| `hooks/handlers/common.sh` | Les deux ensembles de fichiers qui fondent tout le rattrapage : instructions permanentes contre câblage. |
 | `bin/mise-a-jour.sh` | Le `git pull --ff-only` du clone installé. Tiré par launchd, et par `/slash:force-update`. Hors de Claude Code, donc gratuit. |
 | `.mcp.json` | Déclare le serveur MCP `chrome`, et rien d'autre : il ne nomme qu'un script. Même sobriété que `hooks/hooks.json`, même raison — voir [`propagation.md`](propagation.md). |
 | `bin/chrome-mcp.sh` | Le lancement du navigateur : profil dérivé du worktree, cloné du profil modèle à sa naissance, extension de repère préparée dans le worktree, et deux arguments retirés de ceux que Puppeteer pose par défaut — `--disable-extensions`, qui empêcherait les extensions de démarrer, et `--use-mock-keychain`, qui les ferait effacer du profil au premier lancement. |
-| `bin/extension-repere/` | L'extension qui range les onglets d'une fenêtre dans un groupe au nom du ticket. Le lanceur en dépose une copie étiquetée dans `<worktree>/.chrome-repere` — dans le worktree, seul endroit que `install_extension` accepte. |
-| `bin/chrome-repere-proxy.py` | Relais MCP qui repose l'extension au premier appel d'outil, et à chaque redémarrage du navigateur — elle ne lui survit pas. Cache aussi les outils d'extension à la session. |
-| `bin/chrome-modele.sh` | Ouvre `~/.cache/chrome-mcp/_modele` pour y installer Dashlane **et s'y connecter à GitHub**, une fois pour toutes. Le seul lancement de Chrome à la main qui soit permis. Refuse de partir si Chrome tourne déjà, et contrôle les deux à la sortie. |
+| `bin/extension-marker/` | L'extension qui range les onglets d'une fenêtre dans un groupe au nom du ticket. Le lanceur en dépose une copie étiquetée dans `<worktree>/.chrome-marker` — dans le worktree, seul endroit que `install_extension` accepte. |
+| `bin/chrome-marker-proxy.py` | Relais MCP qui repose l'extension au premier appel d'outil, et à chaque redémarrage du navigateur — elle ne lui survit pas. Cache aussi les outils d'extension à la session. |
+| `bin/chrome-template.sh` | Ouvre `~/.cache/chrome-mcp/_modele` pour y installer Dashlane **et s'y connecter à GitHub**, une fois pour toutes. Le seul lancement de Chrome à la main qui soit permis. Refuse de partir si Chrome tourne déjà, et contrôle les deux à la sortie. |
 | `install.sh` | Pose le clone installé, l'import `CLAUDE.md`, l'agent launchd, et neutralise ce qui entre en conflit. Idempotent. |
-| `hooks-retires/` | Hooks retirés de `settings.json`, conservés pour pouvoir les recoller. |
+| `hooks-retired/` | Hooks retirés de `settings.json`, conservés pour pouvoir les recoller. |
 | `settings.snippet.json` | Le peu qui doit vivre dans `settings.json`, et pourquoi. |
 | `claude-custom.code-workspace` | Espace de travail VS Code, versionné volontairement — le `.gitignore` l'exclut de l'exclusion des éditeurs. |
 | `.wtkit/config` | Profil wtkit : `wt open claude-custom` pose un onglet `claude` à côté du shell. Les onglets ne sont créés qu'à la naissance de la session tmux — la modifier n'a d'effet qu'après un `tmux kill-session`. |

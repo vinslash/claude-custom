@@ -162,7 +162,7 @@ session dans l'extension VSCode, qui n'expose pas cette commande.
 
 Qui se servira du navigateur — captures sur une PR, constat dans l'application —
 a une étape à faire une fois pour toutes :
-`bash ~/.claude/skills/slash/bin/chrome-modele.sh`, pour installer Dashlane et se
+`bash ~/.claude/skills/slash/bin/chrome-template.sh`, pour installer Dashlane et se
 connecter à GitHub dans le profil dont chaque worktree clonera le sien.
 
 Le clone installé ne doit **jamais** être édité. Un seul fichier modifié dedans et

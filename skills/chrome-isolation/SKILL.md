@@ -73,7 +73,7 @@ collision possible — à condition de ne pas recréer le problème à la main.
 exactement le geste qui a produit l'incident ci-dessus. Le navigateur appartient
 au serveur MCP, et à lui seul.
 
-Une seule exception, et elle est bornée : `bin/chrome-modele.sh`, qui ouvre le
+Une seule exception, et elle est bornée : `bin/chrome-template.sh`, qui ouvre le
 profil modèle pour y installer une extension et s'y connecter à GitHub. Il
 n'ouvre aucun port de debug, donc aucune session ne peut se tromper et venir
 piloter cette fenêtre-là. C'est un geste d'utilisateur, pas un geste de session.

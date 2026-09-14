@@ -13,8 +13,8 @@
 # repos n'a besoin de rien.
 
 set -u
-# shellcheck source=./commun.sh
-. "$(dirname "${BASH_SOURCE[0]}")/commun.sh"
+# shellcheck source=./common.sh
+. "$(dirname "${BASH_SOURCE[0]}")/common.sh"
 
 # Chemin rapide : aucun marqueur pour personne, on sort avant même de savoir de
 # quelle session il s'agit.

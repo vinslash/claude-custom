@@ -14,7 +14,7 @@
     "de modifier le dépôt de l'équipe. Le plugin fournit son propre serveur",
     "`chrome`, qui lance son navigateur avec un profil par worktree.",
     "",
-    "Retiré volontairement de settings.json (voir hooks-retires/) : les deux hooks",
+    "Retiré volontairement de settings.json (voir hooks-retired/) : les deux hooks",
     "GitNexus, qui lançaient un process Node à chaque Grep, Glob et Bash pour",
     "interroger un index qui n'existe sur aucun dépôt."
   ],

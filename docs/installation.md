@@ -94,7 +94,7 @@ Seulement pour qui se servira du navigateur — captures d'écran sur une PR,
 constat dans l'application.
 
 ```bash
-bash ~/.claude/skills/slash/bin/chrome-modele.sh
+bash ~/.claude/skills/slash/bin/chrome-template.sh
 ```
 
 Chrome s'ouvre sur le profil dont chaque profil de worktree sera cloné. Y faire

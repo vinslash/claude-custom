@@ -16,8 +16,8 @@
 # sessions.
 
 set -u
-# shellcheck source=./commun.sh
-. "$(dirname "${BASH_SOURCE[0]}")/commun.sh"
+# shellcheck source=./common.sh
+. "$(dirname "${BASH_SOURCE[0]}")/common.sh"
 
 payload=$(python3 -c '
 import json, sys

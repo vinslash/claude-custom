@@ -41,7 +41,7 @@ Le profil d'un worktree est cloné depuis `~/.cache/chrome-mcp/_modele` à sa
 tous les worktrees créés ensuite — c'est déjà comme ça que Dashlane arrive.
 
 Le bon geste, une seule fois : quitter Chrome entièrement (Cmd+Q, sinon le
-script refuse de partir), lancer `bin/chrome-modele.sh`, se connecter à GitHub
+script refuse de partir), lancer `bin/chrome-template.sh`, se connecter à GitHub
 dans l'onglet qu'il ouvre, puis quitter par Cmd+Q — Chrome n'écrit ses cookies
 qu'en sortant. Le script contrôle lui-même que la session a été enregistrée. Les worktrees déjà nés
 n'en profitent pas — le clonage a eu lieu —, il faut s'y connecter une fois

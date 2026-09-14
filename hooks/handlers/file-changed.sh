@@ -11,8 +11,8 @@
 # `user-prompt-submit.sh` consomme au message suivant pour le vrai rattrapage.
 
 set -u
-# shellcheck source=./commun.sh
-. "$(dirname "${BASH_SOURCE[0]}")/commun.sh"
+# shellcheck source=./common.sh
+. "$(dirname "${BASH_SOURCE[0]}")/common.sh"
 
 # La reconnaissance du fichier se fait en python et pas en shell, pour une raison
 # précise : sur macOS, la surveillance de fichiers rapporte parfois un chemin

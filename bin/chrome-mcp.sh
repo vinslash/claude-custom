@@ -69,7 +69,7 @@ fi
 # profil, plus aucune trace, l'entrée a même disparu des préférences. Il faut
 # donc reposer l'extension à chaque ouverture — ce qui interdit d'en faire un
 # geste de session, et interdit aussi de l'installer une fois dans le modèle
-# pour que les profils en héritent. D'où le relais `chrome-repere-proxy.py`,
+# pour que les profils en héritent. D'où le relais `chrome-marker-proxy.py`,
 # qui s'en charge tout seul au premier appel d'outil.
 #
 # Le dossier vit dans le worktree, et pas à côté du profil, parce que
@@ -77,7 +77,7 @@ fi
 # avec `--allowUnrestrictedPaths`, qui ne couvre que le cas où le client n'en
 # déclare aucune. Or une session Claude déclare toujours son worktree.
 here=$(cd "$(dirname "$0")" && pwd)
-marker_dir="${workspace_root}/.chrome-repere"
+marker_dir="${workspace_root}/.chrome-marker"
 
 label=$(basename "$workspace_root")
 case "$label" in
@@ -94,7 +94,7 @@ esac
 # le même worktree se marcheraient dessus, et Chrome tient l'extension ouverte
 # depuis ce chemin.
 mkdir -p "$marker_dir"
-cp "$here/extension-repere/manifest.json" "$here/extension-repere/worker.js" "$marker_dir/"
+cp "$here/extension-marker/manifest.json" "$here/extension-marker/worker.js" "$marker_dir/"
 printf 'globalThis.LABEL = "%s";\n' "$label" > "$marker_dir/label.js"
 
 # Git ne doit pas voir passer ce dossier. L'exclusion va dans le fichier local du
@@ -102,8 +102,8 @@ printf 'globalThis.LABEL = "%s";\n' "$label" > "$marker_dir/label.js"
 # il n'a rien à faire dans l'historique de l'équipe.
 if commun=$(git -C "$workspace_root" rev-parse --path-format=absolute --git-common-dir 2>/dev/null); then
   mkdir -p "$git_common/info"
-  grep -qxF '.chrome-repere/' "$git_common/info/exclude" 2>/dev/null \
-    || echo '.chrome-repere/' >> "$git_common/info/exclude"
+  grep -qxF '.chrome-marker/' "$git_common/info/exclude" 2>/dev/null \
+    || echo '.chrome-marker/' >> "$git_common/info/exclude"
 fi
 
 # `--use-mock-keychain` fait passer OSCrypt sur un trousseau simulé. Sur macOS,
@@ -119,7 +119,7 @@ fi
 # du vrai trousseau, comme le Chrome personnel. Il n'accède pas pour autant à son
 # profil, qui vit ailleurs. C'est le prix d'une session Dashlane utilisable, qui
 # est précisément ce qu'on cherche.
-exec python3 "$here/chrome-repere-proxy.py" "$marker_dir" \
+exec python3 "$here/chrome-marker-proxy.py" "$marker_dir" \
   npx -y chrome-devtools-mcp@latest \
   --userDataDir="$profile" \
   --viewport 1440x820 \
