@@ -53,21 +53,21 @@ flowchart TD
 
 ## Les skills
 
-| Chemin | Invocation | Rôle |
-| --- | --- | --- |
-| `skills/constat/` | `/slash:constat` | Fait constater le problème par la personne qui traite le ticket, plutôt que de lui rapporter un constat — phase didactique avant implémentation, vérification de la résolution après. |
-| `skills/decoupage-pr/` | `/slash:decoupage-pr` | Garde-fou sur la taille des PR, et mécanique d'ouverture de plusieurs PR pour un ticket — en parallèle ou empilées. Surcharge `slash-create-pr`. |
-| `skills/process-ticket/` | `/slash:process-ticket` | Parcours complet d'un ticket Linear, du worktree déjà créé jusqu'à la PR ouverte — sept étapes suivies en task list, pour retrouver où on en est en revenant sur un ticket. Orchestre les autres. |
-| `skills/recette-dataset/` | `/slash:recette-dataset` | Jeu de données de recette scopé à un ticket SLI, pour constater un bug avant correction puis prouver sa résolution. |
-| `skills/redaction/` | `/slash:redaction` | Cadre de rédaction des écrits lus par un humain : descriptions de PR, commentaires de review, messages de commit, et livrables écrits longs — plan, handoff, analyse. Porte la passe d'élagage. |
-| `skills/captures-github/` | `/slash:captures-github` | Pose des images sur un écrit GitHub — description de PR, commentaire, review. `gh` ne sait pas uploader, le navigateur le fait et `gh` garde la main sur le texte. |
-| `skills/chrome-ancrage/` | `/slash:chrome-ancrage` | Règles de pilotage du navigateur quand plusieurs sessions tournent en parallèle. |
-| `skills/maj/` | `/slash:maj` | Le seul qui ne parle pas de tickets : force la mise à jour du clone installé sans attendre le tick de launchd, et depuis ce dépôt-ci plutôt que GitHub avec `--depuis-dev`, pour éprouver un skill committé sans le pousser. |
+| Invocation | Rôle |
+| --- | --- |
+| `/slash:constat` | Fait constater le problème par la personne qui traite le ticket, plutôt que de lui rapporter un constat — phase didactique avant implémentation, vérification de la résolution après. |
+| `/slash:decoupage-pr` | Garde-fou sur la taille des PR, et mécanique d'ouverture de plusieurs PR pour un ticket — en parallèle ou empilées. Surcharge `slash-create-pr`. |
+| `/slash:process-ticket` | Parcours complet d'un ticket Linear, du worktree déjà créé jusqu'à la PR ouverte — sept étapes suivies en task list, pour retrouver où on en est en revenant sur un ticket. Orchestre les autres. |
+| `/slash:recette-dataset` | Jeu de données de recette scopé à un ticket SLI, pour constater un bug avant correction puis prouver sa résolution. |
+| `/slash:redaction` | Cadre de rédaction des écrits lus par un humain : descriptions de PR, commentaires de review, messages de commit, et livrables écrits longs — plan, handoff, analyse. Porte la passe d'élagage. |
+| `/slash:captures-github` | Pose des images sur un écrit GitHub — description de PR, commentaire, review. `gh` ne sait pas uploader, le navigateur le fait et `gh` garde la main sur le texte. |
+| `/slash:chrome-ancrage` | Règles de pilotage du navigateur quand plusieurs sessions tournent en parallèle. |
+| `/slash:maj` | Le seul qui ne parle pas de tickets : force la mise à jour du clone installé sans attendre le tick de launchd, et depuis ce dépôt-ci plutôt que GitHub avec `--depuis-dev`, pour éprouver un skill committé sans le pousser. |
 
-Le nom du plugin sert de **namespace** : c'est pourquoi les dossiers ne portent
-plus le préfixe `slash-`, qui ferait doublon. Attention à ne pas les confondre
-avec les skills du dépôt slash-interim (`slash-commit`, `slash-create-pr`), qui
-gardent le leur.
+Le nom du plugin sert de **namespace** : c'est pourquoi les dossiers de
+`skills/` ne portent plus le préfixe `slash-`, qui ferait doublon. Attention à ne
+pas les confondre avec les skills du dépôt slash-interim (`slash-commit`,
+`slash-create-pr`), qui gardent le leur.
 
 Taper la commande reste l'exception : un skill part surtout **de lui-même**, sur
 sa description. `redaction` et `chrome-ancrage` s'appuient en plus sur une amorce
