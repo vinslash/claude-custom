@@ -100,7 +100,7 @@ printf 'globalThis.LABEL = "%s";\n' "$label" > "$marker_dir/label.js"
 # Git ne doit pas voir passer ce dossier. L'exclusion va dans le fichier local du
 # dépôt, jamais dans le `.gitignore` versionné : c'est de l'outillage de poste,
 # il n'a rien à faire dans l'historique de l'équipe.
-if commun=$(git -C "$workspace_root" rev-parse --path-format=absolute --git-common-dir 2>/dev/null); then
+if git_common=$(git -C "$workspace_root" rev-parse --path-format=absolute --git-common-dir 2>/dev/null); then
   mkdir -p "$git_common/info"
   grep -qxF '.chrome-marker/' "$git_common/info/exclude" 2>/dev/null \
     || echo '.chrome-marker/' >> "$git_common/info/exclude"
