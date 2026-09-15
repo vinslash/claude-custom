@@ -10,10 +10,10 @@ profil n'en garde aucune trace. Il faut donc la reposer à chaque fois.
 D'où ce relais, glissé entre Claude Code et `chrome-devtools-mcp` : il laisse
 passer tout le trafic MCP sans y toucher, sauf trois gestes.
 
-  - Au premier appel d'tool de la session — donc au moment où le navigateur
+  - Au premier appel d'outil de la session — donc au moment où le navigateur
     s'ouvre vraiment, jamais avant —, il intercale son propre
     `install_extension` puis relaie l'appel d'origine.
-  - Il refait l'amorce si le server signale que le navigateur a redémarré.
+  - Il refait l'amorce si le serveur signale que le navigateur a redémarré.
   - Il retire les outils d'extension de `tools/list`, pour que la session voie
     exactement la panoplie d'avant : ces cinq-là ne la regardent pas, et
     chacun coûterait du contexte à chaque session.
