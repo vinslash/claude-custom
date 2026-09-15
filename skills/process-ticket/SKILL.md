@@ -279,17 +279,34 @@ dépôt slash-interim, et on ne le court-circuite pas.
 
 ### La branche de base, et le périmètre qui a tenu
 
-La branche de base se déduit, elle ne s'écrit pas en dur — `slash-interim` est
-sur `develop` et n'a **pas** de `main`, donc un `--base main` y échoue sur un
-`fatal: bad revision` :
+**`slash-create-pr` référence `main` en quatre endroits** — trois `git log` /
+`git diff` à ses étapes 5 à 7, et le `--base main` de son bloc `gh pr create`.
+Or `main` n'existe pas sur slash-interim, ni en local ni sur le remote. Suivi à
+la lettre, le skill n'est donc pas *faux*, il est **inapplicable** : il casse dès
+son étape 5, avant même d'arriver à la PR.
+
+```
+$ git log main..HEAD --oneline
+fatal: ambiguous argument 'main..HEAD': unknown revision or path not in the working tree.
+```
+
+Deux substitutions, donc, à faire en le lançant :
 
 ```bash
 BASE=$(git symbolic-ref --short refs/remotes/origin/HEAD | sed 's|^origin/||')
+git fetch origin "$BASE"     # AVANT tout calcul de périmètre
 ```
 
-C'est un **bug** de `slash-create-pr`, qui code `--base main` en dur à son étape
-4, et non une préférence : il a vocation à remonter en PR sur slash-interim, et
-cette surcharge à disparaître avec. Elle vit ici, et nulle part ailleurs.
+`$BASE` est la valeur à lui donner en lieu et place de `main`. Le `fetch` n'est
+pas une précaution de confort : dans un worktree, `refs/heads/` est partagé avec
+le checkout principal, donc le nom nu `develop` y désigne une ref figée au
+dernier `pull` fait là-bas. Pour un diff, viser `origin/$BASE` et jamais `$BASE`
+seul.
+
+C'est un **bug** du skill d'équipe, pas une préférence : il est décrit dans
+[SLI-8446](https://linear.app/slash-interim/issue/SLI-8446), avec la mesure qui
+l'a révélé — 17 fichiers annoncés contre 2 réels. Cette surcharge vit ici, et
+nulle part ailleurs, jusqu'à ce que le ticket soit traité.
 
 Le périmètre, lui, a été arbitré à l'étape 2 et ne se rejoue pas ici. La seule
 chose à vérifier est qu'il a tenu : si le lot n'a finalement rien de

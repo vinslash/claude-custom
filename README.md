@@ -12,9 +12,10 @@ casse et je reprends sans conséquence pour personne.
 migrer vers `slash-interim/.claude/`. C'est pour ça que chaque skill est écrit
 pour rester lisible hors de son contexte d'origine, et que les surcharges d'un
 skill du dépôt vivent ici en attendant. L'exemple courant est l'étape 7 de
-`skills/process-ticket/`, qui déduit la branche de base au lieu du `--base main`
-codé en dur par `slash-create-pr` — sans toucher à celui-ci, le temps de vérifier
-que la correction tient avant de la lui proposer.
+`skills/process-ticket/`, qui déduit la branche de base au lieu du `main` codé en
+dur par `slash-create-pr` — sans toucher à celui-ci. Le correctif est déposé côté
+équipe en [SLI-8446](https://linear.app/slash-interim/issue/SLI-8446) ; la
+surcharge disparaîtra quand le ticket sera traité.
 
 **Tout versionné, d'où le montage.** `~/.claude` mélange la config écrite à la
 main et l'état runtime — sessions, historique, `.credentials.json` : le dossier
