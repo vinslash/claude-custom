@@ -73,6 +73,10 @@ flowchart TD
 <td>Parcours complet d'un ticket Linear, du worktree déjà créé jusqu'à la PR ouverte — sept étapes suivies en task list, pour retrouver où on en est en revenant sur un ticket. Orchestre les autres.</td>
 </tr>
 <tr>
+<td nowrap><samp>/slash:review</samp></td>
+<td>Les quatre situations de review d'une PR — auto-review avant soumission, traitement de la review reçue, review de la PR d'un collègue, vérification de ses corrections. Le mode se <strong>déduit</strong> de l'état de la PR. Le recettage précède la lecture du code, rien n'est posté sans arbitrage, et une seconde passe ne juge que ce que la première a demandé.</td>
+</tr>
+<tr>
 <td nowrap><samp>/slash:case-dataset</samp></td>
 <td>Jeu de données de recette scopé à un ticket SLI, pour constater un bug avant correction puis prouver sa résolution.</td>
 </tr>
@@ -100,6 +104,7 @@ Qui charge qui — une flèche se lit « charge » :
 ```mermaid
 flowchart TD
     pt["/slash:process-ticket"]
+    rv["/slash:review"]
     co["/slash:observe"]
     re["/slash:writing"]
     rd["/slash:case-dataset"]
@@ -110,14 +115,18 @@ flowchart TD
     pt --> co
     pt --> re
     pt --> sc
+    rv --> re
+    rv --> ca
     co --> rd
     co --> ca
     re --> cg
     cg --> ca
 ```
 
-`process-ticket` orchestre, et personne ne l'appelle : c'est le point d'entrée.
-`chrome-isolation` est à l'autre bout, chargé par deux skills — application de la
+`process-ticket` et `review` sont les deux points d'entrée : personne ne les
+appelle, et ils se succèdent sans se charger — le premier s'arrête à la PR
+ouverte, le second reprend à la review.
+`chrome-isolation` est à l'autre bout, chargé par trois skills — application de la
 règle du fait général qui vit dans le skill général
 ([`docs/contribuer.md`](docs/contribuer.md)). `force-update` n'y figure pas : il
 n'appelle personne et personne ne l'appelle.

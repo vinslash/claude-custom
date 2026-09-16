@@ -14,6 +14,8 @@ Le domicile unique de tous les chiffres annoncés par cet atelier : chacun doit
 | Section « Comment tester » d'une PR | **obligatoire**, et **une seule** : un script de **cinq étapes au plus** avec l'attendu à chacune — déroulé, ou annoncé comme non joué avec son empêchement —, ou la phrase qui dit pourquoi rien n'est à recetter | Le relecteur recette avant de relire le code. Sans script, il saute l'étape — et personne ne vérifie que la PR fait ce qu'elle annonce. Au-delà de cinq étapes, c'est la PR qui fait trop de choses. |
 | Section « Screenshots » d'une PR | **obligatoire dès que le diff touche quelque chose de visible** — écran, composant, mail, PDF, export mis en forme —, en avant/après cadré sur la zone qui change | Le diff ne montre ni un libellé tronqué ni une couleur, et le script de recettage suppose qu'on sait à quoi ressemble le bon résultat. Surtout : l'« avant » n'est plus capturable une fois le correctif en place. |
 | Preuve de ce qui a été testé, dans la description | **rien** — le script dit quoi faire, pas ce qui a été fait | Un tableau de recette est une preuve adressée au demandeur, pas au relecteur. |
+| Remarques d'une passe de review | **une dizaine au plus**, chacune avec son poids — bloquant, suggestion ou nit — et sa proposition | Ce n'est plus une review mais une réécriture. La remarque à faire n'est plus sur le code mais sur la nature de la PR, et c'est celle-là qu'on pose. Portée par `slash:review`. |
+| Ce qu'une seconde passe de review juge | **ce que la première a demandé**, et rien d'autre — sauf un bloquant apparu depuis : régression ou bug sur le cas nominal. Le rejeu du script de recettage suit la même règle : les seules étapes visées par les remarques bloquantes | Une passe qui rejuge tout est sans fin par construction. Ce qu'on découvre au second tour et qui n'était pas demandé est un ticket, pas une remarque de cette PR. |
 | Rapport d'étape dans le chat | **3 à 5 lignes** en prose | S'il ne tient pas en cinq lignes, il contient autre chose qu'un rapport. |
 | Ce qui est hors périmètre | **une ligne**, puis on continue | Le ticket, et rien que le ticket ; c'est à l'utilisateur d'en faire un autre. Son détail va dans l'autre ticket, jamais dans celui-ci. |
 | Livrable écrit long — plan, handoff, analyse, dossier de décision | **200 lignes**, après une passe d'élagage obligatoire | Ce n'est plus un plan mais un dossier : le relecteur le survole au lieu de l'arbitrer, et son accord ne vaut plus rien. |
@@ -53,6 +55,7 @@ de **14 à 27** chacune.
 | Contrôle | Borne | Au-delà |
 | --- | --- | --- |
 | `process-ticket` → `scripts/red-flags-sddd.py`, à l'étape 3 | **zéro signalement** sur les fichiers back touchés par la branche | Un red flag SDDD non traité part en review. La remarque y porte sur une décision de conception — ports, mapper, entité ou value-object — donc sur du code déjà écrit : un aller-retour. |
+| `review` → le même script, en mode 1 (auto-review) et en mode 3 (PR d'un collègue) | **zéro signalement** avant de présenter la moindre remarque | Ce que la CI dit déjà, la review ne le dit pas : une remarque humaine sur ce qu'un script attrape est du crédit dépensé là où la machine est meilleure. En mode 3, ce que le script sort est au contraire la remarque la plus solide — elle cite une règle du dépôt, pas un goût. |
 
 ## Les portes anti-overkill
 
@@ -63,6 +66,7 @@ calibrent donc leur profondeur avant de s'engager :
 | Skill | Porte |
 | --- | --- |
 | `observe` | **Trois questions** : y a-t-il quelque chose d'observable, l'utilisateur connaît-il déjà la zone, un challenge est-il probable. Rien d'observable — refactor, renommage — c'est trois lignes et rendre la main. |
+| `review` | **Trois questions** : y a-t-il quelque chose à juger que la CI ne dit pas déjà, y a-t-il quelque chose à traiter — un thread ouvert dont le dernier message vient de l'autre partie —, le POURQUOI du ticket est-il connu. Une réponse qui coupe, et on rend la main en trois lignes. |
 | `case-dataset` | **Trois questions**, et dès qu'une réponse coupe, on s'arrête. Un jeu de données ne prouve rien sans **au moins deux lignes qui divergent** sur la dimension testée. |
 
 Le coût en tokens est lui aussi borné — voir [`contribuer.md`](contribuer.md).
