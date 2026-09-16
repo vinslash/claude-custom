@@ -100,13 +100,10 @@ particulières.
 ```markdown
 ## 🧪 Comment tester
 
-Prérequis : une annonce dont le champ `localisation` est renseigné mais dont le
-géocodage n'a pas abouti.
+Prérequis : une annonce dont le champ `localisation` est renseigné mais dont le géocodage n'a pas abouti.
 
-1. Ouvrir sa page de détail → la pastille affiche la ville et le code postal, au
-   lieu de l'icône seule.
-2. Ouvrir une annonce géocodée → affichage inchangé, au format près :
-   `Ville (73460)` et non `Ville ( 73460 )`.
+1. Ouvrir sa page de détail → la pastille affiche la ville et le code postal, au lieu de l'icône seule.
+2. Ouvrir une annonce géocodée → affichage inchangé, au format près : `Ville (73460)` et non `Ville ( 73460 )`.
 3. Ouvrir une annonce sans aucune localisation → « Localisation non précisée ».
 ```
 
@@ -117,8 +114,7 @@ refaire.
 **Variante — le script écrit, non joué.** Même script, mêmes attendus, une ligne
 de préambule qui dit qu'il n'a pas été déroulé et pourquoi :
 
-> ⚠️ Recette manuelle non jouée — à faire en review : `ats_command_candidate` est
-> vide en local et je n'ai pas de session interne authentifiée.
+> ⚠️ Recette manuelle non jouée — à faire en review : `ats_command_candidate` est vide en local et je n'ai pas de session interne authentifiée.
 
 Le relecteur sait alors qu'il essuie les plâtres. La raison est obligatoire et
 porte sur un empêchement : « la table est vide et le flag est off partout » en est
@@ -128,8 +124,7 @@ sans la raison, c'est la dérobade de la forme 2.
 **Forme 2 — rien à recetter à la main.** Une phrase, avec sa raison et ce qui
 couvre à la place :
 
-> Aucun recettage manuel nécessaire : extraction d'un helper à comportement
-> constant, couverte par les tests existants de `job-location.spec.ts`.
+> Aucun recettage manuel nécessaire : extraction d'un helper à comportement constant, couverte par les tests existants de `job-location.spec.ts`.
 
 Ce qui tranche entre les deux formes : **si la PR change quoi que ce soit qu'un
 utilisateur peut percevoir** — un écran, une réponse d'API, un mail, un export,

@@ -139,6 +139,25 @@ n'a pas été ouverte :
   nature, les captures, les tests, la checklist — et nos titres, tous au niveau
   `##`. Ses deux étiquettes sans contenu propre, `# 🎯 Description` et
   `### Explication`, disparaissent.
+
+## Un paragraphe, une seule ligne
+
+GitHub et Linear rendent **chaque retour à la ligne comme un `<br>`**. Une prose
+pré-wrappée à 80 colonnes impose donc sa mise en page au lecteur : dès qu'il
+rétrécit sa fenêtre, ouvre la PR sur son téléphone ou déplie la barre latérale,
+chacune de ces lignes se re-wrappe pour son compte et le paragraphe tombe en
+escalier de moignons — « relevés de », « que la », « 8202 → ». Le défaut ne se
+voit pas depuis la fenêtre large où on a rédigé : il ne se constate que chez
+celui qui lit.
+
+Donc, dans tout texte publié sur GitHub ou Linear : **un paragraphe s'écrit sur
+une seule ligne**, aussi longue qu'il le faut, et c'est le rendu qui décide où
+couper. Une ligne vide entre les paragraphes. Une puce, une étape de « Comment
+tester », une cellule de tableau : une ligne chacune, continuation comprise.
+
+L'exception est le **message de commit**, lu dans un terminal qui ne re-wrappe
+rien : sujet et corps restent wrappés à 72 colonnes.
+
 ## Ce qui ne va pas dans une PR
 
 À bannir, sans exception :

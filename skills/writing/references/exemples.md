@@ -3,6 +3,11 @@
 Paires avant/après tirées de vraies PR. À enrichir à chaque fois qu'une rédaction
 se fait retoquer.
 
+Dans les blocs d'exemple, **les paragraphes ne sont pas wrappés** : c'est la
+forme attendue d'un texte publié sur GitHub, pas un oubli de mise en forme — voir
+« Un paragraphe, une seule ligne » dans `SKILL.md`. Ne pas les replier à 80
+colonnes en passant.
+
 ---
 
 ## PR #158 — slash-web, SLI-8493 (2026-08-07)
@@ -17,34 +22,23 @@ Closes [SLI-8493](...)
 
 ## Problème
 
-Le bloc `top-job` lisait la ville et le code postal directement dans le marqueur
-géocodé du champ ACF `job_city` :
+Le bloc `top-job` lisait la ville et le code postal directement dans le marqueur géocodé du champ ACF `job_city` :
 
 ```php
 $city = $job_city['markers'][0]['geocode'][0]['properties']['address']['city'] ?? '';
 ```
 
-Or `slash_build_job_city_data()` ne construit ce marqueur que si le géocodage a
-abouti. Sans coordonnées, aucun marqueur n'est créé et le chemin retourne une
-chaîne vide — la pastille se rend alors avec l'icône seule, alors que la ville est
-bien en base dans le champ `localisation` de l'annonce.
+Or `slash_build_job_city_data()` ne construit ce marqueur que si le géocodage a abouti. Sans coordonnées, aucun marqueur n'est créé et le chemin retourne une chaîne vide — la pastille se rend alors avec l'icône seule, alors que la ville est bien en base dans le champ `localisation` de l'annonce.
 
 Exemple en production : https://slash-interim.com/trouver-une-mission/ats-44aa.../
 
 ## Correctif
 
-Le bloc passe par `sla_job_location()` (`cor/themes/peexeo/inc/slalocation.php`),
-le helper qui enchaîne déjà tous les replis : format Mapbox → ancien format
-OpenStreetMap → libellé du marqueur → champ `localisation` brut → ville du
-conseiller rattaché. Il est déjà utilisé par `search-jobs.php`,
-`discover-jobs-related`, `top-advisor` et l'AJAX des profils ; la page de détail
-était la seule à ne pas y passer.
+Le bloc passe par `sla_job_location()` (`cor/themes/peexeo/inc/slalocation.php`), le helper qui enchaîne déjà tous les replis : format Mapbox → ancien format OpenStreetMap → libellé du marqueur → champ `localisation` brut → ville du conseiller rattaché. Il est déjà utilisé par `search-jobs.php`, `discover-jobs-related`, `top-advisor` et l'AJAX des profils ; la page de détail était la seule à ne pas y passer.
 
-Quand aucune localisation n'est disponible, la pastille affiche « Localisation non
-précisée » au lieu d'une icône seule (2ᵉ critère d'acceptation).
+Quand aucune localisation n'est disponible, la pastille affiche « Localisation non précisée » au lieu d'une icône seule (2ᵉ critère d'acceptation).
 
-Effet de bord voulu : le format s'aligne sur celui des conseillers, `Ville (73460)`
-au lieu de `Ville ( 73460 )`.
+Effet de bord voulu : le format s'aligne sur celui des conseillers, `Ville (73460)` au lieu de `Ville ( 73460 )`.
 
 ## Recette
 
@@ -56,13 +50,9 @@ Vérifié en local, avant/après, sur trois cas :
 | Marqueur absent, champ `localisation` renseigné — **le bug** | *(vide)* | `Dommartin (80440)` |
 | Aucune localisation, aucune agence | *(vide)* | `Localisation non précisée` |
 
-3ᵉ critère d'acceptation — localisation affichée identique à la source ATS,
-contrôlée sur trois annonces d'agences différentes (301, 322, 242) :
-`Sainte-Hélène-sur-Isère (73460)`, `Dommartin (80440)`, `Roussillon (38150)`.
-Les trois correspondent.
+3ᵉ critère d'acceptation — localisation affichée identique à la source ATS, contrôlée sur trois annonces d'agences différentes (301, 322, 242) : `Sainte-Hélène-sur-Isère (73460)`, `Dommartin (80440)`, `Roussillon (38150)`. Les trois correspondent.
 
-`fr_FR.mo` recompilé avec `msgfmt` : diff des msgid limité à la seule chaîne
-ajoutée, aucune traduction perdue.
+`fr_FR.mo` recompilé avec `msgfmt` : diff des msgid limité à la seule chaîne ajoutée, aucune traduction perdue.
 ````
 
 **Ce qui cloche :**
@@ -90,26 +80,19 @@ Closes [SLI-8493](...)
 
 ## 🗺️ Contexte
 
-La page de détail d'une annonce, sur le site public. Sous le titre, une pastille
-affiche la ville et le code postal de la mission.
+La page de détail d'une annonce, sur le site public. Sous le titre, une pastille affiche la ville et le code postal de la mission.
 
 ## 🐛 Le problème
 
-Elle lisait la ville uniquement dans le marqueur géocodé de `job_city`. Quand le
-géocodage échoue, il n'y a pas de marqueur : la pastille s'affichait avec l'icône
-seule, alors que la ville est bien en base dans le champ `localisation`.
+Elle lisait la ville uniquement dans le marqueur géocodé de `job_city`. Quand le géocodage échoue, il n'y a pas de marqueur : la pastille s'affichait avec l'icône seule, alors que la ville est bien en base dans le champ `localisation`.
 
 [Exemple en prod](https://slash-interim.com/trouver-une-mission/ats-44aa.../)
 
 ## 🔧 Le correctif
 
-Le bloc passe désormais par `sla_job_location()`, le helper qui enchaîne déjà tous
-les replis (Mapbox, ancien format OSM, champ `localisation`, ville du conseiller).
-Les autres rendus d'annonce l'utilisent tous ; la page de détail était la seule à
-ne pas y passer.
+Le bloc passe désormais par `sla_job_location()`, le helper qui enchaîne déjà tous les replis (Mapbox, ancien format OSM, champ `localisation`, ville du conseiller). Les autres rendus d'annonce l'utilisent tous ; la page de détail était la seule à ne pas y passer.
 
-Et quand vraiment aucune localisation n'est disponible, la pastille affiche
-« Localisation non précisée » plutôt qu'une icône orpheline.
+Et quand vraiment aucune localisation n'est disponible, la pastille affiche « Localisation non précisée » plutôt qu'une icône orpheline.
 
 ## 📸 Screenshot
 
@@ -121,15 +104,11 @@ Même annonce, celle du lien ci-dessus.
 
 ## 🧪 Comment tester
 
-Prérequis : une annonce dont le champ `localisation` est renseigné mais dont le
-géocodage n'a pas abouti.
+Prérequis : une annonce dont le champ `localisation` est renseigné mais dont le géocodage n'a pas abouti.
 
-1. Ouvrir sa page de détail → la pastille affiche la ville et le code postal, au
-   lieu de l'icône seule.
-2. Ouvrir une annonce géocodée → affichage inchangé, au format près :
-   `Ville (73460)` et non `Ville ( 73460 )`.
-3. Ouvrir une annonce sans localisation ni agence rattachée → « Localisation non
-   précisée ».
+1. Ouvrir sa page de détail → la pastille affiche la ville et le code postal, au lieu de l'icône seule.
+2. Ouvrir une annonce géocodée → affichage inchangé, au format près : `Ville (73460)` et non `Ville ( 73460 )`.
+3. Ouvrir une annonce sans localisation ni agence rattachée → « Localisation non précisée ».
 ```
 
 **Ce qui est conservé, et pourquoi :**
@@ -170,14 +149,9 @@ son mode d'emploi au relecteur.**
 ```markdown
 # 🧭 Tests
 
-Simulation puis exécution réelle entre deux indépendants d'agences distinctes,
-`--page-size 2` pour traverser plusieurs pages du curseur. En simulation aucun
-port d'écriture n'est appelé ; en réel les quatre listes de la cible passent de
-vide à peuplé et la source garde tous ses liens.
+Simulation puis exécution réelle entre deux indépendants d'agences distinctes, `--page-size 2` pour traverser plusieurs pages du curseur. En simulation aucun port d'écriture n'est appelé ; en réel les quatre listes de la cible passent de vide à peuplé et la source garde tous ses liens.
 
-Deux pièges couverts par les tests : `ats_command.createdById` est un id
-d'**utilisateur** et n'a aucune clé étrangère — la confusion avec l'id
-d'indépendant passerait en silence ; et un échec n'interrompt pas les suivants.
+Deux pièges couverts par les tests : `ats_command.createdById` est un id d'**utilisateur** et n'a aucune clé étrangère — la confusion avec l'id d'indépendant passerait en silence ; et un échec n'interrompt pas les suivants.
 ```
 
 **Ce qui cloche :**
@@ -201,24 +175,15 @@ d'indépendant passerait en silence ; et un échec n'interrompt pas les suivants
 ```markdown
 ## 🧪 Comment tester
 
-Prérequis : deux indépendants dans deux agences distinctes, la source détenant
-des affaires, un client, des intérimaires et des commandes ATS. Le plus rapide
-est deux `POST /api/e2e/seed`, un par conseiller.
+Prérequis : deux indépendants dans deux agences distinctes, la source détenant des affaires, un client, des intérimaires et des commandes ATS. Le plus rapide est deux `POST /api/e2e/seed`, un par conseiller.
 
-1. `yarn command transfer-independent-portfolio --from-independent <source> --to-independent <cible> --dry-run --page-size 2`
-   → un rapport par nature où `scanned = transferred + skipped + failed`, un log
-   par page, et **aucune** écriture en base.
+1. `yarn command transfer-independent-portfolio --from-independent <source> --to-independent <cible> --dry-run --page-size 2` → un rapport par nature où `scanned = transferred + skipped + failed`, un log par page, et **aucune** écriture en base.
 2. Rejouer sans `--dry-run` → mêmes compteurs, `failed=0`.
-3. Connecté en tant que la cible : « Mes affaires » et « Mes clients » passent de
-   vide à peuplé, `/commandes` affiche les commandes ATS, et la fiche d'un
-   intérimaire transféré s'ouvre.
-4. Côté source : elle ne gère plus rien, mais conserve tous ses liens d'agence —
-   rien ne lui a été retiré.
+3. Connecté en tant que la cible : « Mes affaires » et « Mes clients » passent de vide à peuplé, `/commandes` affiche les commandes ATS, et la fiche d'un intérimaire transféré s'ouvre.
+4. Côté source : elle ne gère plus rien, mais conserve tous ses liens d'agence — rien ne lui a été retiré.
 5. Relancer la commande sur le même couple → `scanned=0`, rien n'est réécrit.
 
-À surveiller au déploiement : les commissions passées ne bougent pas
-(`margin.agencyId` est figé au mois), mais les marges historiques afficheront
-désormais la cible comme gestionnaire.
+À surveiller au déploiement : les commissions passées ne bougent pas (`margin.agencyId` est figé au mois), mais les marges historiques afficheront désormais la cible comme gestionnaire.
 ```
 
 **Le déplacement qui compte :** les deux pièges sont remontés dans « Le
