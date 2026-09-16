@@ -55,7 +55,7 @@ de **14 à 27** chacune.
 | Contrôle | Borne | Au-delà |
 | --- | --- | --- |
 | `process-ticket` → `scripts/red-flags-sddd.py`, à l'étape 3 | **zéro signalement** sur les fichiers back touchés par la branche | Un red flag SDDD non traité part en review. La remarque y porte sur une décision de conception — ports, mapper, entité ou value-object — donc sur du code déjà écrit : un aller-retour. |
-| `review` → le même script, en mode 1 (auto-review) et en mode 3 (PR d'un collègue) | **zéro signalement** avant de présenter la moindre remarque | Ce que la CI dit déjà, la review ne le dit pas : une remarque humaine sur ce qu'un script attrape est du crédit dépensé là où la machine est meilleure. En mode 3, ce que le script sort est au contraire la remarque la plus solide — elle cite une règle du dépôt, pas un goût. |
+| `review` → `red-flags-sddd.py` de `process-ticket`, en mode 1 (auto-review) et en mode 3 (PR d'un collègue) | **zéro signalement** avant de présenter la moindre remarque | Ce que la CI dit déjà, la review ne le dit pas : une remarque humaine sur ce qu'un script attrape est du crédit dépensé là où la machine est meilleure. En mode 3, ce que le script sort est au contraire la remarque la plus solide — elle cite une règle du dépôt, pas un goût. |
 
 ## Les portes anti-overkill
 
@@ -66,7 +66,7 @@ calibrent donc leur profondeur avant de s'engager :
 | Skill | Porte |
 | --- | --- |
 | `observe` | **Trois questions** : y a-t-il quelque chose d'observable, l'utilisateur connaît-il déjà la zone, un challenge est-il probable. Rien d'observable — refactor, renommage — c'est trois lignes et rendre la main. |
-| `review` | **Trois questions** : y a-t-il quelque chose à juger que la CI ne dit pas déjà, y a-t-il quelque chose à traiter — un thread ouvert dont le dernier message vient de l'autre partie —, le POURQUOI du ticket est-il connu. Une réponse qui coupe, et on rend la main en trois lignes. |
+| `review` | **Trois questions** : y a-t-il quelque chose à juger que la CI ne dit pas déjà, y a-t-il quelque chose à traiter, le POURQUOI du ticket est-il connu. Une réponse qui coupe, et on rend la main en trois lignes. La deuxième est **mécanisée** : `scripts/mode.py` refuse de sortir les instructions d'un mode 2 ou 4 si aucun thread n'attend de réponse. |
 | `case-dataset` | **Trois questions**, et dès qu'une réponse coupe, on s'arrête. Un jeu de données ne prouve rien sans **au moins deux lignes qui divergent** sur la dimension testée. |
 
 Le coût en tokens est lui aussi borné — voir [`contribuer.md`](contribuer.md).

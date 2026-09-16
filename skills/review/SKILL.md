@@ -48,47 +48,38 @@ remarque de cette PR. C'est un ticket.
 
 ## Le mode se déduit, il ne se demande pas
 
-Deux appels, en parallèle, avant toute autre chose :
+**Première action, avant toute autre**, depuis la racine du worktree :
 
 ```bash
-gh api user --jq .login
-gh pr view --json number,title,author,isDraft,reviewDecision,reviews,headRefName
+python3 <base-dir de ce skill>/scripts/mode.py [PR]
 ```
 
-Sans argument, `gh pr view` résout la PR depuis la branche courante — vrai dans
-le worktree de son propre ticket comme dans celui d'une PR sortie pour la
-relire. Un numéro ou une URL en `$ARGUMENTS` prime sur cette résolution.
+Il interroge GitHub — qui tu es, qui a ouvert la PR, qui a déjà soumis une
+review, quels threads attendent une réponse de toi —, en déduit le mode, et
+**imprime les instructions de ce mode**. Il n'y a donc pas de fichier à aller
+lire ensuite, et les trois modes qui ne servent pas ne coûtent rien.
 
-| Auteur de la PR | Reviews soumises | Mode |
-| --- | --- | --- |
-| moi, ou pas encore de PR | aucune d'un tiers | **1** — auto-review |
-| moi | au moins une d'un tiers | **2** — traiter la review reçue |
-| un collègue | aucune de moi | **3** — reviewer |
-| un collègue | au moins une de moi | **4** — vérifier les corrections |
+Sans argument, la PR se résout depuis la branche courante : vrai dans le worktree
+de son propre ticket comme dans celui d'une PR sortie pour la relire. Un numéro
+ou une URL en `$ARGUMENTS` prime sur cette résolution.
 
-Deux règles ferment le reste :
+**La phrase de l'utilisateur prime sur la détection.** Une auto-review demandée
+sur une PR déjà commentée est un mode 1, pas un mode 2 : `--mode 1` le force, et
+le script le dit dans son en-tête.
 
-- **la phrase de l'utilisateur prime sur la détection.** Une auto-review demandée
-  sur une PR déjà commentée est un mode 1, pas un mode 2 ;
-- **le mode déduit s'annonce en une ligne**, avec ce qui l'a décidé. Une
-  détection muette qui se trompe fait perdre toute la passe.
-
-Pas de PR du tout — l'auto-review précède l'étape 7 de `slash:process-ticket` —
-c'est le mode 1, et le périmètre se lit sur `origin/$BASE...HEAD`, où
-`BASE=$(git symbolic-ref --short refs/remotes/origin/HEAD | sed 's|^origin/||')`.
-Viser `origin/$BASE` et jamais `$BASE` nu : dans un worktree, le nom nu désigne
-une ref figée au dernier `pull` fait dans le checkout principal.
+**Annoncer le mode déduit en une ligne**, avec ce qui l'a décidé — le script le
+donne. Une détection muette qui se trompe fait perdre toute la passe.
 
 ## La porte anti-overkill
 
-Avant de s'engager, trois questions. Dès qu'une réponse coupe, on s'arrête et on
-rend la main en trois lignes.
+Le script répond à la deuxième question tout seul : en mode 2 et 4, il refuse de
+sortir des instructions si aucun thread n'attend de réponse. Les deux autres se
+posent avant de s'engager, et dès qu'une réponse coupe, on rend la main en trois
+lignes.
 
 1. **Y a-t-il quelque chose à juger ?** Un renommage mécanique, une montée de
    version, un fichier généré : la CI en dit plus que nous.
-2. **Y a-t-il quelque chose à traiter ?** En mode 2 et 4, si aucun thread n'est
-   ouvert avec un dernier message de l'autre partie, il n'y a pas de passe à
-   jouer — le dire plutôt qu'inventer du travail.
+2. **Y a-t-il quelque chose à traiter ?** — tranché par le script.
 3. **Le ticket est-il connu ?** Sans le POURQUOI du ticket, une review n'a
    aucune référence contre quoi juger et dérive vers le goût. Le lire avant.
 
@@ -102,26 +93,16 @@ c'est l'utilisateur qui décide d'en faire un ticket.
 PR existe pour être déroulée : c'est le seul moment où quelqu'un vérifie que la
 PR fait ce qu'elle annonce, et le relecteur assigné la joue avant d'ouvrir le
 diff. Ce qu'on en fait dépend du mode, et suit la même règle que tout le reste —
-une seconde passe ne rejoue que ce que les corrections touchent.
-
-| Mode | Ce qu'on fait du script |
-| --- | --- |
-| **1** — auto-review | On ne le rejoue pas : l'étape 4 de `slash:process-ticket` vient de le dérouler. On vérifie qu'il est **jouable par un tiers** — prérequis, jeu de données, point d'entrée, attendu à chaque étape. Absent ou illisible, ce n'est pas une remarque : la PR n'est pas prête à être soumise. |
-| **2** — traiter la review | On rejoue **les étapes que les corrections touchent**, avant de pousser. Une correction de review défait le constat aussi bien qu'un rebase, et personne ne le rejouera après. |
-| **3** — reviewer | On le déroule **en entier, avant d'ouvrir le diff**. |
-| **4** — vérifier | On rejoue **les étapes visées par les remarques bloquantes** du premier tour, et rien de plus. |
-
-Le navigateur est celui du serveur MCP `chrome`, une instance dédiée au
-worktree : charger **`slash:chrome-isolation`** avant la première action. La forme
-du script, elle, ne se discute pas ici — c'est `slash:writing` qui la porte.
+une seconde passe ne rejoue que ce que les corrections touchent. Le navigateur
+est celui du serveur MCP `chrome`, une instance dédiée au worktree : charger
+**`slash:chrome-isolation`** avant la première action. La forme du script, elle,
+ne se discute pas ici — c'est `slash:writing` qui la porte.
 
 **Ce que la CI dit déjà, la review ne le dit pas.** Lint, typage, tests, red
 flags SDDD : une remarque humaine sur du formatage est du crédit dépensé là où un
-script est meilleur que nous. Les contrôles mécaniques se **lancent** au début des
-modes 1 et 3, et ce qu'ils sortent se traite selon qui possède le code — sur la
-sienne, ça se corrige ou s'assume avant de soumettre, et ça ne se présente pas ;
-sur celle d'un collègue, c'est au contraire la remarque la plus solide de toutes,
-puisqu'elle cite une règle du dépôt et non un goût.
+script est meilleur que nous. Les contrôles mécaniques se **lancent** au début
+des modes 1 et 3 ; ce qu'ils sortent se traite selon qui possède le code, et
+chaque mode le dit.
 
 **Chaque remarque porte un poids** — bloquant, suggestion, nit. Sans lui, tout est
 traité au même niveau.
@@ -139,7 +120,7 @@ approbation. C'est le point de ce skill.
 
 **On ne modifie jamais le code d'une PR qu'on relit.** En mode 3 et 4, le worktree
 porte la branche d'un collègue : on lit, on lance, on constate. Aucune écriture,
-aucun commit, aucun push.
+aucun commit, aucun push — fichier de review-patterns compris.
 
 ## L'arbitrage
 
@@ -165,122 +146,6 @@ le code mais sur la nature de la PR, et c'est celle-là qu'on pose.
 La mécanique `gh` — lire les threads, poster une review ancrée aux lignes,
 répondre, résoudre, approuver — est dans `references/mecanique-gh.md`. La lire au
 moment de publier, pas avant.
-
----
-
-## Mode 1 — L'auto-review, avant de soumettre
-
-Ce qu'on cherche : ce que le relecteur va demander, pour qu'il n'ait pas à le
-demander.
-
-1. **Lancer les contrôles mécaniques** sur la branche — lint et typage ciblés sur
-   ce qui est touché, et le contrôle des red flags SDDD si le diff touche
-   `backend/src/` — `python3 <base-dir de ce skill>/../process-ticket/scripts/red-flags-sddd.py`,
-   depuis la racine du worktree. Ce qu'ils sortent se corrige, il ne se présente pas.
-2. **Relire le diff contre le ticket**, pas contre un idéal : un critère
-   d'acceptation non couvert, un cas limite du ticket oublié, un effet de bord
-   hors périmètre qui a été livré quand même.
-3. **Vérifier que la PR est relisible** : le script « Comment tester » est jouable
-   par un tiers — voir plus haut —, les captures avant/après sont là si l'UI
-   bouge, le lien Linear referme le ticket. C'est `slash:writing` qui porte ces
-   trois exigences ; une PR qui les rate se fera retoquer avant même la lecture
-   du code. Si la PR n'est
-   pas encore ouverte, le point tient quand même : c'est ce qu'il restera à
-   écrire, et l'étape 7 de `slash:process-ticket` s'en charge.
-
-Rien n'est posté. Le livrable est le tableau, la reco globale — soumettre, ou
-corriger d'abord —, et les corrections appliquées après ton arbitrage.
-
-## Mode 2 — Traiter la review reçue
-
-1. **Lire tous les threads**, résolus compris : un débat déjà tranché ne se
-   rouvre pas.
-2. **Ne retenir que les threads ouverts dont le dernier message vient du
-   relecteur.** Un thread `isOutdated` se vérifie sur le code actuel avant d'être
-   traité — la remarque peut être tombée toute seule.
-3. **Pour chaque thread, une position** : corrigé, corrigé autrement, ou assumé.
-   « Assumé » est une réponse légitime et fréquente — un choix volontaire se
-   défend, il ne se plie pas par politesse.
-4. **Appliquer les corrections** dans le code, groupées par intention, puis
-   **rejouer les étapes du script que ces corrections touchent**. Une correction
-   faite pour satisfaire un relecteur peut casser ce qu'un autre a validé.
-5. **Présenter le tableau** : un thread par ligne, la position, et la réponse
-   proposée en une ou deux phrases.
-
-Après arbitrage : committer (`slash-commit`), pousser, puis poster les réponses
-retenues et résoudre les threads traités. Un thread dont la réponse n'a pas été
-retenue reste ouvert — et on dit lesquels.
-
-Les réponses partent **sous ton nom**, sans préfixe ni signature d'agent : tu les
-as arbitrées, elles sont de toi.
-
-## Mode 3 — Reviewer la PR d'un collègue
-
-**Commencer par recetter, pas par lire le diff.** Le worktree porte déjà sa
-branche : dérouler le script en entier, et noter à chaque étape l'écart entre
-l'attendu annoncé et ce qu'on voit. Un écart est une remarque en soi, et la plus
-solide de toutes — elle ne se discute pas.
-
-Absence de « Comment tester », ou script qui ne se déroule pas : c'est la
-première remarque, elle est bloquante, et elle se pose **tout de suite** plutôt
-qu'à la fin. On ne relit pas le code d'une PR dont personne ne peut vérifier
-l'effet, et l'auteur peut réparer ça pendant qu'on lit.
-
-Puis, dans cet ordre :
-
-1. **Les contrôles mécaniques**, comme en mode 1 — ce qu'ils sortent est une
-   remarque solide, ancrée sur une règle du dépôt et non sur un goût.
-2. **Le ticket contre la PR** : ce que le ticket demande est-il livré, entier, et
-   rien d'autre ?
-3. **Le code** : correction sur les cas limites, régression sur l'existant,
-   décision de conception qui coûtera cher à défaire. Pas le style.
-
-Livrable : le tableau et la reco globale. Après arbitrage, la review part d'un
-bloc — remarques ancrées aux lignes et état de review dans le même envoi.
-
-## Mode 4 — Vérifier les corrections
-
-**Ne juger que ce que la première passe a demandé.** C'est la règle du skill, et
-c'est ici qu'elle s'applique le plus littéralement.
-
-**Rejouer avant de juger sur pièces.** Les étapes du script visées par les
-remarques bloquantes du premier tour, et elles seules : un thread peut être
-répondu correctement et la correction ne pas marcher. Si les corrections ont
-changé le script lui-même, c'est le nouveau qu'on déroule.
-
-Puis reprendre les threads ouverts par nous, un par un, et leur donner un
-verdict :
-
-| Verdict | Ce qu'on en fait |
-| --- | --- |
-| **traité** | résoudre le thread |
-| **traité autrement, et c'est recevable** | résoudre, en le disant en une phrase |
-| **pas traité**, ou la réponse ne répond pas | laisser ouvert, relancer sur ce point précis |
-
-Ce qu'on découvre en relisant et qui n'était pas demandé au premier tour ne
-devient une remarque que s'il est **bloquant** — une régression, un bug sur le cas
-nominal. Tout le reste est un ticket, et se dit en une ligne.
-
-Reco globale : approuver si le rejeu passe, qu'aucun verdict n'est « pas traité »
-et qu'aucun bloquant n'est apparu. Sinon, demander des changements sur les seuls
-points qui restent.
-
-## La capitalisation, en modes 2 et 4 seulement
-
-Une remarque qu'un humain a attrapée et qu'un script aurait dû attraper est le
-seul vrai signal pour faire évoluer les guidelines. C'est ce qu'on capitalise, et
-rien d'autre : nos propres remarques des modes 1 et 3 n'ont pas cette valeur de
-preuve — personne ne les a validées.
-
-Verser ces cas dans `.claude/review-patterns/<slug-branche>.md`, au format que
-`slash-process-review-patterns` consomme. Si rien n'est généralisable, ne pas
-créer le fichier : un pattern creux coûte plus cher que pas de pattern.
-
-En mode 2, le fichier part avec la branche, dans les commits de la PR. En mode 4,
-il n'y a pas de branche à nous : l'écrire dans le **clone principal du dépôt**, pas
-dans le worktree de relecture, et le laisser non committé — l'utilisateur le
-versera avec son prochain ticket. Rien ne s'écrit jamais sur la branche d'un
-collègue, fichier de patterns compris.
 
 ## Ce que ce skill ne fait pas
 
