@@ -13,8 +13,8 @@ description: >
   rejoue que les étapes que les corrections touchent. Rien n'est posté sur
   GitHub sans arbitrage de l'utilisateur, remarque par remarque. On ne modifie
   jamais le code d'une PR qu'on relit.
-  Use when the user says « fais l'auto-review », « avant de soumettre la PR à
-  review », « untel a fait la review, il faut traiter », « on m'a assigné à la
+  Use when the user says « fais l'auto-review », « fais la self-review », « je
+  relis ma PR avant de la soumettre », « avant de soumettre la PR à review », « untel a fait la review, il faut traiter », « on m'a assigné à la
   review de cette PR », « untel a traité nos retours », « on vérifie et on
   approuve », or `/slash:review`. Remplace `slash-pr-review` et
   `slash-review-code` du dépôt slash-interim sur ces quatre situations. Ne PAS

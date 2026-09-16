@@ -137,8 +137,10 @@ pas les confondre avec les skills du dépôt slash-interim (`slash-commit`,
 `slash-create-pr`), qui gardent le leur.
 
 Taper la commande reste l'exception : un skill part surtout **de lui-même**, sur
-sa description. `writing` et `chrome-isolation` s'appuient en plus sur une amorce
-dans `CLAUDE.md`, parce que leur déclenchement ne peut pas dépendre du hasard.
+sa description. `writing`, `review` et `chrome-isolation` s'appuient en plus sur
+une amorce dans `CLAUDE.md`, parce que leur déclenchement ne peut pas dépendre du
+hasard. Pour `review`, la raison est mesurée : `slash-review-code`, du dépôt
+slash-interim, matche les mêmes phrases et a gagné une self-review réelle.
 
 ## Installation
 
