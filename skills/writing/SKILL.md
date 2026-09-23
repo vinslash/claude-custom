@@ -271,3 +271,12 @@ vraies PR, annotées. Elles portent plus que les règles ci-dessus.
 
 Quand tu produis une description qui se fait retoquer par l'utilisateur,
 **ajoute la paire à ce fichier**. C'est comme ça que ce skill s'affine.
+
+**Et écris-la dans `~/Development/claude-custom`, jamais dans le clone
+installé.** Le chemin `references/exemples.md` résolu depuis
+`~/.claude/skills/slash/` vise le clone, que personne ne doit éditer : un seul
+fichier modifié dedans et le `merge --ff-only` de `bin/update.sh` refuse — toutes
+les mises à jour s'arrêtent, sans que rien ne l'affiche. C'est arrivé le 22/09,
+et ça n'a été vu que par un `/slash:force-update` lancé pour autre chose. Le
+fichier à ouvrir est donc
+`~/Development/claude-custom/skills/writing/references/exemples.md`.
