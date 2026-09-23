@@ -113,7 +113,13 @@ sait pas par quoi remplacer. C'est `slash:writing` qui gouverne le texte, et il
 se charge **avant** de rédiger quoi que ce soit qui parte sur GitHub.
 
 **Une reco globale**, toujours, qui se traduit en un état GitHub : commenter,
-demander des changements, approuver.
+demander des changements, approuver. C'est l'`event` qui la porte, et GitHub
+l'affiche en tête de la PR — donc **le corps de la review ne la répète pas**. Il
+dit ce que ce verdict veut dire pour l'auteur : ce qui est sûr, ce qui ne l'est
+pas, ce qu'il lui reste à faire. « Reco : approuver » en ouverture est le
+vocabulaire du **tableau d'arbitrage**, celui qu'on soumet avant de publier, et
+il n'a rien à faire dans le texte publié (paire annotée dans
+`slash:writing`, `references/exemples.md`, PR 1110).
 
 **Rien ne part sans arbitrage.** Ni une réponse, ni une remarque, ni une
 approbation. C'est le point de ce skill.

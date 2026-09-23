@@ -47,7 +47,7 @@ notifie l'auteur à chaque fois et le fait travailler sur une review incomplète
 ```bash
 cat > /tmp/review.json <<'JSON'
 {
-  "body": "Corps de la review — la reco globale, en deux ou trois phrases.",
+  "body": "Corps de la review — ce que le verdict veut dire pour l'auteur, en deux ou trois phrases. Jamais « Reco : approuver » : l'état est déjà affiché par GitHub.",
   "event": "REQUEST_CHANGES",
   "comments": [
     { "path": "backend/src/foo/foo.use-case.ts", "line": 42,
