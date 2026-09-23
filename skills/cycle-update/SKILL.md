@@ -10,11 +10,16 @@ description: >
   incidents et releases. Confronte le réalisé aux **attendus** de la fiche du
   rôle plutôt que d'énumérer, et rédige la passation contre la checklist de prise
   de poste du suivant. Rien n'est posté sans validation explicite.
+  **« sprint » vaut « cycle » partout** : l'équipe dit les deux.
   Use when the user says « update de fin de cycle », « point d'étape », « project
-  update », « fais le point sur le projet », « je passe la main sur le rôle »,
-  « la passation du rôle », « qu'est-ce que j'ai fait ce cycle », or
-  `/slash:cycle-update`; and whenever someone holding a cycle role wants to leave
-  a trace of where things stand.
+  update », « fais le point sur le projet », « je veux faire le point sur mon
+  projet », « j'ai le lead sur ce projet ce cycle », « je passe la main sur le
+  rôle », « la passation du rôle », « qu'est-ce que j'ai fait ce cycle ou ce
+  sprint », « laisser une trace de où on en est », or `/slash:cycle-update`; and
+  whenever someone who holds a cycle role or leads a project wants to report on
+  it. Se déclencher **même si la demande se lit aussi comme « explique-moi où en
+  est ce projet »** : la question d'entrée du skill lève l'ambiguïté en un clic,
+  alors qu'un résumé rendu hors skill n'applique aucune de ses règles.
   Ne PAS utiliser pour écrire la **description** d'un projet Linear, pour rédiger
   un daily, ni pour traiter un ticket (→ `slash:process-ticket`).
 ---
