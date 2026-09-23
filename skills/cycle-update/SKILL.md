@@ -200,6 +200,19 @@ deux outils de suivi. Elle se compte et elle se dit.
 **Fin de cycle → lire `references/fin-de-cycle.md` avant d'écrire.** Ses sections
 supplémentaires et leurs règles ne sont pas ici, et ne s'improvisent pas.
 
+**Le réalisé dit ce que ça change, pas quels tickets ont bougé.** Linear affiche
+déjà la liste des issues à côté de l'update : la répéter en prose ne dit rien de
+neuf, et c'est le même principe que « le relecteur a déjà le diff ». Une
+énumération de tickets habillée en phrase reste une énumération.
+
+Donc : **une phrase-chapeau en gras par idée, la conséquence en prose**, et une
+**prochaine étape qui nomme qui fait quoi** quand il y en a une. Un identifiant
+SLI ne se cite que si le lecteur doit aller voir **celui-là précisément** — un
+arbitrage, une alerte, un sujet que le suivant reprend. Le modèle est ce que le
+produit écrit lui-même sur ses projets : « l'axe de découpage change », « next
+step : Julien explore la spec » — trois lignes qui portent plus qu'une liste de
+sept livraisons.
+
 Un **point d'étape** porte quatre choses. La santé et le réalisé tiennent en
 **150 mots** ; les arbitrages, une ligne chacun, sans plafond — on coupe le
 récit, jamais une décision à prendre.
