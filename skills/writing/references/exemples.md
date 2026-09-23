@@ -202,3 +202,35 @@ version « avant ». On a d'abord gardé le titre en ne changeant que le lecteur
 en tenant que le skill gouverne le contenu et pas la nomenclature. Un titre qui
 porte la mauvaise consigne la reproduit pourtant à chaque PR, quoi qu'en dise le
 skill. D'où `## 🧪 Comment tester`, qui la porte juste.
+
+---
+
+## PR #1110 — slash-interim, SLI-9009 (2026-09-22) — corps de review
+
+Review de la PR d'un collègue, soumise en `APPROVE` avec six remarques ancrées.
+Ce qui s'est fait retoquer n'est pas le fond mais la **première phrase**.
+
+### ❌ Avant
+
+```markdown
+Reco : **approuver**. Rien ne casse sur le chemin livré — flag éteint, les six remarques ci-dessous portent toutes sur le chemin flag allumé.
+```
+
+### ✅ Après
+
+```markdown
+Rien ne bloque le merge : ce qui part en MEP est le chemin flag éteint, et les six remarques ci-dessous portent toutes sur le chemin flag allumé.
+```
+
+**Ce qui n'allait pas.** « Reco : approuver » est le vocabulaire du **tableau
+d'arbitrage** — celui qu'on soumet à l'utilisateur avant de publier. Une fois la
+review soumise, l'état `APPROVED` est déjà porté par GitHub, en vert, en haut de
+la page. Le répéter en ouverture ne dit rien de neuf et se lit comme une note
+interne laissée dans le texte publié.
+
+**La leçon, transposable :** un livrable ne rejoue pas l'étiquette de la
+décision qui l'a produit. Là où l'interface porte déjà le verdict — état de
+review, label de PR, statut de ticket —, la première phrase sert à dire **ce que
+le verdict veut dire pour le lecteur** : ce qui est sûr, ce qui ne l'est pas, et
+ce qu'il lui reste à faire. Le même piège existe sur une description de PR qui
+s'ouvre par « PR de bug » alors que la case est cochée juste au-dessus.
