@@ -77,6 +77,10 @@ flowchart TD
 <td>Les quatre situations de review d'une PR — auto-review avant soumission, traitement de la review reçue, review de la PR d'un collègue, vérification de ses corrections. Le mode se <strong>déduit</strong> de l'état de la PR. Le recettage précède la lecture du code, rien n'est posté sans arbitrage, et une seconde passe ne juge que ce que la première a demandé.</td>
 </tr>
 <tr>
+<td nowrap><samp>/slash:cycle-update</samp></td>
+<td>Les updates d'un projet Linear au fil du cycle : le <strong>point d'étape</strong> pour le produit, et l'<strong>update de fin de cycle</strong> qui le contient et y ajoute la passation. La forme se déduit du <strong>rôle</strong> tenu, et le réalisé se <strong>confronte aux attendus</strong> de sa fiche au lieu de s'énumérer. Le travail n'est pas d'écrire mais de rassembler.</td>
+</tr>
+<tr>
 <td nowrap><samp>/slash:case-dataset</samp></td>
 <td>Jeu de données de recette scopé à un ticket SLI, pour constater un bug avant correction puis prouver sa résolution.</td>
 </tr>
@@ -111,6 +115,7 @@ flowchart TD
     sc["/slash:pr-scope"]
     cg["/slash:github-screenshots"]
     ca["/slash:chrome-isolation"]
+    cu["/slash:cycle-update"]
 
     pt --> co
     pt --> re
@@ -121,11 +126,14 @@ flowchart TD
     co --> ca
     re --> cg
     cg --> ca
+    cu --> re
 ```
 
-`process-ticket` et `review` sont les deux points d'entrée : personne ne les
-appelle, et ils se succèdent sans se charger — le premier s'arrête à la PR
-ouverte, le second reprend à la review.
+`process-ticket` et `review` sont les deux points d'entrée du parcours d'un
+ticket : personne ne les appelle, et ils se succèdent sans se charger — le
+premier s'arrête à la PR ouverte, le second reprend à la review. `cycle-update`
+est un troisième point d'entrée, hors parcours : il part à la fin du cycle, pas
+sur un ticket.
 `chrome-isolation` est à l'autre bout, chargé par trois skills — application de la
 règle du fait général qui vit dans le skill général
 ([`docs/contribuer.md`](docs/contribuer.md)). `force-update` n'y figure pas : il

@@ -24,6 +24,8 @@ Le domicile unique de tous les chiffres annoncés par cet atelier : chacun doit
 | La forme du code retenue, dans le plan (ticket qui touche `backend/src/`) | **trois à cinq lignes** : arbo plate ou SDDD, use-case ou application service, ports, entité ou value-object, et le fichier existant imité | La forme se décide dans le plan ou elle se subit en review : à l'implémentation elle est déjà écrite, et la remarque coûte un aller-retour. |
 | Le POURQUOI d'un ticket | **cinq lignes**, avec les mots de l'utilisateur | C'est la matière première de la description de PR, pas une analyse. |
 | Message de commit (slash-interim) | **titre seul, sans corps** | Convention du dépôt, portée par `slash-commit`. |
+| Relevé de rôle de fin de cycle | **3 puces au plus sur ce qui a été fait** — les points saillants — et **3 au plus sur le vécu du rôle**. Portée par `slash:cycle-update`, borne posée par l'équipe | Un relevé exhaustif n'est pas lu par le suivant, et c'est lui le destinataire. Ce qui déborde des trois puces relève de la section de passation, qui répond à sa checklist de prise de poste. |
+| Temps de production d'un update de cycle | **10 minutes** pour un update de fin de cycle, **3 minutes** pour un point d'étape, aller-retour de validation compris | C'est le critère de réussite de `slash:cycle-update`, pas un vœu : au-delà, le rituel se fait sauter — il l'a déjà été sur deux updates sur trois. Ce qui se coupe alors est la collecte, jamais la validation. Un point d'étape qui dépasse ses 3 minutes ne se paye plus : il devait faire baisser le coût de la fin de cycle, pas s'y ajouter. |
 
 Les 150 à 250 mots se comptent hors script de recettage, et ne montent pas avec
 le diff : une PR qui livre une fonctionnalité entière se décrit dans les mêmes
