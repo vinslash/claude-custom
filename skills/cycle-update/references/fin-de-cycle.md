@@ -3,6 +3,11 @@
 Ce que l'update de fin de cycle ajoute au point d'étape. À lire avant de rédiger,
 et seulement dans ce cas — un point d'étape n'en a pas besoin.
 
+**250 mots sur la santé et le réalisé.** Les arbitrages tiennent une ligne
+chacun, sans plafond, et la passation n'a pas de borne : son lecteur est le
+suivant, il a deux minutes et non dix secondes, et c'est la seule section qu'on
+ne coupe pas. On coupe le récit, jamais une décision à prendre.
+
 ## Les sections, dans l'ordre
 
 **Relevé de rôle** (Run, Idle time) :
@@ -22,6 +27,12 @@ débordement arbitré pour un commando.
 
 Confronter le réalisé aux attendus de la fiche plutôt qu'énumérer. « 3 sur 4, la
 passe Dependabot n'est pas passée » vaut dix fois une liste de réalisations.
+
+**Rien ne se dit deux fois.** La confrontation porte tout ce qu'elle couvre ;
+« ce que j'ai fait » ne garde que ce qui tombe **en dehors** des attendus — et
+c'est souvent l'essentiel du cycle, puisque c'est l'imprévu. Un relevé qui
+annonce la passe Dependabot en puce puis la recoche en attendu paie deux fois la
+même information.
 
 Un attendu non tenu **se dit**, sans être adouci ni transformé en échec : la
 fiche du dev Plateforme le pose elle-même — un cycle où la prod a brûlé et où les

@@ -195,7 +195,9 @@ deux outils de suivi. Elle se compte et elle se dit.
 **Fin de cycle → lire `references/fin-de-cycle.md` avant d'écrire.** Ses sections
 supplémentaires et leurs règles ne sont pas ici, et ne s'improvisent pas.
 
-Un **point d'étape** porte quatre choses :
+Un **point d'étape** porte quatre choses. La santé et le réalisé tiennent en
+**150 mots** ; les arbitrages, une ligne chacun, sans plafond — on coupe le
+récit, jamais une décision à prendre.
 
 - **La santé** — `On track` / `At risk` / `Off track` ;
 - **Le réalisé** depuis le dernier point ;
@@ -216,11 +218,12 @@ il part une fois.
 
 ## Garde-fous
 
-- **La santé ne se déduit jamais.** La proposer avec son motif et, quand elle
-  n'est pas tranchable, **nommer l'autre lecture** plutôt que choisir — un
-  commando dont le code est livré mais la recette pas commencée se lit `On track`
-  ou `At risk` selon ce qu'on appelle clôture. Sur un relevé de rôle, elle se lit
-  contre les attendus de la fiche, pas contre un plan que le run n'a pas.
+- **La santé ne se déduit jamais**, et elle **tient en une ligne** : le verdict,
+  puis le fait qui le porte. C'est elle que le fil d'activité montre, et souvent
+  la seule chose qu'on lira. Quand elle n'est pas tranchable, l'autre lecture ne
+  s'explique pas là — elle descend dans les arbitrages, où trancher la santé
+  devient une décision à prendre. Sur un relevé de rôle, elle se lit contre les
+  attendus de la fiche, pas contre un plan que le run n'a pas.
 - **Rien ne s'invente.** Une source muette donne une section vide et un « je n'ai
   rien trouvé sur X », jamais une phrase de remplissage. Un update qui brode est
   pire qu'un update absent.
