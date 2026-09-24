@@ -142,9 +142,11 @@ aujourd'hui pour un point d'étape, à sa clôture pour une fin de cycle.
 
 Le **dernier update ne fait que remonter le départ**, jamais l'inverse : posté
 pendant le cycle, la période reprend où il s'arrête ; antérieur au cycle, il ne
-sert qu'à mesurer le trou — **qu'on nomme en une ligne sans le combler**.
-Remonter à un update vieux d'un mois ferait raconter trois cycles et le travail
-de plusieurs personnes. Regarder aussi **qui l'a écrit** : un update du produit
+sert qu'à mesurer le trou. **Ce trou ne se publie pas** : il se dit à l'auteur
+au moment de valider, pour qu'il sache ce que l'update ne couvre pas, et
+n'apparaît jamais dans le texte posté — un lecteur n'a que faire de ce qui n'a
+pas été écrit. Remonter à un update vieux d'un mois ferait raconter trois cycles
+et le travail de plusieurs personnes. Regarder aussi **qui l'a écrit** : un update du produit
 sur une recette peut être le plus récent sans rien dire de la livraison.
 
 ### 3. Rassembler
@@ -205,6 +207,12 @@ déjà la liste des issues à côté de l'update : la répéter en prose ne dit 
 neuf, et c'est le même principe que « le relecteur a déjà le diff ». Une
 énumération de tickets habillée en phrase reste une énumération.
 
+**Ni liste, ni compte.** « 9 livrés, 2 doublons », « les 4 premiers tickets
+tournent en prod », « le jalon est à 100 % » ne disent rien à qui n'ouvre pas le
+tracker. Ce qui parle, ce sont les **fonctionnalités** : ce qu'un utilisateur
+peut faire maintenant et ne pouvait pas avant, et ce qui l'attend à la prochaine
+release.
+
 Donc : **une phrase-chapeau en gras par idée, la conséquence en prose**, et une
 **prochaine étape qui nomme qui fait quoi** quand il y en a une. Un identifiant
 SLI ne se cite que si le lecteur doit aller voir **celui-là précisément** — un
@@ -222,26 +230,34 @@ récit, jamais une décision à prendre.
 - **Les attendus, en projection** : ce qui n'est pas encore engagé, tant qu'il
   est temps de corriger. C'est la meilleure raison d'en faire un sur un rôle de
   Run — « le runbook n'est pas engagé » à mi-parcours est un signal ;
-- **Les arbitrages et alertes** — c'est là qu'ils servent encore. Sur un projet,
-  le **débordement qui se voit venir** en fait partie : annoncé à mi-parcours il
-  se replanifie, annoncé le dernier jour il désorganise le cycle suivant.
+- **Décisions & arbitrages**, puis **Alertes** — deux sections, pas une. Un
+  arbitrage demande à quelqu'un de trancher et se nomme avec lui ; une alerte
+  signale un risque sans appeler de décision immédiate. Les mélanger noie les
+  décisions dans les risques. C'est là qu'elles servent encore : sur un projet,
+  le **débordement qui se voit venir** est une alerte, et annoncé à mi-parcours
+  il se replanifie.
 
 ### 5. Le brouillon, puis poster
 
 Afficher le brouillon entier et poser **une seule** question : *qu'est-ce que
 j'ai raté ?* C'est la plus rentable — la personne corrige au lieu de composer.
+La santé s'y arbitre explicitement, parce que ce qui la porte est souvent
+invisible de la collecte : congés, tiers, complexité imprévue.
 
 Puis `save_status_update`, **sur go explicite**. Un update notifie les abonnés :
 il part une fois.
 
 ## Garde-fous
 
-- **La santé ne se déduit jamais**, et elle **tient en une ligne** : le verdict,
-  puis le fait qui le porte. C'est elle que le fil d'activité montre, et souvent
-  la seule chose qu'on lira. Quand elle n'est pas tranchable, l'autre lecture ne
-  s'explique pas là — elle descend dans les arbitrages, où trancher la santé
-  devient une décision à prendre. Sur un relevé de rôle, elle se lit contre les
-  attendus de la fiche, pas contre un plan que le run n'a pas.
+- **La santé est un jugement humain, jamais un calcul.** L'état des tickets
+  l'alimente, il ne la produit pas : des congés sur une partie de l'équipe, une
+  difficulté avec un tiers, une complexité technique imprévue pèsent autant et
+  n'apparaissent dans aucune source. « Tous les tickets sont clos et le jalon est
+  à 100 % » n'est donc pas une santé, c'est une métrique. Elle se **demande**, et
+  s'écrit en **une ligne** — le verdict, puis ce qui le porte, qui n'est pas
+  forcément un chiffre. Quand elle n'est pas tranchable, l'autre lecture descend
+  dans les arbitrages. Sur un relevé de rôle, elle se lit contre les attendus de
+  la fiche, pas contre un plan que le run n'a pas.
 - **Rien ne s'invente.** Une source muette donne une section vide et un « je n'ai
   rien trouvé sur X », jamais une phrase de remplissage. Un update qui brode est
   pire qu'un update absent.

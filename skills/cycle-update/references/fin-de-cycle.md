@@ -15,11 +15,12 @@ ne coupe pas. On coupe le récit, jamais une décision à prendre.
 1. **La santé**, adossée aux attendus du rôle ;
 2. **Ce qui a été fait** — trois puces au plus, review comprise ;
 3. **Les attendus**, en bilan ;
-4. **Les arbitrages et alertes** ;
+4. **Décisions & arbitrages**, puis **Alertes** — deux sections distinctes ;
 5. **Ce qui attend le suivant** ;
 6. **Le vécu du rôle** — trois puces au plus.
 
-**Project update** (Build) : la santé, le réalisé, les arbitrages et alertes, puis
+**Project update** (Build) : la santé, le réalisé, les décisions & arbitrages,
+les alertes, puis
 **le jalon** — au moins un jalon mergé pour un projet standard, sujet clôturé ou
 débordement arbitré pour un commando.
 
