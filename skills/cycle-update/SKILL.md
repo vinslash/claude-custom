@@ -250,8 +250,10 @@ clic :
   l'option ;
 - **ce qui le porte, au-delà de l'avancement** — en choix multiple : congés sur
   une partie de l'équipe, difficulté avec un tiers, complexité technique
-  imprévue, rien d'autre que l'avancement. La liste n'est pas fermée : « autre »
-  reste ouvert, et c'est souvent là qu'est la vraie raison.
+  imprévue, rien d'autre que l'avancement. La liste n'est pas fermée :
+  `AskUserQuestion` ajoute « autre » de lui-même, en saisie libre — ne pas le
+  mettre dans les options, ce serait gaspiller une des quatre places. Et c'est
+  souvent là qu'est la vraie raison : la liste du CTO se terminait par « etc. ».
 
 Puis **écrire la ligne de santé** à partir des deux réponses — le verdict, puis
 ce qui le porte, en une phrase qui les tient ensemble. Jamais l'énumération des
