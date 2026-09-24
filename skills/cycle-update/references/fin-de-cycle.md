@@ -13,7 +13,9 @@ ne coupe pas. On coupe le récit, jamais une décision à prendre.
 **Relevé de rôle** (Run, Idle time) :
 
 1. **La santé**, adossée aux attendus du rôle ;
-2. **Ce qui a été fait** — trois puces au plus, review comprise ;
+2. **Le réalisé**, dans les trois blocs du point d'étape — en production depuis
+   le dernier update et sa disponibilité réelle, prêt pour la prochaine MEP,
+   reste à faire — review comprise ;
 3. **Les attendus**, en bilan ;
 4. **Décisions & arbitrages**, puis **Alertes** — deux sections distinctes ;
 5. **Ce qui attend le suivant** ;

@@ -202,16 +202,17 @@ deux outils de suivi. Elle se compte et elle se dit.
 **Fin de cycle → lire `references/fin-de-cycle.md` avant d'écrire.** Ses sections
 supplémentaires et leurs règles ne sont pas ici, et ne s'improvisent pas.
 
-**Le réalisé dit ce que ça change, pas quels tickets ont bougé.** Linear affiche
-déjà la liste des issues à côté de l'update : la répéter en prose ne dit rien de
-neuf, et c'est le même principe que « le relecteur a déjà le diff ». Une
-énumération de tickets habillée en phrase reste une énumération.
+**Rien qui double ce que Linear affiche déjà.** C'est la règle qui commande
+toutes les autres. Le badge de santé, le pourcentage d'avancement, les jalons, la
+liste des issues : tout ça est à l'écran, à côté de l'update. Le répéter ne dit
+rien de neuf — même principe que « le relecteur a déjà le diff ». Un update ne
+consigne que ce qui a une **valeur ajoutée** par rapport à ce que l'outil donne
+déjà.
 
-**Ni liste, ni compte.** « 9 livrés, 2 doublons », « les 4 premiers tickets
-tournent en prod », « le jalon est à 100 % » ne disent rien à qui n'ouvre pas le
-tracker. Ce qui parle, ce sont les **fonctionnalités** : ce qu'un utilisateur
-peut faire maintenant et ne pouvait pas avant, et ce qui l'attend à la prochaine
-release.
+Donc ni liste, ni compte, ni pourcentage : « 9 livrés, 2 doublons », « le jalon
+est à 100 % » ne disent rien à qui n'ouvre pas le tracker, et rien du tout à qui
+l'ouvre. Ce qui parle, ce sont les **fonctionnalités** : ce qu'un utilisateur
+peut faire maintenant et ne pouvait pas avant.
 
 Donc : **une phrase-chapeau en gras par idée, la conséquence en prose**, et une
 **prochaine étape qui nomme qui fait quoi** quand il y en a une. Un identifiant
@@ -221,26 +222,32 @@ produit écrit lui-même sur ses projets : « l'axe de découpage change », « 
 step : Julien explore la spec » — trois lignes qui portent plus qu'une liste de
 sept livraisons.
 
-Un **point d'étape** porte quatre choses. La santé et le réalisé tiennent en
-**120 mots** ; les arbitrages, une ligne chacun, sans plafond — on coupe le
-récit, jamais une décision à prendre.
+Un **point d'étape** porte ceci, dans cet ordre. Le récit tient en **120 mots** ;
+les décisions et les alertes, une ligne chacune, sans plafond — on coupe le
+récit, jamais une décision. C'est un **plafond, pas une cible** : les updates de
+référence du produit vont de 40 à 450 mots, et ce qui est constant chez lui n'est
+pas la longueur mais qu'il n'y figure rien d'inutile.
 
-C'est un **plafond, pas une cible**. Les updates de référence du produit vont de
-40 à 450 mots : ce qui est constant chez lui n'est pas la longueur mais qu'il n'y
-figure **rien qui ne soit une décision ou un point en suspens**. Le gras à éviter
-est le récit du travail fait, pas le volume.
+- **La ligne de santé** — un one-liner qui **justifie** le statut sans le
+  répéter. Le badge `On track` / `At risk` / `Off track` est déjà affiché
+  au-dessus du texte : l'écrire une seconde fois est le doublon type ;
+- **Ce qui est en production depuis le dernier update**, avec sa **disponibilité
+  réelle** quand elle compte : derrière un flag fermé, en bêta sur quelques
+  comptes, ou ouvert à tous. « En prod » seul ne dit rien — c'est le lead qui a
+  cette information, et c'est elle qui rend l'update lisible par quelqu'un
+  d'extérieur à la cuisine tech ;
+- **Ce qui est prêt pour la prochaine mise en production** ;
+- **Ce qu'il reste à faire** ;
+- **Décisions & arbitrages**, puis **Alertes** — deux sections, pas une, et
+  **omises quand il n'y a rien**. La barre est haute : une décision **prise** sur
+  le périmètre du projet, un risque **pour le projet**. Une question d'intendance
+  posée au produit, un sujet d'organisation ou de staffing, ou la redite de ce
+  que le réalisé vient de dire n'y ont pas leur place. Le tri garde une part de
+  subjectif, et c'est assumé.
 
-- **La santé** — `On track` / `At risk` / `Off track` ;
-- **Le réalisé** depuis le dernier point ;
-- **Les attendus, en projection** : ce qui n'est pas encore engagé, tant qu'il
-  est temps de corriger. C'est la meilleure raison d'en faire un sur un rôle de
-  Run — « le runbook n'est pas engagé » à mi-parcours est un signal ;
-- **Décisions & arbitrages**, puis **Alertes** — deux sections, pas une. Un
-  arbitrage demande à quelqu'un de trancher et se nomme avec lui ; une alerte
-  signale un risque sans appeler de décision immédiate. Les mélanger noie les
-  décisions dans les risques. C'est là qu'elles servent encore : sur un projet,
-  le **débordement qui se voit venir** est une alerte, et annoncé à mi-parcours
-  il se replanifie.
+Sur un **relevé de rôle**, les trois blocs du milieu laissent place aux
+**attendus en projection** : ce qui n'est pas encore engagé, tant qu'il est temps
+de corriger. « Le runbook n'est pas engagé » à mi-parcours est un signal.
 
 ### 5. Le brouillon, puis poster
 
@@ -285,8 +292,8 @@ il part une fois.
   difficulté avec un tiers, une complexité technique imprévue pèsent autant et
   n'apparaissent dans aucune source. « Tous les tickets sont clos et le jalon est
   à 100 % » n'est donc pas une santé, c'est une métrique. Elle se **demande**, et
-  s'écrit en **une ligne** — le verdict, puis ce qui le porte, qui n'est pas
-  forcément un chiffre. Quand elle n'est pas tranchable, l'autre lecture descend
+  s'écrit en **une ligne qui justifie le statut sans le nommer** — le badge est
+  déjà au-dessus. Quand elle n'est pas tranchable, l'autre lecture descend
   dans les arbitrages. Sur un relevé de rôle, elle se lit contre les attendus de
   la fiche, pas contre un plan que le run n'a pas.
 - **Rien ne s'invente.** Une source muette donne une section vide et un « je n'ai
