@@ -239,10 +239,28 @@ récit, jamais une décision à prendre.
 
 ### 5. Le brouillon, puis poster
 
-Afficher le brouillon entier et poser **une seule** question : *qu'est-ce que
-j'ai raté ?* C'est la plus rentable — la personne corrige au lieu de composer.
-La santé s'y arbitre explicitement, parce que ce qui la porte est souvent
-invisible de la collecte : congés, tiers, complexité imprévue.
+Afficher le brouillon entier, **santé exceptée** : elle seule ne sort pas de la
+collecte, elle se remplit après.
+
+Avec le brouillon, un `AskUserQuestion` de deux questions qui se répondent d'un
+clic :
+
+- **le verdict** — `On track` / `At risk` / `Off track`. Celui que la collecte
+  suggère est proposé en premier, son motif observable dans la description de
+  l'option ;
+- **ce qui le porte, au-delà de l'avancement** — en choix multiple : congés sur
+  une partie de l'équipe, difficulté avec un tiers, complexité technique
+  imprévue, rien d'autre que l'avancement. La liste n'est pas fermée : « autre »
+  reste ouvert, et c'est souvent là qu'est la vraie raison.
+
+Puis **écrire la ligne de santé** à partir des deux réponses — le verdict, puis
+ce qui le porte, en une phrase qui les tient ensemble. Jamais l'énumération des
+cases cochées.
+
+Dans le même message, la seule question qui reste, en prose : *qu'est-ce que j'ai
+raté ?* C'est la plus rentable — la personne corrige au lieu de composer. C'est
+aussi là qu'on lui dit ce que l'update ne couvre pas, quand la période laisse un
+trou derrière elle.
 
 Puis `save_status_update`, **sur go explicite**. Un update notifie les abonnés :
 il part une fois.
