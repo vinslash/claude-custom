@@ -233,9 +233,9 @@ pas la longueur mais qu'il n'y figure rien d'inutile.
   au-dessus du texte : l'écrire une seconde fois est le doublon type ;
 - **Ce qui est en production depuis le dernier update**, avec sa **disponibilité
   réelle** quand elle compte : derrière un flag fermé, en bêta sur quelques
-  comptes, ou ouvert à tous. « En prod » seul ne dit rien — c'est le lead qui a
-  cette information, et c'est elle qui rend l'update lisible par quelqu'un
-  d'extérieur à la cuisine tech ;
+  comptes, ou ouvert à tous. « En prod » seul ne dit rien à qui est extérieur à
+  la cuisine tech. **Cette disponibilité se contrôle avant de se demander** — voir
+  plus bas ;
 - **Ce qui est prêt pour la prochaine mise en production** ;
 - **Ce qu'il reste à faire** ;
 - **Décisions & arbitrages**, puis **Alertes** — deux sections, pas une, et
@@ -248,6 +248,24 @@ pas la longueur mais qu'il n'y figure rien d'inutile.
 Sur un **relevé de rôle**, les trois blocs du milieu laissent place aux
 **attendus en projection** : ce qui n'est pas encore engagé, tant qu'il est temps
 de corriger. « Le runbook n'est pas engagé » à mi-parcours est un signal.
+
+#### La disponibilité se contrôle, elle ne se demande pas d'abord
+
+Dans slash-interim, un flag est une ligne de la table `feature` — `name` +
+`isDisabled` — déclarée par une migration. L'enum `feature_name_enum` de la
+migration la plus récente qui le redéclare donne la liste à jour.
+
+Le contrôle porte sur **les fichiers livrés sur la période**, ceux des PR de la
+collecte : y a-t-il une garde — `useFeature`, `FeatureName.`, `isFeatureEnabled` —
+dans leur module ?
+
+- **aucune garde** → « en production » veut dire **disponible**. Ne rien
+  demander ;
+- **une garde** → demander, en pré-remplissant avec la valeur initiale de la
+  migration (`isDisabled: true` = fermé) et toute trace d'ouverture dans Slack.
+  L'**état réel en production est une ligne de base de données**, qu'aucune
+  source du dépôt ne donne : c'est là, et seulement là, que le lead sait ce que
+  personne d'autre ne sait.
 
 ### 5. Le brouillon, puis poster
 
