@@ -247,18 +247,24 @@ est le récit du travail fait, pas le volume.
 Afficher le brouillon entier, **santé exceptée** : elle seule ne sort pas de la
 collecte, elle se remplit après.
 
-Avec le brouillon, un `AskUserQuestion` de deux questions qui se répondent d'un
-clic :
+Avec le brouillon, **une** question : le **verdict** — `On track` / `At risk` /
+`Off track`. Celui que la collecte suggère est proposé en premier, son motif
+observable dans la description de l'option.
 
-- **le verdict** — `On track` / `At risk` / `Off track`. Celui que la collecte
-  suggère est proposé en premier, son motif observable dans la description de
-  l'option ;
-- **ce qui le porte, au-delà de l'avancement** — en choix multiple : congés sur
-  une partie de l'équipe, difficulté avec un tiers, complexité technique
-  imprévue, rien d'autre que l'avancement. La liste n'est pas fermée :
-  `AskUserQuestion` ajoute « autre » de lui-même, en saisie libre — ne pas le
-  mettre dans les options, ce serait gaspiller une des quatre places. Et c'est
-  souvent là qu'est la vraie raison : la liste du CTO se terminait par « etc. ».
+Une **seconde question ne se pose que si la réponse la rend utile** : verdict
+`At risk` ou `Off track`, ou verdict qui **contredit** ce que la collecte
+suggérait. C'est là, et seulement là, que la raison est ailleurs que dans
+l'avancement. Elle demande alors **ce qui porte le jugement**, en choix
+multiple : congés sur une partie de l'équipe, difficulté avec un tiers,
+complexité technique imprévue. La liste n'est pas fermée — `AskUserQuestion`
+ajoute « autre » de lui-même, en saisie libre ; ne pas le mettre dans les
+options, ce serait gaspiller une des quatre places, et c'est souvent là qu'est la
+vraie raison.
+
+**Un verdict nominal et conforme à la suggestion ne déclenche rien** : la ligne
+s'écrit du verdict et de ce qui l'explique. Une question dont la réponse est
+« rien d'autre » est un clic volé, et c'est comme ça qu'un geste de trois minutes
+devient un questionnaire.
 
 Puis **écrire la ligne de santé** à partir des deux réponses — le verdict, puis
 ce qui le porte, en une phrase qui les tient ensemble. Jamais l'énumération des
