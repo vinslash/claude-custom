@@ -42,16 +42,14 @@ collecte qu'on coupe.
 
 ## Deux moments, dont l'un contient l'autre
 
-Le **point d'étape** répond exactement à ce que le produit demande — santé,
-réalisé depuis le dernier update, arbitrages et alertes —, et rien de plus.
-L'**update de fin de cycle** est ces trois points, plus la couche de passation.
+Le **point d'étape** est ce que le produit demande, et rien de plus.
+L'**update de fin de cycle** l'englobe et y ajoute la couche de passation — dont
+les points d'étape sont la matière première, puisqu'un cycle raconté au fil de
+l'eau réduit la collecte finale aux derniers jours.
 
-Il n'est donc pas une corvée en plus : c'est la matière première de la passation,
-et un cycle raconté au fil de l'eau réduit la collecte finale aux derniers jours.
-
-**Aucune cadence n'est imposée** : il part à l'initiative de la personne. Le
-skill répond, il ne convoque pas. Donc l'update de fin de cycle ne présume jamais
-qu'il en existe.
+**Aucune cadence n'est imposée** : le point d'étape part à l'initiative de la
+personne, le skill répond et ne convoque pas. Donc la fin de cycle ne présume
+jamais qu'il en existe.
 
 Linear ne type pas les updates : la distinction vit en **première ligne**, sans
 rien avant elle.
@@ -61,9 +59,8 @@ rien avant elle.
 **Fin de cycle 55 — passation du rôle Plateforme**
 ```
 
-Ce n'est pas cosmétique — c'est ce qui permet de retrouver les points du mandat
-courant, et d'éviter de prendre pour un bilan un update écrit par quelqu'un
-d'autre sur un tout autre sujet.
+C'est ce qui permet de retrouver les points du mandat courant, et d'éviter de
+prendre pour un bilan un update écrit par quelqu'un d'autre sur un autre sujet.
 
 ## La forme se déduit du rôle
 
@@ -197,123 +194,54 @@ signaler.
 **La review est un poste de charge** — jusqu'à 28 PR sur un cycle, absentes des
 deux outils de suivi. Elle se compte et elle se dit.
 
-### 4. Rédiger le brouillon, complet
+### 4. Rédiger le brouillon
 
-**Fin de cycle → lire `references/fin-de-cycle.md` avant d'écrire.** Ses sections
-supplémentaires et leurs règles ne sont pas ici, et ne s'improvisent pas.
+**Lire `references/redaction.md` avant d'écrire** : les blocs, leur ordre, leurs
+bornes, et le contrôle de disponibilité. **Fin de cycle → lire aussi
+`references/fin-de-cycle.md`**, pour la couche de passation. Rien de tout ça
+n'est ici, et rien ne s'improvise.
 
-**Rien qui double ce que Linear affiche déjà.** C'est la règle qui commande
-toutes les autres. Le badge de santé, le pourcentage d'avancement, les jalons, la
-liste des issues : tout ça est à l'écran, à côté de l'update. Le répéter ne dit
-rien de neuf — même principe que « le relecteur a déjà le diff ». Un update ne
-consigne que ce qui a une **valeur ajoutée** par rapport à ce que l'outil donne
-déjà.
-
-Donc ni liste, ni compte, ni pourcentage : « 9 livrés, 2 doublons », « le jalon
-est à 100 % » ne disent rien à qui n'ouvre pas le tracker, et rien du tout à qui
-l'ouvre. Ce qui parle, ce sont les **fonctionnalités** : ce qu'un utilisateur
-peut faire maintenant et ne pouvait pas avant.
-
-Donc : **une phrase-chapeau en gras par idée, la conséquence en prose**, et une
-**prochaine étape qui nomme qui fait quoi** quand il y en a une. Un identifiant
-SLI ne se cite que si le lecteur doit aller voir **celui-là précisément** — un
-arbitrage, une alerte, un sujet que le suivant reprend. Le modèle est ce que le
-produit écrit lui-même sur ses projets : « l'axe de découpage change », « next
-step : Julien explore la spec » — trois lignes qui portent plus qu'une liste de
-sept livraisons.
-
-Un **point d'étape** porte ceci, dans cet ordre. Le récit tient en **120 mots** ;
-les décisions et les alertes, une ligne chacune, sans plafond — on coupe le
-récit, jamais une décision. C'est un **plafond, pas une cible** : les updates de
-référence du produit vont de 40 à 450 mots, et ce qui est constant chez lui n'est
-pas la longueur mais qu'il n'y figure rien d'inutile.
-
-- **La ligne de santé** — un one-liner qui **justifie** le statut sans le
-  répéter. Le badge `On track` / `At risk` / `Off track` est déjà affiché
-  au-dessus du texte : l'écrire une seconde fois est le doublon type ;
-- **Ce qui est en production depuis le dernier update**, avec sa **disponibilité
-  réelle** quand elle compte : derrière un flag fermé, en bêta sur quelques
-  comptes, ou ouvert à tous. « En prod » seul ne dit rien à qui est extérieur à
-  la cuisine tech. **Cette disponibilité se contrôle avant de se demander** — voir
-  plus bas ;
-- **Ce qui est prêt pour la prochaine mise en production** ;
-- **Ce qu'il reste à faire** ;
-- **Décisions & arbitrages**, puis **Alertes** — deux sections, pas une, et
-  **omises quand il n'y a rien**. La barre est haute : une décision **prise** sur
-  le périmètre du projet, un risque **pour le projet**. Une question d'intendance
-  posée au produit, un sujet d'organisation ou de staffing, ou la redite de ce
-  que le réalisé vient de dire n'y ont pas leur place. Le tri garde une part de
-  subjectif, et c'est assumé.
-
-Sur un **relevé de rôle**, les trois blocs du milieu laissent place aux
-**attendus en projection** : ce qui n'est pas encore engagé, tant qu'il est temps
-de corriger. « Le runbook n'est pas engagé » à mi-parcours est un signal.
-
-#### La disponibilité se contrôle, elle ne se demande pas d'abord
-
-Dans slash-interim, un flag est une ligne de la table `feature` — `name` +
-`isDisabled` — déclarée par une migration. L'enum `feature_name_enum` de la
-migration la plus récente qui le redéclare donne la liste à jour.
-
-Le contrôle porte sur **les fichiers livrés sur la période**, ceux des PR de la
-collecte : y a-t-il une garde — `useFeature`, `FeatureName.`, `isFeatureEnabled` —
-dans leur module ?
-
-- **aucune garde** → « en production » veut dire **disponible**. Ne rien
-  demander ;
-- **une garde** → demander, en pré-remplissant avec la valeur initiale de la
-  migration (`isDisabled: true` = fermé) et toute trace d'ouverture dans Slack.
-  L'**état réel en production est une ligne de base de données**, qu'aucune
-  source du dépôt ne donne : c'est là, et seulement là, que le lead sait ce que
-  personne d'autre ne sait.
+Une seule règle reste sous les yeux, parce qu'elle gouverne aussi la collecte :
+**rien qui double ce que Linear affiche déjà** — badge de santé, pourcentage,
+jalons, liste des issues. Un update ne consigne que ce qui a une valeur ajoutée
+par rapport à l'outil.
 
 ### 5. Le brouillon, puis poster
 
 Afficher le brouillon entier, **santé exceptée** : elle seule ne sort pas de la
-collecte, elle se remplit après.
+collecte.
 
-Avec le brouillon, **une** question : le **verdict** — `On track` / `At risk` /
-`Off track`. Celui que la collecte suggère est proposé en premier, son motif
-observable dans la description de l'option.
+Avec lui, **une** question : le **verdict** — `On track` / `At risk` /
+`Off track`, celui que la collecte suggère en premier, son motif observable dans
+la description de l'option.
 
 Une **seconde question ne se pose que si la réponse la rend utile** : verdict
-`At risk` ou `Off track`, ou verdict qui **contredit** ce que la collecte
-suggérait. C'est là, et seulement là, que la raison est ailleurs que dans
-l'avancement. Elle demande alors **ce qui porte le jugement**, en choix
-multiple : congés sur une partie de l'équipe, difficulté avec un tiers,
-complexité technique imprévue. La liste n'est pas fermée — `AskUserQuestion`
-ajoute « autre » de lui-même, en saisie libre ; ne pas le mettre dans les
-options, ce serait gaspiller une des quatre places, et c'est souvent là qu'est la
-vraie raison.
+`At risk` ou `Off track`, ou verdict qui **contredit** la suggestion. C'est là,
+et seulement là, que la raison est ailleurs que dans l'avancement. Elle demande
+alors **ce qui porte le jugement**, en choix multiple — congés sur une partie de
+l'équipe, difficulté avec un tiers, complexité technique imprévue.
+`AskUserQuestion` ajoute « autre » de lui-même : ne pas le mettre dans les
+options, ce serait gaspiller une des quatre places.
 
-**Un verdict nominal et conforme à la suggestion ne déclenche rien** : la ligne
-s'écrit du verdict et de ce qui l'explique. Une question dont la réponse est
-« rien d'autre » est un clic volé, et c'est comme ça qu'un geste de trois minutes
-devient un questionnaire.
+**Un verdict nominal et conforme ne déclenche rien.** Une question dont la
+réponse est « rien d'autre » est un clic volé, et c'est comme ça qu'un geste de
+trois minutes devient un questionnaire.
 
-Puis **écrire la ligne de santé** à partir des deux réponses — le verdict, puis
-ce qui le porte, en une phrase qui les tient ensemble. Jamais l'énumération des
-cases cochées.
+Puis **écrire la ligne de santé** à partir des réponses, en une phrase qui les
+tient ensemble — jamais l'énumération des cases cochées.
 
 Dans le même message, la seule question qui reste, en prose : *qu'est-ce que j'ai
-raté ?* C'est la plus rentable — la personne corrige au lieu de composer. C'est
-aussi là qu'on lui dit ce que l'update ne couvre pas, quand la période laisse un
-trou derrière elle.
+raté ?* La personne corrige au lieu de composer. C'est aussi là qu'on lui dit ce
+que l'update ne couvre pas, quand la période laisse un trou.
 
 Puis `save_status_update`, **sur go explicite**. Un update notifie les abonnés :
 il part une fois.
 
 ## Garde-fous
 
-- **La santé est un jugement humain, jamais un calcul.** L'état des tickets
-  l'alimente, il ne la produit pas : des congés sur une partie de l'équipe, une
-  difficulté avec un tiers, une complexité technique imprévue pèsent autant et
-  n'apparaissent dans aucune source. « Tous les tickets sont clos et le jalon est
-  à 100 % » n'est donc pas une santé, c'est une métrique. Elle se **demande**, et
-  s'écrit en **une ligne qui justifie le statut sans le nommer** — le badge est
-  déjà au-dessus. Quand elle n'est pas tranchable, l'autre lecture descend
-  dans les arbitrages. Sur un relevé de rôle, elle se lit contre les attendus de
-  la fiche, pas contre un plan que le run n'a pas.
+- **La santé ne se calcule jamais.** « Tous les tickets sont clos et le jalon est
+  à 100 % » n'est pas une santé, c'est une métrique. Elle se **demande** — le
+  reste de la règle est dans `references/redaction.md`.
 - **Rien ne s'invente.** Une source muette donne une section vide et un « je n'ai
   rien trouvé sur X », jamais une phrase de remplissage. Un update qui brode est
   pire qu'un update absent.
