@@ -222,8 +222,13 @@ step : Julien explore la spec » — trois lignes qui portent plus qu'une liste 
 sept livraisons.
 
 Un **point d'étape** porte quatre choses. La santé et le réalisé tiennent en
-**150 mots** ; les arbitrages, une ligne chacun, sans plafond — on coupe le
+**120 mots** ; les arbitrages, une ligne chacun, sans plafond — on coupe le
 récit, jamais une décision à prendre.
+
+C'est un **plafond, pas une cible**. Les updates de référence du produit vont de
+40 à 450 mots : ce qui est constant chez lui n'est pas la longueur mais qu'il n'y
+figure **rien qui ne soit une décision ou un point en suspens**. Le gras à éviter
+est le récit du travail fait, pas le volume.
 
 - **La santé** — `On track` / `At risk` / `Off track` ;
 - **Le réalisé** depuis le dernier point ;
