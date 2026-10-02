@@ -1,8 +1,8 @@
 # slash:writing
 
 Cadre de rédaction des écrits destinés à un relecteur humain : descriptions de
-pull request, commentaires de code review, messages de commit, et livrables
-écrits longs — document de plan, handoff, analyse, dossier de décision.
+pull request, commentaires de code review, messages de commit, issues GitHub et
+tickets Linear, et livrables écrits longs — document de plan, handoff, analyse, dossier de décision.
 
 Un principe : **le relecteur a trente secondes et il a déjà le diff.** Sur un
 livrable long il en a dix minutes, mais il a une décision à prendre : ce qui ne

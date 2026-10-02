@@ -2,20 +2,24 @@
 name: writing
 description: >
   Cadre de rédaction des écrits destinés à un relecteur humain : descriptions de
-  pull request, commentaires de code review, messages de commit, et livrables
-  écrits longs — document de plan, handoff, analyse, dossier de décision. Impose
+  pull request, commentaires de code review, messages de commit, issues GitHub
+  et tickets Linear, et livrables écrits longs — document de plan, handoff,
+  analyse, dossier de décision. Impose
   une description courte, en prose et en quatre sections — contexte, problème,
   correctif, comment tester —, qui dit le POURQUOI que le diff ne dit pas.
   Impose sur toute PR une section « Comment tester » — le script que le relecteur
   déroule avant de lire le code, ou la raison qu'il n'y en ait pas —, une
   section « Screenshots » en avant/après dès que l'UI bouge, et bannit
   les preuves de test exhaustives, les snippets recopiés du diff et les détails
-  d'outillage sans conséquence pour le relecteur. Sur les livrables
+  d'outillage sans conséquence pour le relecteur. Sur une issue ou un ticket,
+  impose un encart de tête — Problème, Valeur, Risque, Taille — et replie
+  l'analyse dans des notes pour l'agent. Sur les livrables
   longs, impose une passe d'élagage avant de rendre — plaidoirie, hors-périmètre
   et méta-commentaire dehors — et donne un exutoire borné au détail technique
   coûteux à reproduire : un commentaire Linear ou PR.
   Use when about to run `gh pr create`, `gh pr edit --body`, `gh pr review`,
-  `gh pr comment`, or `git commit`; before handing over any long written
+  `gh pr comment`, `gh issue create`, `Linear:save_issue`, or `git commit`;
+  before drafting a GitHub issue or a Linear ticket; before handing over any long written
   deliverable a human will review, including a plan submitted through
   `ExitPlanMode`; when the user says « ouvre une PR », « fais la PR », « rédige
   la description », « décris la PR », « commente la review », « relis cette PR »,
@@ -212,7 +216,7 @@ Ce n'est pas un commentaire de code review — celui-là s'adresse à l'auteur s
 un défaut. Celui-ci ne s'adresse à personne en particulier, il dépose.
 
 Et le hors-périmètre n'entre pas dans ce couloir : son détail va dans l'autre
-ticket, pas en commentaire de celui-ci.
+ticket s'il existe, et sinon nulle part — pas en commentaire de celui-ci.
 
 ## Commentaires de code review
 
@@ -224,6 +228,41 @@ Qualifie systématiquement le poids de la remarque — bloquant, suggestion, ou 
 sinon l'auteur traite tout au même niveau et perd son temps sur des broutilles.
 
 Ne commente jamais pour paraphraser le code. Si tu n'as rien à redire, ne dis rien.
+
+## Issues GitHub et tickets Linear
+
+Le lecteur d'une issue n'est pas celui qui la traitera : c'est celui qui décide
+si elle vaut d'être prise. Deux encarts, dans cet ordre :
+
+```markdown
+**Problème** — ce que l'utilisateur subit, pas la cause technique.
+**Valeur** — qui y gagne quoi.
+**Risque** — de le faire, et de ne pas le faire.
+**Taille** — S, M ou L.
+
+<details><summary>🤖 Notes pour l'agent</summary>
+
+Causes, fichiers, pistes, mesures.
+
+</details>
+```
+
+L'encart de tête tient en **120 mots au plus**, une ligne par champ. Si la ligne
+**Valeur** ne s'écrit pas — personne ne subit le défaut aujourd'hui —, il n'y a
+pas d'issue à ouvrir. Le bloc replié reçoit l'analyse coûteuse à refaire, au lieu
+d'encombrer le corps. Les règles plus haut s'y appliquent : un paragraphe par
+ligne, ni plaidoirie ni méta-commentaire.
+
+Les quatre marqueurs en gras et la chaîne « 🤖 Notes pour l'agent » s'écrivent
+**tels quels** : un hook de wtkit les vérifie à la création de l'issue.
+
+Sur slash-interim, `slash-create-issue` garde la main sur le type, les labels et
+la validation. Ce gabarit en est l'encart de tête ; les sections propres au type
+viennent dessous, dans le corps, et le bloc replié ferme le ticket.
+
+Rédiger une issue n'autorise pas à l'ouvrir : aucune ne se crée sans une demande
+explicite de l'utilisateur pour ce sujet, et on cherche d'abord une issue
+existante à compléter.
 
 ## Messages de commit
 

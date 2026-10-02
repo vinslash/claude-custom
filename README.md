@@ -86,7 +86,7 @@ flowchart TD
 </tr>
 <tr>
 <td nowrap><samp>/slash:writing</samp></td>
-<td>Cadre de rédaction des écrits lus par un humain : descriptions de PR, commentaires de review, messages de commit, et livrables écrits longs — plan, handoff, analyse. Porte la passe d'élagage.</td>
+<td>Cadre de rédaction des écrits lus par un humain : descriptions de PR, commentaires de review, messages de commit, issues et tickets, et livrables écrits longs — plan, handoff, analyse. Porte la passe d'élagage.</td>
 </tr>
 <tr>
 <td nowrap><samp>/slash:github-screenshots</samp></td>
