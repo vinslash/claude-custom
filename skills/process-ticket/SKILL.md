@@ -18,8 +18,7 @@ description: >
   `slash:writing`.
   Use when the user says « mission : traiter ce ticket », « traite le ticket »,
   « on attaque SLI-XXXX », « je viens de créer le worktree », or
-  `/slash:process-ticket SLI-XXXX`; and at the start of any session whose cwd is
-  an `sli-XXXX-*` worktree. Ne PAS utiliser pour reprendre une PR déjà ouverte
+  `/slash:process-ticket SLI-XXXX`. Ne PAS utiliser pour reprendre une PR déjà ouverte
   (→ `slash:writing`), pour une review, ni pour un travail sans ticket
   Linear — exploration, question, correctif ponctuel demandé dans le chat.
 ---

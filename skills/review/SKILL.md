@@ -16,8 +16,7 @@ description: >
   Use when the user says « fais l'auto-review », « fais la self-review », « je
   relis ma PR avant de la soumettre », « avant de soumettre la PR à review », « untel a fait la review, il faut traiter », « on m'a assigné à la
   review de cette PR », « untel a traité nos retours », « on vérifie et on
-  approuve », or `/slash:review`. Remplace `slash-pr-review` et
-  `slash-review-code` du dépôt slash-interim sur ces quatre situations. Ne PAS
+  approuve », or `/slash:review`. Ne PAS
   utiliser pour rédiger une description de PR (→ `slash:writing`), pour traiter un
   ticket de bout en bout (→ `slash:process-ticket`), ni pour auditer un plan avant
   implémentation (→ `slash-review-plan`).

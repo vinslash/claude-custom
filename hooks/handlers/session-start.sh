@@ -42,10 +42,7 @@ if [ -n "$root" ]; then
     append "Cette session est ouverte dans le worktree du ticket **SLI-${num}**
 (branche \`${branch}\`, racine \`${root}\`).
 
-L'identifiant du ticket se lit dans la branche : ne pas le redemander.
-Le parcours de traitement de bout en bout est le skill \`slash:process-ticket\`.
-Si cette branche est ici pour être **relue** et non écrite — la PR d'un collègue
-sortie dans ce worktree —, c'est \`slash:review\`."
+L'identifiant du ticket se lit dans la branche : ne pas le redemander."
   fi
 fi
 
