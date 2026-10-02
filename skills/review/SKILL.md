@@ -43,7 +43,7 @@ auteur comme relecteur :
 > **Une seconde passe ne juge que ce que la première a demandé.**
 
 Ce qu'on découvre au second tour et qui n'était pas demandé n'est pas une
-remarque de cette PR. C'est un ticket.
+remarque de cette PR : c'est une ligne dans le verdict, et rien de plus.
 
 ## Le mode se déduit, il ne se demande pas
 
@@ -85,8 +85,13 @@ lignes.
 ## Ce qui ne change pas d'un mode à l'autre
 
 **Le périmètre est le ticket.** Pas le code adjacent qu'on trouve laid, pas la
-dette croisée en route. Ce qui est hors périmètre tient en **une ligne**, et
-c'est l'utilisateur qui décide d'en faire un ticket.
+dette croisée en route. Ce qui est hors périmètre tient en **une ligne** dans le
+verdict ou le rapport, et rien de plus.
+
+**On ne crée jamais soi-même d'issue ni de ticket**, GitHub comme Linear. Seule
+une demande explicite de l'utilisateur, pour ce sujet-là, en ouvre un — et on
+cherche alors d'abord une issue existante à compléter. Un défaut que personne ne
+subit aujourd'hui ne mérite pas de ticket.
 
 **Le recettage précède la lecture du code.** La section « Comment tester » d'une
 PR existe pour être déroulée : c'est le seul moment où quelqu'un vérifie que la

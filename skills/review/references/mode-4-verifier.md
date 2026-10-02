@@ -20,7 +20,8 @@ verdict :
 
 Ce qu'on découvre en relisant et qui n'était pas demandé au premier tour ne
 devient une remarque que s'il est **bloquant** — une régression, un bug sur le cas
-nominal. Tout le reste est un ticket, et se dit en une ligne.
+nominal. Tout le reste tient en une ligne dans le verdict, et rien de plus : pas
+d'issue ni de ticket sans que l'utilisateur le demande pour ce sujet.
 
 Reco globale : approuver si le rejeu passe, qu'aucun verdict n'est « pas traité »
 et qu'aucun bloquant n'est apparu. Sinon, demander des changements sur les seuls
