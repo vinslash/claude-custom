@@ -12,7 +12,8 @@ passer tout le trafic MCP sans y toucher, sauf trois gestes.
 
   - Au premier appel d'outil de la session — donc au moment où le navigateur
     s'ouvre vraiment, jamais avant —, il intercale son propre
-    `install_extension` puis relaie l'appel d'origine.
+    `install_extension` puis relaie l'appel d'origine. Et il recommence à
+    chaque appel tant que l'installation n'a pas réussi.
   - Il refait l'amorce dès que le serveur signale que le navigateur a
     redémarré, sans attendre l'appel suivant : la session qui vient d'ouvrir une
     page et passe la main à l'utilisateur n'en fera peut-être plus aucun.
@@ -44,9 +45,15 @@ server = subprocess.Popen(
     text=True, bufsize=1,
 )
 
-bootstrapped = threading.Event()   # l'amorce initiale a eu lieu
+# Où en est l'extension sur le navigateur courant. Seule une réponse réussie la
+# fait passer à POSEE : un premier appel qui échoue — profil tenu par le Chrome
+# d'une autre session, navigateur qui ne démarre pas — échoue aussi pour
+# l'installation, et le navigateur qui s'ouvre ensuite naîtrait sans repère si
+# on comptait cette tentative pour faite. Vu le 05/10 sur SLI-8031.
+ABSENTE, EN_COURS, POSEE = 'absente', 'en cours', 'posée'
+state = ABSENTE
+state_lock = threading.Lock()
 answered = threading.Event()   # notre propre appel a reçu sa réponse
-lock = threading.Lock()
 # Les deux fils écrivent au serveur depuis que la réamorce part du fil de
 # lecture : deux lignes entrelacées casseraient le JSON-RPC.
 write_lock = threading.Lock()
@@ -74,17 +81,40 @@ def demande_amorce():
     })
 
 
-def signaler_echec(message):
+def lancer_amorce():
+    """Demande l'installation, sauf si elle est déjà faite ou en route."""
+    global state
+    with state_lock:
+        if state != ABSENTE:
+            return False
+        state = EN_COURS
+    answered.clear()
+    try:
+        demande_amorce()
+    except Exception as erreur:
+        print('repère : amorce impossible (%s)' % erreur, file=sys.stderr)
+        with state_lock:
+            state = ABSENTE
+        return False
+    return True
+
+
+def noter_reponse(message):
     """Un repère absent ne se voit pas : l'échec doit au moins laisser une trace."""
+    global state
     result = message.get('result') or {}
-    if 'error' in message or result.get('isError'):
-        print('repère : install_extension a échoué (%s)'
+    failed = 'error' in message or result.get('isError')
+    if failed:
+        print('repère : install_extension a échoué, nouvel essai au prochain appel (%s)'
               % json.dumps(message.get('error') or result.get('content')),
               file=sys.stderr)
+    with state_lock:
+        state = ABSENTE if failed else POSEE
 
 
 def lire_serveur():
     """Remonte les réponses au client, sauf les nôtres."""
+    global state
     for line in server.stdout:
         try:
             message = json.loads(line)
@@ -94,7 +124,7 @@ def lire_serveur():
             continue
 
         if message.get('id') == BOOTSTRAP_ID:
-            signaler_echec(message)
+            noter_reponse(message)
             answered.set()
             continue
 
@@ -105,10 +135,10 @@ def lire_serveur():
         # fil-ci, qui l'avalera au tour suivant. Une fois posée, l'extension
         # range aussi l'onglet que l'appel de relance vient d'ouvrir.
         if RESTART_SIGNAL in json.dumps(message.get('result', {})):
-            try:
-                demande_amorce()
-            except Exception as erreur:
-                print('repère : réamorce impossible (%s)' % erreur, file=sys.stderr)
+            with state_lock:
+                if state == POSEE:
+                    state = ABSENTE
+            lancer_amorce()
 
         result = message.get('result')
         if isinstance(result, dict) and isinstance(result.get('tools'), list):
@@ -123,12 +153,16 @@ def lire_serveur():
 
 
 def amorcer():
-    answered.clear()
-    demande_amorce()
+    global state
+    if not lancer_amorce():
+        return
     # Ne jamais bloquer indéfiniment : sans repère la session travaille quand
-    # même, sans navigateur elle ne fait plus rien.
-    answered.wait(timeout=60)
-    bootstrapped.set()
+    # même, sans navigateur elle ne fait plus rien. Une réponse arrivée trop
+    # tard sera quand même notée par le fil de lecture.
+    if not answered.wait(timeout=60):
+        with state_lock:
+            if state == EN_COURS:
+                state = ABSENTE
 
 
 threading.Thread(target=lire_serveur, daemon=True).start()
@@ -140,14 +174,11 @@ for line in sys.stdin:
         ecrire_serveur(line)
         continue
 
-    if message.get('method') == 'tools/call' and not bootstrapped.is_set():
-        with lock:
-            if not bootstrapped.is_set():
-                try:
-                    amorcer()
-                except Exception as erreur:
-                    print('repère : amorce impossible (%s)' % erreur, file=sys.stderr)
-                    bootstrapped.set()
+    # Tant que l'extension n'est pas posée, chaque appel d'outil retente : un
+    # échec qui dure ne coûte qu'un appel refusé de plus, un échec passager
+    # rattrapé à l'appel suivant rend son repère à la fenêtre.
+    if message.get('method') == 'tools/call' and state == ABSENTE:
+        amorcer()
 
     vers_serveur(message)
 
