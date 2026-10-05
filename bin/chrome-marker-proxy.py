@@ -13,7 +13,9 @@ passer tout le trafic MCP sans y toucher, sauf trois gestes.
   - Au premier appel d'outil de la session — donc au moment où le navigateur
     s'ouvre vraiment, jamais avant —, il intercale son propre
     `install_extension` puis relaie l'appel d'origine.
-  - Il refait l'amorce si le serveur signale que le navigateur a redémarré.
+  - Il refait l'amorce dès que le serveur signale que le navigateur a
+    redémarré, sans attendre l'appel suivant : la session qui vient d'ouvrir une
+    page et passe la main à l'utilisateur n'en fera peut-être plus aucun.
   - Il retire les outils d'extension de `tools/list`, pour que la session voie
     exactement la panoplie d'avant : ces cinq-là ne la regardent pas, et
     chacun coûterait du contexte à chaque session.
@@ -42,9 +44,12 @@ server = subprocess.Popen(
     text=True, bufsize=1,
 )
 
-bootstrapped = threading.Event()   # l'extension est posée sur le navigateur courant
+bootstrapped = threading.Event()   # l'amorce initiale a eu lieu
 answered = threading.Event()   # notre propre appel a reçu sa réponse
 lock = threading.Lock()
+# Les deux fils écrivent au serveur depuis que la réamorce part du fil de
+# lecture : deux lignes entrelacées casseraient le JSON-RPC.
+write_lock = threading.Lock()
 
 
 def vers_client(message):
@@ -53,8 +58,29 @@ def vers_client(message):
 
 
 def vers_serveur(message):
-    server.stdin.write(json.dumps(message) + '\n')
-    server.stdin.flush()
+    ecrire_serveur(json.dumps(message) + '\n')
+
+
+def ecrire_serveur(line):
+    with write_lock:
+        server.stdin.write(line)
+        server.stdin.flush()
+
+
+def demande_amorce():
+    vers_serveur({
+        'jsonrpc': '2.0', 'id': BOOTSTRAP_ID, 'method': 'tools/call',
+        'params': {'name': 'install_extension', 'arguments': {'path': MARKER_DIR}},
+    })
+
+
+def signaler_echec(message):
+    """Un repère absent ne se voit pas : l'échec doit au moins laisser une trace."""
+    result = message.get('result') or {}
+    if 'error' in message or result.get('isError'):
+        print('repère : install_extension a échoué (%s)'
+              % json.dumps(message.get('error') or result.get('content')),
+              file=sys.stderr)
 
 
 def lire_serveur():
@@ -68,13 +94,21 @@ def lire_serveur():
             continue
 
         if message.get('id') == BOOTSTRAP_ID:
+            signaler_echec(message)
             answered.set()
             continue
 
         # Le serveur prévient lui-même quand le navigateur a redémarré ; c'est
-        # notre seul indice qu'il faut reposer l'extension.
+        # notre seul indice qu'il faut reposer l'extension. La demande part
+        # avant la réponse qui porte l'avis, pour passer devant tout appel que
+        # la session enverrait ensuite. Sans attente : sa réponse arrive par ce
+        # fil-ci, qui l'avalera au tour suivant. Une fois posée, l'extension
+        # range aussi l'onglet que l'appel de relance vient d'ouvrir.
         if RESTART_SIGNAL in json.dumps(message.get('result', {})):
-            bootstrapped.clear()
+            try:
+                demande_amorce()
+            except Exception as erreur:
+                print('repère : réamorce impossible (%s)' % erreur, file=sys.stderr)
 
         result = message.get('result')
         if isinstance(result, dict) and isinstance(result.get('tools'), list):
@@ -90,10 +124,7 @@ def lire_serveur():
 
 def amorcer():
     answered.clear()
-    vers_serveur({
-        'jsonrpc': '2.0', 'id': BOOTSTRAP_ID, 'method': 'tools/call',
-        'params': {'name': 'install_extension', 'arguments': {'path': MARKER_DIR}},
-    })
+    demande_amorce()
     # Ne jamais bloquer indéfiniment : sans repère la session travaille quand
     # même, sans navigateur elle ne fait plus rien.
     answered.wait(timeout=60)
@@ -106,8 +137,7 @@ for line in sys.stdin:
     try:
         message = json.loads(line)
     except Exception:
-        server.stdin.write(line)
-        server.stdin.flush()
+        ecrire_serveur(line)
         continue
 
     if message.get('method') == 'tools/call' and not bootstrapped.is_set():

@@ -62,6 +62,12 @@ onglet, donc en fermer un ne peut pas effacer le repère. Tout est automatique :
 le lanceur grave l'étiquette et repose l'extension à chaque ouverture — elle ne
 survit pas au navigateur — sans qu'aucune session ait à s'en occuper.
 
+Une fenêtre y échappe, par construction : celle qu'ouvre `new_page` avec
+`isolatedContext`. Ce contexte séparé est invisible des extensions, donc sa
+fenêtre n'a jamais de repère. Ne s'en servir que pour une seconde session
+applicative simultanée — deux utilisateurs connectés à la fois —, et pas pour
+ouvrir une page ordinaire.
+
 Conséquence : deux sessions sur deux worktrees ont deux navigateurs, deux
 profils, deux jeux de cookies. Il n'y a plus de port partagé, donc plus de
 collision possible — à condition de ne pas recréer le problème à la main.
