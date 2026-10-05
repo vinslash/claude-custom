@@ -93,9 +93,21 @@ esac
 # Écraser les fichiers un à un plutôt que refaire le dossier : deux sessions sur
 # le même worktree se marcheraient dessus, et Chrome tient l'extension ouverte
 # depuis ce chemin.
+#
+# Le worker porte un nom tiré de son contenu, étiquette comprise. Chrome garde
+# dans le profil l'enregistrement du service worker de l'extension, et le
+# reprend tel quel à chaque réinstallation : même nom de script, même code,
+# quels que soient le fichier sur disque et le numéro de version. Mesuré le
+# 05/10 — après une mise à jour du worker, le fichier servi était le nouveau,
+# le code exécuté l'ancien. Un nom neuf est la seule chose qui le fasse relire.
 mkdir -p "$marker_dir"
-cp "$here/extension-marker/manifest.json" "$here/extension-marker/worker.js" "$marker_dir/"
 printf 'globalThis.LABEL = "%s";\n' "$label" > "$marker_dir/label.js"
+worker="worker-$(cat "$here/extension-marker/worker.js" "$marker_dir/label.js" | shasum | cut -c1-12).js"
+cp "$here/extension-marker/worker.js" "$marker_dir/$worker"
+sed "s/\"worker\.js\"/\"$worker\"/" "$here/extension-marker/manifest.json" > "$marker_dir/manifest.json"
+# Les versions précédentes ne servent plus à rien : le manifeste ne les nomme
+# plus.
+find "$marker_dir" -name 'worker*.js' ! -name "$worker" -delete
 
 # Git ne doit pas voir passer ce dossier. L'exclusion va dans le fichier local du
 # dépôt, jamais dans le `.gitignore` versionné : c'est de l'outillage de poste,

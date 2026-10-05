@@ -69,11 +69,20 @@ onglet, donc en fermer un ne peut pas effacer le repère. Tout est automatique :
 le lanceur grave l'étiquette et repose l'extension à chaque ouverture — elle ne
 survit pas au navigateur — sans qu'aucune session ait à s'en occuper.
 
-Une fenêtre y échappe, par construction : celle qu'ouvre `new_page` avec
-`isolatedContext`. Ce contexte séparé est invisible des extensions, donc sa
-fenêtre n'a jamais de repère. Ne s'en servir que pour une seconde session
-applicative simultanée — deux utilisateurs connectés à la fois —, et pas pour
-ouvrir une page ordinaire.
+**Un second compte connecté en parallèle passe par `127.0.0.1`, pas par
+`isolatedContext`.** Le navigateur sépare cookies et stockage par nom d'hôte :
+`http://127.0.0.1:<port>` est une autre origine que `http://localhost:<port>`,
+donc une autre session applicative, dans la même fenêtre. Ouvrir sa première
+page avec le nom du compte en fragment — `new_page` sur
+`http://127.0.0.1:<port>/#repere=superadmin` —, et ses onglets se rangent dans un
+second groupe, violet, intitulé `SLI-8422 · superadmin`. Le nom est retenu même
+quand l'application retire le fragment.
+
+`isolatedContext`, lui, ouvre une fenêtre que l'extension ne voit pas : sans
+repère, elle redevient indiscernable de celle d'un autre worktree. N'y recourir
+que si `127.0.0.1` est refusé — CORS du backend, ou connexion Google ou SSO, que
+Firebase n'accepte que sur ses domaines autorisés —, et dire alors à
+l'utilisateur quelle fenêtre porte quel compte.
 
 Conséquence : deux sessions sur deux worktrees ont deux navigateurs, deux
 profils, deux jeux de cookies. Il n'y a plus de port partagé, donc plus de
