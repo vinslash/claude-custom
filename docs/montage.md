@@ -13,7 +13,7 @@ effet, [`propagation.md`](propagation.md).
 | `RTK.md` | Référence du proxy CLI `rtk`, importée par `CLAUDE.md`. |
 | `.claude-plugin/plugin.json` | Le manifeste. C'est sa seule présence qui fait charger le dossier comme plugin. |
 | `hooks/hooks.json` | Le câblage, et rien d'autre : un script par événement. Volontairement famélique — voir [`propagation.md`](propagation.md). |
-| `hooks/handlers/session-start.sh` | Déclare les `watchPaths` à surveiller, et injecte le ticket lu dans le nom de branche quand la session s'ouvre dans un worktree SLI. |
+| `hooks/handlers/session-start.sh` | Déclare les `watchPaths` à surveiller, injecte le ticket lu dans le nom de branche quand la session s'ouvre dans un worktree SLI, et prévient l'utilisateur quand le profil Chrome du worktree va naître d'un modèle aux sessions périmées. |
 | `hooks/handlers/file-changed.sh` | `FileChanged` : se déclenche seul quand un fichier de config bouge sur disque, prévient à l'écran, pose un marqueur. |
 | `hooks/handlers/user-prompt-submit.sh` | Consomme le marqueur au message suivant et réinjecte les instructions permanentes modifiées. |
 | `hooks/handlers/common.sh` | Les deux ensembles de fichiers qui fondent tout le rattrapage : instructions permanentes contre câblage. |
@@ -22,7 +22,7 @@ effet, [`propagation.md`](propagation.md).
 | `bin/chrome-mcp.sh` | Le lancement du navigateur : profil dérivé du worktree, cloné du profil modèle à sa naissance, extension de repère préparée dans le worktree, et deux arguments retirés de ceux que Puppeteer pose par défaut — `--disable-extensions`, qui empêcherait les extensions de démarrer, et `--use-mock-keychain`, qui les ferait effacer du profil au premier lancement. |
 | `bin/extension-marker/` | L'extension qui range les onglets d'une fenêtre dans un groupe au nom du ticket. Le lanceur en dépose une copie étiquetée dans `<worktree>/.chrome-marker` — dans le worktree, seul endroit que `install_extension` accepte. |
 | `bin/chrome-marker-proxy.py` | Relais MCP qui repose l'extension au premier appel d'outil, et dès que le serveur signale un redémarrage du navigateur — elle ne lui survit pas. Cache aussi les outils d'extension à la session, et trace sur stderr une installation refusée. |
-| `bin/chrome-template.sh` | Ouvre `~/.cache/chrome-mcp/_modele` pour y installer Dashlane **et s'y connecter à GitHub**, une fois pour toutes. Le seul lancement de Chrome à la main qui soit permis. Refuse de partir si Chrome tourne déjà, et contrôle les deux à la sortie. |
+| `bin/chrome-template.sh` | Ouvre `~/.cache/chrome-mcp/_modele` pour y installer Dashlane **et s'y connecter à GitHub**, puis rafraîchir ces sessions avant leur échéance. Le seul lancement de Chrome à la main qui soit permis. Refuse de partir si Chrome tourne déjà, et contrôle les deux à la sortie. |
 | `install.sh` | Pose le clone installé, l'import `CLAUDE.md`, l'agent launchd, et neutralise ce qui entre en conflit. Idempotent. |
 | `hooks-retired/` | Hooks retirés de `settings.json`, conservés pour pouvoir les recoller. |
 | `settings.snippet.json` | Le peu qui doit vivre dans `settings.json`, et pourquoi. |

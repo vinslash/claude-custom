@@ -43,17 +43,24 @@ au premier chef — et leur session déjà ouverte.
 
 C'est aussi le bon endroit pour une session **GitHub** : ouverte dans le modèle,
 tous les worktrees nés ensuite l'héritent, et poser les captures d'une PR ne
-demande plus de connexion — voir `slash:github-screenshots`. Le contrôle tient en
-une commande, qui ne lit que des noms de domaine :
+demande plus de connexion — voir `slash:github-screenshots`.
+
+**Ces sessions expirent au bout de 14 jours**, GitHub comme Dashlane, et le
+modèle ne les prolonge pas puisque personne ne l'ouvre. Un profil de worktree,
+lui, prolonge les siennes en s'en servant. Passé l'échéance, chaque worktree neuf
+hérite donc de sessions mortes, et tout est à ressaisir. Le début de session
+prévient quand c'est le cas ; le geste est de relancer `bin/chrome-template.sh`.
+Le contrôle tient en une commande, qui ne lit qu'une date :
 
 ```bash
 sqlite3 "file:$HOME/.cache/chrome-mcp/_modele/Default/Cookies?immutable=1" \
-  "select distinct host_key from cookies where host_key like '%github%';"
+  "select datetime(expires_utc/1000000 - 11644473600, 'unixepoch') from cookies
+   where host_key = 'github.com' and name = 'user_session';"
 ```
 
-Elle doit lister `.github.com`. Vide, la connexion n'a pas été faite ou n'a pas
-été enregistrée — Chrome écrit ses cookies à la fermeture, donc fermer le modèle
-avant de vérifier.
+Elle doit rendre une date à venir. Une date passée, c'est le modèle à rafraîchir ;
+rien du tout, la connexion n'a pas été faite ou pas enregistrée — Chrome écrit
+ses cookies à la fermeture, donc fermer le modèle avant de vérifier.
 
 Chaque fenêtre porte enfin le nom de son ticket, dans la barre d'onglets : une
 petite extension range **tous** ses onglets dans un groupe jaune intitulé

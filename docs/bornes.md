@@ -61,6 +61,13 @@ de **14 à 27** chacune.
 | `process-ticket` → `scripts/red-flags-sddd.py`, à l'étape 3 | **zéro signalement** sur les fichiers back touchés par la branche | Un red flag SDDD non traité part en review. La remarque y porte sur une décision de conception — ports, mapper, entité ou value-object — donc sur du code déjà écrit : un aller-retour. |
 | `review` → `red-flags-sddd.py` de `process-ticket`, en mode 1 (auto-review) et en mode 3 (PR d'un collègue) | **zéro signalement** avant de présenter la moindre remarque | Ce que la CI dit déjà, la review ne le dit pas : une remarque humaine sur ce qu'un script attrape est du crédit dépensé là où la machine est meilleure. En mode 3, ce que le script sort est au contraire la remarque la plus solide — elle cite une règle du dépôt, pas un goût. |
 
+## Le profil Chrome modèle
+
+| Borne | Valeur | Au-delà |
+| --- | --- | --- |
+| Durée des sessions GitHub et Dashlane héritées du modèle | **14 jours** depuis le passage de `chrome-template.sh` — délai fixé par GitHub et par Dashlane, pas par nous. Porté par `chrome-isolation` | Chaque worktree neuf naît avec des sessions mortes, et tout est à ressaisir sans rien qui dise pourquoi. |
+| Préavis du début de session | **3 jours** avant l'échéance, et seulement dans un worktree dont le profil n'est pas encore né — `hooks/handlers/session-start.sh` | Prévenir partout ferait un message de plus dans chaque session, pour un geste qui n'en concerne qu'une ; prévenir le jour même ne laisse pas le temps de rouvrir le modèle. |
+
 ## Les portes anti-overkill
 
 Un skill qui impose quinze minutes de cérémonie sur un libellé mal orthographié

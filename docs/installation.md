@@ -90,7 +90,7 @@ apparaître. Le journal des mises à jour vit dans
 mises à jour effectives ; les erreurs de launchd lui-même vont dans
 `~/.claude/slash-state/launchd-erreurs.log`.
 
-## Une fois pour toutes : le profil Chrome modèle
+## Le profil Chrome modèle
 
 Seulement pour qui se servira du navigateur — captures d'écran sur une PR,
 constat dans l'application.
@@ -101,8 +101,13 @@ bash ~/.claude/skills/slash/bin/chrome-template.sh
 
 Chrome s'ouvre sur le profil dont chaque profil de worktree sera cloné. Y faire
 **deux** choses : installer Dashlane et s'y connecter, **et** se connecter à
-GitHub. Puis fermer la fenêtre. Sans ça, chaque première pose de capture
+GitHub. Puis quitter Chrome par Cmd+Q. Sans ça, chaque première pose de capture
 s'arrêtera sur une connexion GitHub à faire à la main.
+
+Ce n'est pas un geste unique : les deux sessions expirent, et le modèle, qu'on
+n'ouvre jamais, ne les prolonge pas — délai dans [`bornes.md`](bornes.md). Le
+script annonce l'échéance en sortant, et le début de session prévient quand un
+worktree va naître d'un modèle périmé : relancer alors le même script.
 
 C'est le seul lancement de Chrome à la main qui soit permis : partout ailleurs,
 le navigateur est fourni par le serveur MCP `chrome`.

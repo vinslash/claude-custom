@@ -48,12 +48,16 @@ mkdir -p "$template"
 echo "Profil modèle : $template"
 echo
 echo "Dans la fenêtre qui s'ouvre, DEUX choses :"
-echo "  1. installer Dashlane depuis le Chrome Web Store, et s'y connecter ;"
+echo "  1. installer Dashlane depuis le Chrome Web Store, et s'y connecter en"
+echo "     cochant « Garder ma session ouverte pendant 14 jours » ;"
 echo "  2. se connecter à GitHub dans le second onglet."
 echo
 echo "Puis QUITTER PAR CMD+Q, et non en fermant la dernière fenêtre — sur macOS"
 echo "Chrome survit parfois à sa dernière fenêtre, et un profil pas encore vidé"
 echo "sur disque serait cloné à moitié écrit. Ne pas interrompre ce script."
+echo
+echo "Ces sessions durent 14 jours, et le modèle ne les prolonge pas : le rouvrir"
+echo "avant l'échéance. Le début de session prévient quand elle approche."
 echo
 echo "Les profils de worktree DÉJÀ créés ne changent pas. Pour qu'un ticket en"
 echo "cours reparte du modèle, supprimer son dossier dans ~/.cache/chrome-mcp/."
@@ -74,20 +78,25 @@ missing=""
 [ -d "$template/Default/Extensions/fdjamakpfbbddfjaooikfcpapjohcfmg" ] \
   || missing="$missing Dashlane"
 
-# Le fichier dépend de la version de Chrome : les deux emplacements connus.
-github_ok=0
+# Le fichier dépend de la version de Chrome : les deux emplacements connus. On
+# lit l'échéance de `user_session` plutôt que sa seule présence : un cookie
+# expiré compterait comme une session alors qu'il n'en est plus une. C'est la
+# même lecture que fait `hooks/handlers/session-start.sh` pour prévenir.
+expiry=0
 for base in "$template/Default/Cookies" "$template/Default/Network/Cookies"; do
   [ -f "$base" ] || continue
-  n=$(sqlite3 "file:$base?immutable=1" \
-        "select count(*) from cookies where host_key like '%github%';" 2>/dev/null || true)
-  case "$n" in ''|*[!0-9]*) n=0 ;; esac
-  if [ "$n" -gt "$github_ok" ]; then github_ok="$n"; fi
+  e=$(sqlite3 "file:$base?immutable=1" \
+        "select max(expires_utc/1000000 - 11644473600) from cookies
+         where host_key = 'github.com' and name = 'user_session';" 2>/dev/null || true)
+  case "$e" in ''|*[!0-9]*) e=0 ;; esac
+  if [ "$e" -gt "$expiry" ]; then expiry="$e"; fi
 done
-[ "$github_ok" -gt 0 ] || missing="$missing GitHub"
+[ "$expiry" -gt "$(date +%s)" ] || missing="$missing GitHub"
 
 if [ -z "$missing" ]; then
   echo "Modèle prêt : Dashlane installé, session GitHub enregistrée."
-  echo "Les prochains worktrees en hériteront."
+  echo "Les prochains worktrees en hériteront jusqu'au $(date -r "$expiry" '+%d/%m') ;"
+  echo "rouvrir le modèle avant."
 else
   echo "Attention, il manque :$missing — relancer ce script."
   echo "Si c'est GitHub : Chrome n'écrit ses cookies qu'en quittant par Cmd+Q."

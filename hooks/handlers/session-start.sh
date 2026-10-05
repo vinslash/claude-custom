@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# `SessionStart` : deux choses, à l'ouverture de chaque session.
+# `SessionStart` : trois choses, à l'ouverture de chaque session.
 #
 # 1. Déclarer les `watchPaths` — les chemins absolus que Claude Code doit
 #    surveiller pour déclencher `FileChanged`. C'est ce qui abonne la session aux
@@ -11,6 +11,9 @@
 #    SLI. L'identifiant se lit dans le nom de la branche : le faire ici plutôt
 #    que de le laisser déduire par le modèle, c'est déterministe, ça ne coûte
 #    rien, et ça évite qu'un parcours démarre sur un ticket mal identifié.
+#
+# 3. Prévenir l'utilisateur quand le profil Chrome de ce worktree va naître d'un
+#    modèle dont les sessions sont mortes ou sur le point de l'être.
 #
 # Silencieux et sans effet hors slash-interim — ce hook tourne dans toutes les
 # sessions.
@@ -68,16 +71,60 @@ $ctx"
   printf '%s' "$current" > "$SESSIONS/$sid.fingerprint" 2>/dev/null
 fi
 
+# ------------------------------------------------- profil Chrome modèle périmé --
+# Le profil du worktree naît d'un clone du modèle, sessions GitHub et Dashlane
+# comprises. Mais elles ne durent que 14 jours, et le modèle, qu'on n'ouvre
+# jamais, ne les prolonge pas : passé ce délai, chaque profil neuf hérite de
+# sessions mortes, et il faut tout ressaisir sans que rien ne dise pourquoi.
+#
+# On ne prévient donc que là où ça se paie : un worktree dont le profil n'est
+# pas encore né, et un modèle à moins de trois jours de l'échéance. L'échéance se
+# lit sur le cookie `user_session` de GitHub ; celle de Dashlane n'est lisible
+# nulle part, mais les deux connexions se font dans le même passage de
+# `chrome-template.sh`, donc elles tombent ensemble.
+notice=""
+chrome_base="$HOME/.cache/chrome-mcp"
+profile="$chrome_base/$(basename "${root:-$PWD}")"
+if [ -d "$chrome_base/_modele" ] && [ ! -d "$profile" ]; then
+  expiry=""
+  for cookies in "$chrome_base/_modele/Default/Cookies" "$chrome_base/_modele/Default/Network/Cookies"; do
+    [ -f "$cookies" ] || continue
+    expiry=$(sqlite3 "file:$cookies?immutable=1" \
+      "select max(expires_utc/1000000 - 11644473600) from cookies
+       where host_key = 'github.com' and name = 'user_session';" 2>/dev/null) || expiry=""
+    [ -n "$expiry" ] && break
+  done
+  now=$(date +%s)
+  case "$expiry" in ''|*[!0-9]*) expiry=0 ;; esac
+  if [ "$expiry" -le "$now" ]; then
+    when="sont expirées"
+    [ "$expiry" -gt 0 ] && when="ont expiré le $(date -r "$expiry" '+%d/%m')"
+  elif [ "$expiry" -le $((now + 3 * 86400)) ]; then
+    when="expirent le $(date -r "$expiry" '+%d/%m')"
+  else
+    when=""
+  fi
+  if [ -n "$when" ]; then
+    notice="Profil Chrome modèle : ses sessions GitHub et Dashlane $when. Ce worktree en héritera, et il faudra s'y reconnecter. Pour rafraîchir le modèle : quitter Chrome (Cmd+Q), puis bash ~/.claude/skills/slash/bin/chrome-template.sh."
+  fi
+fi
+
 # Balayage de l'état laissé par les sessions mortes. Sans ça, `sessions/` grossit
 # d'un fichier par session et par jour, pour toujours.
 find "$SESSIONS" -type f -mtime +7 -delete 2>/dev/null
 
-CC_PATHS="$(permanent_instructions; wiring)" python3 - "$ctx" <<'PY'
+CC_PATHS="$(permanent_instructions; wiring)" CC_NOTICE="$notice" python3 - "$ctx" <<'PY'
 import json, os, sys
 ctx = sys.argv[1] if len(sys.argv) > 1 else ""
 paths = [p for p in os.environ.get("CC_PATHS", "").split("\n") if p.strip()]
 out = {"hookEventName": "SessionStart", "watchPaths": paths}
 if ctx.strip():
     out["additionalContext"] = ctx
-print(json.dumps({"hookSpecificOutput": out}))
+result = {"hookSpecificOutput": out}
+# `systemMessage` s'affiche à l'utilisateur, pas au modèle : c'est lui qui
+# devra rouvrir le modèle, pas la session.
+notice = os.environ.get("CC_NOTICE", "")
+if notice:
+    result["systemMessage"] = notice
+print(json.dumps(result))
 PY

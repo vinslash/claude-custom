@@ -183,7 +183,7 @@ déjà ouverte, une fois : `/reload-plugins` dans le terminal, ou une nouvelle
 session dans l'extension VSCode, qui n'expose pas cette commande.
 
 Qui se servira du navigateur — captures sur une PR, constat dans l'application —
-a une étape à faire une fois pour toutes :
+a une étape à faire, puis à refaire quand le début de session le demande :
 `bash ~/.claude/skills/slash/bin/chrome-template.sh`, pour installer Dashlane et se
 connecter à GitHub dans le profil dont chaque worktree clonera le sien.
 
