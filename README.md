@@ -168,13 +168,19 @@ en dur pour son option `--from-dev`. Cloner ailleurs marche, mais `/slash:force-
 ne saura plus tirer d'ici sans passer par GitHub.
 
 L'installateur pose le clone à `~/.claude/skills/slash`, la ligne d'import dans
-`~/.claude/CLAUDE.md`, et l'agent launchd qui tire toutes les deux minutes. Il
+`~/.claude/CLAUDE.md`, l'agent launchd qui tire toutes les deux minutes, et la
+status line de `bin/statusline.sh` :
+
+```
+Opus 5.5 │ ██████░░░░ 62% 125k/200k │ 3,09 € │ Σ 2M tok │ ⏱ 29min │ projet (main*)
+``` Il
 est idempotent et ne supprime jamais un fichier sans l'avoir sauvegardé.
 
 **Une configuration déjà en place n'est pas écrasée.** L'import est ajouté
-*au-dessus* d'un `~/.claude/CLAUDE.md` existant, dont le contenu est conservé ; la
-seule entrée touchée dans `settings.json` est la neutralisation d'un serveur MCP
-inutilisable sur l'hôte ; et vos skills personnels, vos hooks et vos autres
+*au-dessus* d'un `~/.claude/CLAUDE.md` existant, dont le contenu est conservé ; dans
+`settings.json`, seules deux entrées sont touchées — la neutralisation d'un
+serveur MCP inutilisable sur l'hôte, et la status line, posée seulement s'il n'y
+en a pas déjà une ; et vos skills personnels, vos hooks et vos autres
 plugins ne sont pas touchés. Cas par cas dans
 [`docs/installation.md`](docs/installation.md).
 

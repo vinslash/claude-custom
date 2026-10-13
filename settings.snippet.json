@@ -6,7 +6,7 @@
     "symlink y serait remplacé par un fichier ordinaire sans prévenir.",
     "",
     "Tout le reste — skills, hooks, serveur MCP — est porté par le plugin et donc",
-    "versionné. install.sh applique la seule entrée ci-dessous, de façon idempotente.",
+    "versionné. install.sh applique les deux entrées ci-dessous, de façon idempotente.",
     "",
     "disabledMcpjsonServers : le .mcp.json de slash-interim déclare un serveur",
     "chrome-devtools taillé pour le devcontainer (il vise host.docker.internal,",
@@ -16,7 +16,16 @@
     "",
     "Retiré volontairement de settings.json (voir hooks-retired/) : les deux hooks",
     "GitNexus, qui lançaient un process Node à chaque Grep, Glob et Bash pour",
-    "interroger un index qui n'existe sur aucun dépôt."
+    "interroger un index qui n'existe sur aucun dépôt.",
+    "",
+    "statusLine : un plugin ne peut pas la déclarer. Elle vise le script DANS le",
+    "clone installé, et suit donc les mises à jour. install.sh ne la pose que si",
+    "aucune status line n'est en place, ou par-dessus l'ancienne copie autonome",
+    "~/.claude/statusline.sh ; une status line personnelle est laissée."
   ],
-  "disabledMcpjsonServers": ["chrome-devtools"]
+  "disabledMcpjsonServers": ["chrome-devtools"],
+  "statusLine": {
+    "type": "command",
+    "command": "bash ~/.claude/skills/slash/bin/statusline.sh"
+  }
 }

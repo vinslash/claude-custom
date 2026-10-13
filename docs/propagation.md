@@ -14,6 +14,7 @@ affaire de goût : c'est ce que Claude Code sait faire, vérifié.
 | Corps d'un `SKILL.md`, sa description, ajout, suppression, renommage | Surveillant natif, dans la session en cours |
 | Corps d'un handler de hook | Relu à chaque déclenchement — `hooks.json` ne nomme qu'un script |
 | `~/.claude/settings.json` | Surveillant natif |
+| `bin/statusline.sh` | Relu à chaque rafraîchissement de la status line — `settings.json` ne nomme que le script |
 | `CLAUDE.md` et ses imports `@` — `RTK.md`, les `AMORCE.md` | **Rien ne les relit.** Réinjectés par `user-prompt-submit.sh` |
 | `hooks/hooks.json`, `.mcp.json`, `agents/`, `output-styles/` | Le seul geste manuel qui reste : `/reload-plugins` dans le terminal, **nouvelle session** dans l'extension VSCode |
 

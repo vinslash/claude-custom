@@ -201,9 +201,14 @@ done
 [ "$found" = 1 ] || ok "aucun."
 
 # ------------------------------------------------------------- settings.json --
-# Une seule entrée doit y vivre : la neutralisation du serveur `chrome-devtools`
-# déclaré par le .mcp.json de slash-interim, taillé pour le devcontainer et
-# inutilisable sur l'hôte. Le reste (hooks, MCP) est porté par le plugin.
+# Deux entrées doivent y vivre, parce qu'un plugin ne sait porter ni l'une ni
+# l'autre :
+#
+# - la neutralisation du serveur `chrome-devtools` déclaré par le .mcp.json de
+#   slash-interim, taillé pour le devcontainer et inutilisable sur l'hôte ;
+# - la status line, qui vise le script DANS le clone : elle suit donc les mises
+#   à jour sans qu'on y touche. Une status line déjà en place est laissée, sauf
+#   l'ancienne copie autonome de ce même script dans ~/.claude.
 step "settings.json"
 settings="$CLAUDE_DIR/settings.json"
 if [ -f "$settings" ]; then
@@ -212,19 +217,37 @@ if [ -f "$settings" ]; then
   python3 - "$settings" "$STAMP" <<'PY'
 import json, shutil, sys
 p, stamp = sys.argv[1], sys.argv[2]
+ok = lambda m: print(f"  \033[32m✔\033[0m {m}")
+warn = lambda m: print(f"  \033[33m!\033[0m {m}")
 with open(p) as f:
     cfg = json.load(f)
+changed = False
+
 disabled = cfg.get("disabledMcpjsonServers") or []
 if "chrome-devtools" in disabled:
-    print("  \033[32m✔\033[0m chrome-devtools déjà neutralisé.")
+    ok("chrome-devtools déjà neutralisé.")
 else:
-    shutil.copy2(p, f"{p}.bak-{stamp}")
     disabled.append("chrome-devtools")
     cfg["disabledMcpjsonServers"] = disabled
+    changed = True
+    ok("chrome-devtools neutralisé (entrée .mcp.json de slash-interim).")
+
+wanted = "bash ~/.claude/skills/slash/bin/statusline.sh"
+current = (cfg.get("statusLine") or {}).get("command", "")
+if current == wanted:
+    ok("status line déjà branchée sur le clone.")
+elif not current or current.endswith(".claude/statusline.sh"):
+    cfg["statusLine"] = {"type": "command", "command": wanted}
+    changed = True
+    ok("status line branchée sur le clone" + (f" (remplace {current})." if current else "."))
+else:
+    warn(f"status line personnelle laissée en place ({current}) — celle du dépôt : {wanted}")
+
+if changed:
+    shutil.copy2(p, f"{p}.bak-{stamp}")
     with open(p, "w") as f:
         json.dump(cfg, f, indent=2, ensure_ascii=False)
         f.write("\n")
-    print("  \033[32m✔\033[0m chrome-devtools neutralisé (entrée .mcp.json de slash-interim).")
 PY
 else
   warn "pas de settings.json — voir settings.snippet.json pour ce qu'il doit contenir."

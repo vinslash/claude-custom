@@ -23,6 +23,7 @@ effet, [`propagation.md`](propagation.md).
 | `bin/extension-marker/` | L'extension qui range les onglets d'une fenêtre dans un groupe au nom du ticket, et ceux d'un second compte ouvert sur `127.0.0.1` dans un second groupe au nom de ce compte. Le lanceur en dépose une copie étiquetée dans `<worktree>/.chrome-marker` — dans le worktree, seul endroit que `install_extension` accepte. |
 | `bin/chrome-marker-proxy.py` | Relais MCP qui repose l'extension au premier appel d'outil, retente à chaque appel tant qu'elle n'a pas pris, et la repose dès que le serveur signale un redémarrage du navigateur — elle ne lui survit pas. Cache aussi les outils d'extension à la session, et trace sur stderr une installation refusée. |
 | `bin/chrome-template.sh` | Ouvre `~/.cache/chrome-mcp/_modele` pour y installer Dashlane **et s'y connecter à GitHub**, puis rafraîchir ces sessions avant leur échéance. Le seul lancement de Chrome à la main qui soit permis. Refuse de partir si Chrome tourne déjà, et contrôle les deux à la sortie. |
+| `bin/statusline.sh` | La status line : modèle, remplissage du contexte, coût en euros, tokens consommés sur la session sous-agents compris, durée, dossier et branche. `settings.json` vise ce fichier dans le clone, donc elle suit les mises à jour. Écrit son seul cache — le taux USD→EUR du jour — dans `~/.claude/cache/`, jamais dans le clone. |
 | `install.sh` | Pose le clone installé, l'import `CLAUDE.md`, l'agent launchd, et neutralise ce qui entre en conflit. Idempotent. |
 | `hooks-retired/` | Hooks retirés de `settings.json`, conservés pour pouvoir les recoller. |
 | `settings.snippet.json` | Le peu qui doit vivre dans `settings.json`, et pourquoi. |
@@ -45,8 +46,8 @@ quel projet. `install.sh` le vérifie ; ne pas revenir à un chemin relatif.
 **Ce que Claude Code réécrit lui-même ne doit pas être un lien.** `settings.json`
 d'abord : il le réécrit (thème, plugins activés, `/config`), et une réécriture
 atomique remplacerait le lien par un fichier ordinaire sans prévenir. Il n'est donc
-pas versionné, et le peu qui doit y vivre est documenté dans
-`settings.snippet.json`.
+pas versionné, et le peu qui doit y vivre — la neutralisation d'un serveur MCP et
+la status line — est documenté dans `settings.snippet.json`.
 
 `~/.claude/CLAUDE.md` ensuite, pour la même raison poussée d'un cran : Claude Code
 y écrit aussi (`/memory`, « ajoute ça à CLAUDE.md »). Quand c'était un lien vers le

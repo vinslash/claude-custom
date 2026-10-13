@@ -14,6 +14,10 @@ mise à jour automatique se vérifie, et comment revenir en arrière.
 | Un accès **SSH en lecture** à `vinslash/claude-custom` | Le clone installé tire ses mises à jour depuis GitHub. Sans accès, l'installation se termine avec un avertissement et la configuration reste figée à son état du jour. |
 | Google Chrome | Seulement pour le serveur MCP `chrome` et les skills qui en dépendent. Le reste marche sans. |
 
+`jq` est **facultatif** : seule la status line s'en sert, et sans lui elle
+affiche `jq not installed` au lieu de ses compteurs. Il est livré avec les macOS
+récents, sinon `brew install jq`.
+
 `rtk` est **facultatif**. `RTK.md` est importé dans toutes les sessions et décrit
 un proxy CLI qui économise des tokens ; sans le binaire, ces instructions restent
 sans effet et rien ne casse.
@@ -32,7 +36,8 @@ l'avoir sauvegardé à côté sous `.bak-<horodatage>`.
 | `~/.claude/CLAUDE.md` lien symbolique | Le remplace par le fichier d'une ligne — voir [`montage.md`](montage.md), qui dit pourquoi ce ne doit pas être un lien. |
 | `~/.claude/RTK.md` | N'est plus lu par personne une fois l'import en place : versé dans le dépôt s'il n'y est pas, retiré s'il est identique, sauvegardé et retiré s'il diffère — avec proposition d'en verser le contenu dans le dépôt. |
 | Anciens liens `~/.claude/skills/slash-*` | Retire **seulement** ceux qui pointent vers ce dépôt. Les autres sont laissés, avec un avertissement. |
-| `~/.claude/settings.json` | Ajoute une seule clé : `disabledMcpjsonServers: ["chrome-devtools"]` — voir [`../settings.snippet.json`](../settings.snippet.json). Ne sauvegarde que s'il modifie vraiment. |
+| `~/.claude/settings.json` | Ajoute `disabledMcpjsonServers: ["chrome-devtools"]`, et `statusLine` vers `bin/statusline.sh` du clone — voir [`../settings.snippet.json`](../settings.snippet.json). Ne sauvegarde que s'il modifie vraiment. |
+| Une `statusLine` déjà déclarée | **La laisse**, et donne la commande à poser pour prendre celle du dépôt. Seule exception : l'ancienne copie autonome `~/.claude/statusline.sh`, remplacée par le script du clone. |
 | `~/.claude/slash-etat/` — l'état sous son ancien nom | Déplace son contenu vers `slash-state/` **sans jamais écraser** ce qui s'y trouve déjà, puis ne retire l'ancien dossier que s'il finit vide, et le dit s'il reste quelque chose. |
 | Un agent launchd sous l'ancien label `…​.maj` | L'évince et supprime son plist **avant** de charger le nouveau. Sans ça, deux agents tourneraient, dont un pointant sur un script qui n'existe plus. |
 | L'agent launchd | Écrit `~/Library/LaunchAgents/com.slash.claude-custom.update.plist` et le charge. |
@@ -134,8 +139,9 @@ rm -rf ~/.claude/skills/slash ~/.claude/slash-state
 
 Reste à retirer à la main la ligne `@~/.claude/skills/slash/CLAUDE.md` en tête de
 `~/.claude/CLAUDE.md` — le contenu qui suit est le vôtre, et les sauvegardes
-`~/.claude/CLAUDE.md.bak-*` sont toujours là. Et, si elle vous gêne, l'entrée
-`disabledMcpjsonServers` de `settings.json`.
+`~/.claude/CLAUDE.md.bak-*` sont toujours là. Et dans `settings.json`, la clé
+`statusLine` — elle viserait un script disparu — et, si elle vous gêne, l'entrée
+`disabledMcpjsonServers`.
 
 Le dépôt de développement, lui, n'a jamais été modifié par l'installation : il
 suffit de le supprimer.
