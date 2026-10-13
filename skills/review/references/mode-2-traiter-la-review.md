@@ -18,7 +18,7 @@ mécanique `gh` est dans `mecanique-gh.md`, à lire au moment de publier.
 5. **Présenter le tableau** : un thread par ligne, la position, et la réponse
    proposée en une ou deux phrases.
 
-Après arbitrage : committer (`slash-commit`), pousser, puis poster les réponses
+Après arbitrage : committer (`slash-create-commit` dans slash-interim), pousser, puis poster les réponses
 retenues et résoudre les threads traités. Un thread dont la réponse n'a pas été
 retenue reste ouvert — et on dit lesquels.
 

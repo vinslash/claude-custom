@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Red flags SDDD sur les fichiers back touches par la branche.
 
-Reprend la table « Red flags — stop et corriger » de slash-ddd-backend et les
+Reprend la table « Red flags — stop et corriger » de l'ancien slash-ddd-backend (devenu slash-guideline-backend-ddd) et les
 invariants de .claude/rules/sddd-structure.md. Un depassement = code de sortie 1.
 
 Usage : red-flags-sddd.py [base]

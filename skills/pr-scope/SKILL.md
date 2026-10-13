@@ -1,22 +1,18 @@
 ---
 name: pr-scope
+disable-model-invocation: true
 description: >
-  Ce qu'une pull request doit embrasser pour être relisible : un lot
-  **constatable** — quelque chose qu'on peut mettre devant quelqu'un et montrer
-  que ça marche. Le critère n'est ni le volume ni le nombre de fichiers, c'est
-  de pouvoir jouer un « après » sur le lot. Se tranche à l'analyse, où le
-  périmètre ne coûte que le choix d'un ordre d'implémentation, et non après
-  l'implémentation, où la même décision coûte des cherry-picks. Donne les
-  frontières qui marchent et les cas qui ne livrent rien d'observable.
-  Use at the analysis or planning step of a ticket, before any code is written —
-  step 2 of `slash:process-ticket`; when the user says « qu'est-ce qu'on livre
-  dans cette PR ? », « on met tout dans une seule PR ? », « par où on commence »,
-  « est-ce que ça se constate », « ça se teste comment », or `/slash:pr-scope`.
-  Ne PAS utiliser au moment d'ouvrir la PR — à l'étape 7 le périmètre est déjà
-  écrit et ce skill n'a plus de prise —, ni pour découper les commits
-  (→ `slash-commit`), ni pour rédiger une description (→ `slash:writing`), ni
-  pour arbitrer la **taille** d'une PR : une grosse PR qui livre un lot
-  constatable est le cas nominal, et ce skill n'a rien à en dire.
+  Grille **optionnelle**, lancée seulement à la main : ce qu'une pull request
+  doit embrasser pour être relisible, un lot **constatable** — quelque chose
+  qu'on peut mettre devant quelqu'un et montrer que ça marche. Le critère n'est
+  ni le volume ni le nombre de fichiers, c'est de pouvoir jouer un « après » sur
+  le lot. Se tranche à l'analyse, où le périmètre ne coûte que le choix d'un
+  ordre d'implémentation, et non après l'implémentation, où la même décision
+  coûte des cherry-picks. Lue comme un fichier par l'étape 2 de
+  `slash:process-ticket` ; dans slash-interim, le cadrage de
+  `slash-develop-ticket` en tient lieu. Ne tranche pas la **taille** d'une PR :
+  une grosse PR qui livre un lot constatable est le cas nominal.
+  Invoked only through `/slash:pr-scope`.
 ---
 
 # Le périmètre d'une pull request

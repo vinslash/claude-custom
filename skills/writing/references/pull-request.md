@@ -1,84 +1,59 @@
 # Rédiger une description de pull request
 
-À lire **avant** de rédiger, pas après. `SKILL.md` porte le format et les règles
-qui ne se délèguent pas ; ce fichier porte ce qui ne tenait pas dedans — ce
-qu'on garde du gabarit du dépôt, la mécanique des captures, et les deux formes
-de « Comment tester ».
+À lire **avant** de rédiger, pas après. `SKILL.md` porte la pyramide et les
+règles qui ne se délèguent pas ; ce fichier porte ce qui ne tenait pas dedans —
+la pose des images, et les deux formes de « Comment tester ».
 
-## Ce qu'on garde du gabarit du dépôt
+## La pyramide vient de slash-interim
 
-Sur **slash-web**, aucun gabarit : le format du `SKILL.md` tel quel, sans la case de
-nature ni la checklist.
+Le format d'avant — Contexte, Problème, Correctif, en 150 à 250 mots de prose —
+a cédé la place au template de slash-interim, plus court et mieux tenu : une
+Description de soixante mots, un schéma qui dit en dix secondes ce que la
+prose disait en cent, une preuve qui montre au lieu de raconter, et un bloc
+replié qui recueille ce qui débordait. Un hook du dépôt en vérifie les budgets,
+ce qu'aucune consigne écrite n'avait obtenu.
 
-Sur **slash-interim**, `.github/pull_request_template.md` en fournit un, et on
-ne s'y plie pas : on garde sa **substance**, pas sa mise en page.
+Ce qu'on a gardé du format d'avant tient dans les règles de contenu de
+`SKILL.md` — le POURQUOI plutôt que l'inventaire, la prose plutôt que les puces,
+rien de ce que le diff dit déjà —, et dans la section « Comment tester », qui
+survit **hors slash-interim** : là-bas, la recette a son sous-ticket.
 
-| Du gabarit | Ce qu'on en fait |
-| --- | --- |
-| La ligne de liaison Linear | Gardée, en tête |
-| La liste `Hotfix` / `Bug` / `Feature` / `Refacto / Tech` | Gardée **entière**, nue sous la ligne Linear, avec la ou les cases qui s'appliquent cochées. Ne garder que la ligne cochée n'est plus une liste de cases, et prive le relecteur de ce qui a été écarté. Elle porte la nature de la PR : ne la redis pas en prose |
-| `# 🎯 Description`, `### Explication` | **Retirés.** Deux étiquettes qui n'annoncent rien qu'on ne sache déjà — les sections qu'elles contiennent *sont* la description et l'explication — et deux crans d'imbrication en trop |
-| `# 📸 Screenshot` | Gardé, au singulier du gabarit, en `## 📸 Screenshot`. Retiré quand l'UI ne bouge pas, son propre commentaire le donnant pour conditionnel |
-| `# 🧭 Tests` | Devient **`## 🧪 Comment tester`** : même section, un titre qui dit au relecteur ce qu'on attend de lui au lieu de ce qu'on a fait |
-| `# ✅ Checklist` | Gardée, cases comprises, en `## ✅ Checklist` |
-
-Rien de ce qu'un relecteur y cherche ne disparaît — nature de la PR,
-explication, captures, tests, checklist. Ce qui change est le balisage — nos titres, tous en `##` — plus la
-section « Contexte » que le gabarit n'avait pas.
-
-Le renommage de `# 🧭 Tests` répare précisément ce que son commentaire cassait :
-« décrire comment tu as testé la PR » désigne le mauvais lecteur, et c'est ce qui
-produit la version « avant » de la PR #942 dans `exemples.md`. Le
-titre porte maintenant la bonne consigne.
-
-**En contrepartie, tes PR ne ressemblent plus tout à fait à celles de
-l'équipe**, qui repère `# 🎯 Description` et `# 🧭 Tests`. C'est un arbitrage
-assumé, pas un oubli : si un relecteur s'en plaint, c'est le gabarit qu'il faut
-faire évoluer, pas la description qu'il faut replier dedans.
-
-## « Screenshot » : dès que l'UI bouge
+## La Preuve de test : l'avant ne se rattrape pas
 
 Un relecteur qui a vu l'écran sait ce qu'il cherche avant de recetter. Et la
 capture est le seul endroit où un libellé tronqué, une couleur ou un décalage
-se voient : le diff ne les montre pas, et le script de recettage suppose déjà
-qu'on sait à quoi ressemble le bon résultat.
-
-La section existe **dès que le diff touche quelque chose de visible** — un
-écran, un composant, un mail, un PDF, un export mis en forme. Un changement de
-CSS compte ; un renommage de variable non.
+se voient : le diff ne les montre pas.
 
 **Un avant/après**, cadré sur la zone qui change et non sur la fenêtre entière,
-où le relecteur devra chercher ce qui a bougé. Côte à côte plutôt qu'empilées :
-la comparaison est le but.
-
-```markdown
-## 📸 Screenshot
-
-| Avant | Après |
-|---|---|
-| ![](…) | ![](…) |
-```
+côte à côte dans le tableau du template, les deux images à la même taille.
 
 **L'« avant » ne se rattrape pas.** Le correctif en place, l'écran fautif
 n'existe plus : la capture se prend au constat mode « avant », ou elle est
-perdue. Une PR d'UI sans « avant » est presque toujours une PR dont la capture
-a été oubliée au seul moment où elle était possible.
+perdue. Pour un bug sans écran, l'avant est le test rouge sur la base : un
+worktree détaché sur `origin/<base>` dans le scratchpad, le test copié dedans,
+lancé, puis le worktree supprimé.
 
-Sur slash-interim, le gabarit livre la section et son commentaire la donne
-lui-même pour conditionnelle : si l'UI ne bouge pas, la **retirer** plutôt que
-d'y écrire « N/A ».
+**La pose.** `gh` ≥ 2.99 joint les fichiers locaux avec `--attach` sur `gh pr
+create`, `gh pr edit`, `gh pr comment` et `gh issue create` : référencer chaque
+image par son chemin local, `![Avant](<scratchpad>/avant.png)` — jamais
+`<img src>`, que `gh` ne réécrit pas — et `gh` le remplace par l'URL téléversée.
 
-**L'upload, c'est nous.** `gh` ne sait pas poser d'image sur GitHub et il
-n'existe aucune API pour ça, mais le navigateur du serveur MCP `chrome` sait le
-faire. Charger **`slash:github-screenshots`**, qui porte le geste, dès qu'il y a
-des captures à poser. Un seul point d'arrêt : la connexion GitHub dans ce
-navigateur, qui est un geste d'utilisateur. Le repli, si ça résiste, reste les
-captures dans le scratchpad et l'utilisateur qui les colle.
+```bash
+gh pr create --draft --body-file <scratchpad>/pr-body.md \
+  --attach "<scratchpad>/schema.svg#Ce que la PR modifie" \
+  --attach "<scratchpad>/avant.png#Avant" --attach "<scratchpad>/apres.png#Après"
+```
 
+Un envoi raté laisse la PR créée et sort en non-zéro : vérifier le code de
+sortie, puis qu'aucun chemin local ne reste dans le corps publié (`gh pr view
+--json body -q .body | grep -c '<scratchpad>'`).
+
+Si `gh` est plus ancien ou si l'envoi résiste — une review ancrée aux lignes,
+par exemple —, **`slash:github-screenshots`** pose les images par le navigateur.
 Ce qui reste interdit dans tous les cas : pousser un `![](…)` mort, et annoncer
 une PR illustrée dont les images ne se rendent pas.
 
-## « Comment tester » : la section qui ne se supprime pas
+## « Comment tester » : la section qui ne se supprime pas (hors slash-interim)
 
 Chez nous, le relecteur assigné **recette d'abord et relit le code ensuite**. Il
 n'a pas constaté le bug, il n'a pas le jeu de données en tête, et il ne sait pas
@@ -132,7 +107,7 @@ un délai —, il y a un script. « C'est couvert par les tests » n'est une rai
 valable que si rien de perceptible n'a bougé ; sinon c'est une dérobade, et le
 relecteur la verra comme telle.
 
-À la suite du script, s'il y a lieu, ce que le relecteur ne peut pas deviner et
+En plus du script, s'il y a lieu, ce que le relecteur ne peut pas deviner et
 qui peut le surprendre en prod :
 
 - un effet de bord assumé (un changement visuel, un format qui bouge) ;
@@ -141,7 +116,6 @@ qui peut le surprendre en prod :
 
 Ces trois-là restent facultatifs. Le script, lui, ne l'est pas.
 
-Ils peuvent se plier dans un `<details><summary>Points de vigilance pour la
-review</summary>`. Replier n'est pas une dispense d'élagage : le contenu du bloc
-obéit aux mêmes règles que le reste de la description, et le hors-périmètre y
-reste interdit — il va dans l'autre ticket.
+Ils vont dans le bloc replié « Pour la review ». Replier n'est pas une dispense
+d'élagage : le contenu du bloc obéit aux mêmes règles que le reste de la
+description, et le hors-périmètre y reste interdit — il va dans l'autre ticket.

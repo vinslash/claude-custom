@@ -10,12 +10,12 @@ casse et je reprends sans conséquence pour personne.
 
 **Un chemin vers l'équipe, ensuite.** Ce qui a fait ses preuves est destiné à
 migrer vers `slash-interim/.claude/`. C'est pour ça que chaque skill est écrit
-pour rester lisible hors de son contexte d'origine, et que les surcharges d'un
-skill du dépôt vivent ici en attendant. L'exemple courant est l'étape 7 de
-`skills/process-ticket/`, qui déduit la branche de base au lieu du `main` codé en
-dur par `slash-create-pr` — sans toucher à celui-ci. Le correctif est déposé côté
-équipe en [SLI-8446](https://linear.app/slash-interim/issue/SLI-8446) ; la
-surcharge disparaîtra quand le ticket sera traité.
+pour rester lisible hors de son contexte d'origine. Le chemin a été parcouru :
+slash-interim porte désormais ses propres parcours — `slash-develop-ticket`,
+`slash-review-code`, `slash-apply-pr-review`, `slash-create-pr` et son template
+en pyramide. **Là où ils couvrent le même terrain, ils passent devant** : les
+skills d'ici qui leur correspondent ne se lancent plus qu'à la main, et
+`writing` a adopté leur structure de PR.
 
 **Tout versionné, d'où le montage.** `~/.claude` mélange la config écrite à la
 main et l'état runtime — sessions, historique, `.credentials.json` : le dossier
@@ -66,15 +66,15 @@ flowchart TD
 </tr>
 <tr>
 <td nowrap><samp>/slash:pr-scope</samp></td>
-<td>Ce qu'une PR doit livrer pour être relisible : un lot <strong>constatable</strong>, qu'on peut mettre devant quelqu'un. Se tranche à l'analyse, jamais au moment d'ouvrir la PR.</td>
+<td>Manuel. Ce qu'une PR doit livrer pour être relisible : un lot <strong>constatable</strong>, qu'on peut mettre devant quelqu'un. Se tranche à l'analyse ; dans slash-interim, le cadrage de <code>slash-develop-ticket</code> en tient lieu.</td>
 </tr>
 <tr>
 <td nowrap><samp>/slash:process-ticket</samp></td>
-<td>Parcours complet d'un ticket Linear, du worktree déjà créé jusqu'à la PR ouverte — sept étapes suivies en task list, pour retrouver où on en est en revenant sur un ticket. Orchestre les autres.</td>
+<td>Manuel. Parcours accompagné d'un ticket Linear, du worktree déjà créé jusqu'à la PR ouverte : constat par soi-même, plan arbitré, résolution constatée. L'alternative à <code>slash-develop-ticket</code>, le parcours autonome du dépôt, qui reste celui par défaut.</td>
 </tr>
 <tr>
 <td nowrap><samp>/slash:review</samp></td>
-<td>Les quatre situations de review d'une PR — auto-review avant soumission, traitement de la review reçue, review de la PR d'un collègue, vérification de ses corrections. Le mode se <strong>déduit</strong> de l'état de la PR. Le recettage précède la lecture du code, rien n'est posté sans arbitrage, et une seconde passe ne juge que ce que la première a demandé.</td>
+<td>Manuel. Les quatre situations de review d'une PR, où l'utilisateur arbitre chaque remarque. L'alternative à <code>slash-review-code</code> et <code>slash-apply-pr-review</code>, les parcours du dépôt, qui restent ceux par défaut. Le recettage précède la lecture du code, et une seconde passe ne juge que ce que la première a demandé.</td>
 </tr>
 <tr>
 <td nowrap><samp>/slash:cycle-update</samp></td>
@@ -86,11 +86,11 @@ flowchart TD
 </tr>
 <tr>
 <td nowrap><samp>/slash:writing</samp></td>
-<td>Cadre de rédaction des écrits lus par un humain : descriptions de PR, commentaires de review, messages de commit, issues et tickets, et livrables écrits longs — plan, handoff, analyse. Porte la passe d'élagage.</td>
+<td>Cadre de rédaction des écrits lus par un humain : descriptions de PR — la pyramide de slash-interim, plus « Comment tester » ailleurs —, commentaires de review, messages de commit, issues et tickets, et livrables écrits longs — plan, handoff, analyse. Porte la passe d'élagage. Là où le dépôt a son skill de PR ou de commit, celui-ci fait foi pour la structure.</td>
 </tr>
 <tr>
 <td nowrap><samp>/slash:github-screenshots</samp></td>
-<td>Pose des images sur un écrit GitHub — description de PR, commentaire, review. <code>gh</code> ne sait pas uploader, le navigateur le fait et <code>gh</code> garde la main sur le texte.</td>
+<td>Repli pour poser des images sur un écrit GitHub quand <code>gh --attach</code> (gh ≥ 2.99) ne le peut pas : le navigateur héberge les images, <code>gh</code> garde la main sur le texte.</td>
 </tr>
 <tr>
 <td nowrap><samp>/slash:chrome-isolation</samp></td>
@@ -141,15 +141,20 @@ n'appelle personne et personne ne l'appelle.
 
 Le nom du plugin sert de **namespace** : c'est pourquoi les dossiers de
 `skills/` ne portent plus le préfixe `slash-`, qui ferait doublon. Attention à ne
-pas les confondre avec les skills du dépôt slash-interim (`slash-commit`,
-`slash-create-pr`), qui gardent le leur.
+pas les confondre avec les skills du dépôt slash-interim (`slash-create-commit`,
+`slash-create-pr`…), qui gardent le leur.
 
 Taper la commande reste l'exception : un skill part surtout **de lui-même**, sur
 sa description. `writing` et `chrome-isolation` s'appuient en plus sur une
 amorce dans `CLAUDE.md`, parce que leur déclenchement ne peut pas dépendre du
-hasard. `review` et `process-ticket` n'en ont pas : les skills du dépôt
-slash-interim qui couvrent les mêmes situations restent un choix, qu'on tranche
-en tapant la commande voulue.
+hasard.
+
+`process-ticket`, `review` et `pr-scope` font l'inverse : leur frontmatter porte
+`disable-model-invocation: true`, et ils ne partent **que** si on tape leur
+commande. Les parcours du dépôt slash-interim qui couvrent les mêmes situations
+passent ainsi devant sans arbitrage du modèle, et ces trois-là ne coûtent plus
+rien au contexte des sessions. Conséquence : `process-ticket` ne peut pas
+*charger* `pr-scope`, il le lit comme un fichier.
 
 ## Installation
 

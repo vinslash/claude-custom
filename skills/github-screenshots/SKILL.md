@@ -2,17 +2,18 @@
 name: github-screenshots
 description: >
   Pose des images — captures avant/après, schéma, trace d'exécution — sur un
-  écrit GitHub : description de pull request, commentaire de PR ou de ticket,
-  commentaire de code review. `gh` ne sait pas uploader d'image et GitHub
-  n'expose aucune API pour les pièces jointes ; le seul chemin passe par le
-  navigateur du serveur MCP `chrome`, qui dépose les fichiers dans une zone de
-  commentaire pour n'en récolter que les URL. Le texte, lui, reste écrit par
-  `gh` dans tous les cas. Un seul point d'arrêt : la connexion GitHub, qui est
-  un geste d'utilisateur.
+  écrit GitHub par le navigateur, quand `gh` ne peut pas le faire lui-même.
+  Depuis sa version 2.99, `gh` joint les fichiers locaux avec `--attach` sur
+  `gh pr create`, `gh pr edit`, `gh pr comment` et `gh issue create` : c'est le
+  chemin par défaut, et ce skill n'en est plus que le repli — `gh` trop ancien,
+  review ancrée aux lignes, envoi qui résiste. Le repli passe par le navigateur
+  du serveur MCP `chrome`, qui dépose les fichiers dans une zone de commentaire
+  pour n'en récolter que les URL. Le texte, lui, reste écrit par `gh` dans tous
+  les cas. Un seul point d'arrêt : la connexion GitHub, qui est un geste
+  d'utilisateur.
   Use when about to publish anything on GitHub that contains an image — before
   `gh pr create`, `gh pr edit --body`, `gh pr comment`, `gh pr review`,
-  `gh issue comment` — and whenever a PR description has a « Screenshots »
-  section to fill. Also when the user says « mets les captures », « ajoute les
+  `gh issue comment` — when `gh --attach` is unavailable or fails. Also when the user says « mets les captures », « ajoute les
   screenshots », « illustre la PR », « colle l'image dans le commentaire »,
   « sers-toi du champ de commentaire pour les URL ».
   Ne PAS utiliser pour décider s'il faut des captures ni pour les cadrer
@@ -20,6 +21,14 @@ description: >
 ---
 
 # Poser des images sur un écrit GitHub
+
+## D'abord, `gh --attach`
+
+`gh --version` : à partir de 2.99, référencer chaque image par son chemin local
+dans le corps (`![Avant](<chemin>/avant.png)`) et la joindre avec `--attach
+"<chemin>#<légende>"` ; `gh` la téléverse et réécrit le lien. Rien de ce qui suit
+n'est alors nécessaire. Plus ancien : proposer `brew upgrade gh` à l'utilisateur,
+ou continuer ici.
 
 ## Le principe qui commande tout le reste
 

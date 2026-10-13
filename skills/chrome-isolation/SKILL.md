@@ -125,6 +125,23 @@ worktree, jamais une autre, et jamais son Chrome personnel.
 demandent `slash:observe` et `slash:process-ticket` : le navigateur est là pour
 qu'il manipule lui-même, pas seulement pour produire des captures.
 
+## Quand un skill du dépôt impose un autre navigateur
+
+Dans slash-interim, `slash-review-code` fait piloter Chrome à ses revues par
+l'extension **`claude-in-chrome`**, et demande à l'utilisateur d'y ouvrir la
+session de recette. Dans le parcours de ce skill-là, **c'est lui qui fait foi** :
+ne pas réécrire ses briefs vers le serveur `chrome`, ni lui refuser le navigateur
+qu'il attend.
+
+Le prix est connu et se dit à l'utilisateur au moment où la revue réclame une
+session : l'extension pilote son Chrome personnel, pas une instance du worktree.
+Deux revues qui tournent en même temps sur deux worktrees y partagent donc les
+mêmes onglets, et une capture peut venir de la mauvaise stack. Une revue à la
+fois, ou vérifier l'URL de l'onglet avant toute capture qui sert de preuve.
+
+Partout ailleurs — `slash:observe`, `slash:case-dataset`, une recette demandée
+dans le chat — les règles ci-dessus s'appliquent sans exception.
+
 ## Ce qu'il faut savoir en pratique
 
 **Le profil est par worktree, pas par session.** Première conséquence : la

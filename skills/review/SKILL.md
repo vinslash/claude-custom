@@ -1,25 +1,21 @@
 ---
 name: review
+disable-model-invocation: true
 description: >
-  Les quatre situations de review d'une pull request : l'auto-review avant de
-  soumettre la sienne, le traitement de la review reçue, la review de la PR d'un
-  collègue, et la seconde passe qui vérifie ses corrections. Le mode se **déduit**
-  de l'état de la PR — auteur, reviews déjà soumises — sans rien demander. Impose
-  ce qui fait qu'une review se termine : le périmètre du ticket et rien d'autre,
-  un poids sur chaque remarque, une proposition attachée, une seconde passe qui ne
-  juge que ce que la première a demandé, et une reco globale. Impose aussi que le
-  **recettage précède la lecture du code** : le script « Comment tester » de la PR
-  se déroule dans le navigateur avant d'ouvrir le diff, et une seconde passe n'en
-  rejoue que les étapes que les corrections touchent. Rien n'est posté sur
-  GitHub sans arbitrage de l'utilisateur, remarque par remarque. On ne modifie
-  jamais le code d'une PR qu'on relit.
-  Use when the user says « fais l'auto-review », « fais la self-review », « je
-  relis ma PR avant de la soumettre », « avant de soumettre la PR à review », « untel a fait la review, il faut traiter », « on m'a assigné à la
-  review de cette PR », « untel a traité nos retours », « on vérifie et on
-  approuve », or `/slash:review`. Ne PAS
-  utiliser pour rédiger une description de PR (→ `slash:writing`), pour traiter un
-  ticket de bout en bout (→ `slash:process-ticket`), ni pour auditer un plan avant
-  implémentation (→ `slash-review-plan`).
+  Parcours **optionnel**, lancé seulement à la main, des quatre situations de
+  review d'une pull request : l'auto-review avant de soumettre la sienne, le
+  traitement de la review reçue, la review de la PR d'un collègue, et la seconde
+  passe qui vérifie ses corrections. Dans slash-interim, les parcours par défaut
+  sont ceux du dépôt — `slash-review-code` pour relire, `slash-apply-pr-review`
+  pour traiter les retours — ; celui-ci en est l'alternative accompagnée, où
+  l'utilisateur arbitre chaque remarque. Le mode se **déduit** de l'état de la
+  PR. Impose ce qui fait qu'une review se termine : le périmètre du ticket et
+  rien d'autre, un poids sur chaque remarque, une proposition attachée, une
+  seconde passe qui ne juge que ce que la première a demandé, et une reco
+  globale. Le recettage précède la lecture du code. Rien n'est posté sur GitHub
+  sans arbitrage de l'utilisateur, et on ne modifie jamais le code d'une PR
+  qu'on relit.
+  Invoked only through `/slash:review [<PR>]`.
 ---
 
 # La review d'une pull request
@@ -93,8 +89,9 @@ une demande explicite de l'utilisateur, pour ce sujet-là, en ouvre un — et on
 cherche alors d'abord une issue existante à compléter. Un défaut que personne ne
 subit aujourd'hui ne mérite pas de ticket.
 
-**Le recettage précède la lecture du code.** La section « Comment tester » d'une
-PR existe pour être déroulée : c'est le seul moment où quelqu'un vérifie que la
+**Le recettage précède la lecture du code.** Le script de recette d'une PR —
+section « Comment tester », ou sous-ticket de tests dans slash-interim — existe
+pour être déroulé : c'est le seul moment où quelqu'un vérifie que la
 PR fait ce qu'elle annonce, et le relecteur assigné la joue avant d'ouvrir le
 diff. Ce qu'on en fait dépend du mode, et suit la même règle que tout le reste —
 une seconde passe ne rejoue que ce que les corrections touchent. Le navigateur
@@ -163,4 +160,3 @@ moment de publier, pas avant.
 - Il ne pousse pas et ne merge pas une PR qu'il relit.
 - Il ne rejoue pas le périmètre de la PR : arbitré à l'analyse par
   `slash:pr-scope`, il ne se rattrape pas sur une branche déjà écrite.
-- Il ne remplace pas `slash-review-plan`, qui audite un plan avant le code.

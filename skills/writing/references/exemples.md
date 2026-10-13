@@ -8,6 +8,13 @@ forme attendue d'un texte publié sur GitHub, pas un oubli de mise en forme — 
 « Un paragraphe, une seule ligne » dans `SKILL.md`. Ne pas les replier à 80
 colonnes en passant.
 
+**Les « après » datés d'avant le 13/10/2026 suivent l'ancien format** —
+Contexte, Problème, Correctif, Screenshot, Comment tester. Leur leçon porte sur
+le contenu, qui n'a pas changé : le POURQUOI plutôt que l'inventaire, la prose,
+le bon destinataire. La structure en vigueur est la pyramide de `SKILL.md`, et
+dans slash-interim « Comment tester » n'existe plus : la recette va dans le
+sous-ticket de tests.
+
 ---
 
 ## PR #158 — slash-web, SLI-8493 (2026-08-07)

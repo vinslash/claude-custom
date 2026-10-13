@@ -10,10 +10,10 @@ Le domicile unique de tous les chiffres annoncés par cet atelier : chacun doit
 
 | Écrit | Borne | Au-delà |
 | --- | --- | --- |
-| Description de PR | **150 à 250 mots de prose**, 4 sections ni plus ni moins — contexte, problème, correctif, comment tester — plus les screenshots quand l'UI bouge, 2 à 3 phrases pour le contexte et 2 à 4 pour le problème et le correctif | Ce n'est plus une description mais un rapport. Le relecteur a trente secondes et il a déjà le diff. |
-| Section « Comment tester » d'une PR | **obligatoire**, et **une seule** : un script de **cinq étapes au plus** avec l'attendu à chacune — déroulé, ou annoncé comme non joué avec son empêchement —, ou la phrase qui dit pourquoi rien n'est à recetter | Le relecteur recette avant de relire le code. Sans script, il saute l'étape — et personne ne vérifie que la PR fait ce qu'elle annonce. Au-delà de cinq étapes, c'est la PR qui fait trop de choses. |
-| Section « Screenshots » d'une PR | **obligatoire dès que le diff touche quelque chose de visible** — écran, composant, mail, PDF, export mis en forme —, en avant/après cadré sur la zone qui change | Le diff ne montre ni un libellé tronqué ni une couleur, et le script de recettage suppose qu'on sait à quoi ressemble le bon résultat. Surtout : l'« avant » n'est plus capturable une fois le correctif en place. |
-| Preuve de ce qui a été testé, dans la description | **rien** — le script dit quoi faire, pas ce qui a été fait | Un tableau de recette est une preuve adressée au demandeur, pas au relecteur. |
+| Description de PR | **la pyramide de slash-interim** : ligne de tête, Description de **60 mots** au plus, Schéma, Preuve de test (**40 mots** hors tableau, ligne « Non testé » obligatoire), Impact de **60 mots** au plus, bloc replié « Pour la review » — et aucun autre titre. Hors slash-interim, plus « Comment tester » | Ce n'est plus une description mais un rapport. Le relecteur a trente secondes et il a déjà le diff. Dans slash-interim, le hook `pr-body-budget.sh` refuse la commande. |
+| Section « Comment tester » d'une PR | **obligatoire hors slash-interim** — où la recette va dans le sous-ticket de tests —, et **une seule** : un script de **cinq étapes au plus** avec l'attendu à chacune — déroulé, ou annoncé comme non joué avec son empêchement —, ou la phrase qui dit pourquoi rien n'est à recetter | Le relecteur recette avant de relire le code. Sans script, il saute l'étape — et personne ne vérifie que la PR fait ce qu'elle annonce. Au-delà de cinq étapes, c'est la PR qui fait trop de choses. |
+| Captures avant/après, dans la Preuve de test | **obligatoire dès que le diff touche quelque chose de visible** — écran, composant, mail, PDF, export mis en forme —, en avant/après cadré sur la zone qui change | Le diff ne montre ni un libellé tronqué ni une couleur, et le script de recettage suppose qu'on sait à quoi ressemble le bon résultat. Surtout : l'« avant » n'est plus capturable une fois le correctif en place. |
+| Preuve de test, dans la description | **un état, pas un déroulé** : l'avant et l'après — ni tours de recette, ni compteurs de tests, ni historique de CI | Un tableau de recette est une preuve adressée au demandeur, pas au relecteur. |
 | Remarques d'une passe de review | **une dizaine au plus**, chacune avec son poids — bloquant, suggestion ou nit — et sa proposition | Ce n'est plus une review mais une réécriture. La remarque à faire n'est plus sur le code mais sur la nature de la PR, et c'est celle-là qu'on pose. Portée par `slash:review`. |
 | Ce qu'une seconde passe de review juge | **ce que la première a demandé**, et rien d'autre — sauf un bloquant apparu depuis : régression ou bug sur le cas nominal. Le rejeu du script de recettage suit la même règle : les seules étapes visées par les remarques bloquantes | Une passe qui rejuge tout est sans fin par construction. Ce qu'on découvre au second tour et qui n'était pas demandé est un ticket, pas une remarque de cette PR. |
 | Rapport d'étape dans le chat | **3 à 5 lignes** en prose | S'il ne tient pas en cinq lignes, il contient autre chose qu'un rapport. |
@@ -23,17 +23,16 @@ Le domicile unique de tous les chiffres annoncés par cet atelier : chacun doit
 | Renvoi vers ce commentaire depuis le livrable | **une ligne**, jamais un résumé | La pollution qu'on venait de sortir revient par la fenêtre. |
 | La forme du code retenue, dans le plan (ticket qui touche `backend/src/`) | **trois à cinq lignes** : arbo plate ou SDDD, use-case ou application service, ports, entité ou value-object, et le fichier existant imité | La forme se décide dans le plan ou elle se subit en review : à l'implémentation elle est déjà écrite, et la remarque coûte un aller-retour. |
 | Le POURQUOI d'un ticket | **cinq lignes**, avec les mots de l'utilisateur | C'est la matière première de la description de PR, pas une analyse. |
-| Message de commit (slash-interim) | **titre seul, sans corps** | Convention du dépôt, portée par `slash-commit`. |
+| Message de commit (slash-interim) | **titre seul, sans corps** | Convention du dépôt, portée par `slash-create-commit`. |
 | Relevé de rôle de fin de cycle | **3 puces au plus sur ce qui a été fait** — les points saillants — et **3 au plus sur le vécu du rôle**. Portée par `slash:cycle-update`, borne posée par l'équipe | Un relevé exhaustif n'est pas lu par le suivant, et c'est lui le destinataire. Ce qui déborde des trois puces relève de la section de passation, qui répond à sa checklist de prise de poste. |
 | Longueur d'un update de cycle | **120 mots** pour un point d'étape, **250** pour une fin de cycle — comptés sur la **santé et le réalisé** seuls. Les arbitrages tiennent **une ligne chacun**, sans plafond ; la passation n'a pas de borne | La borne porte sur le récit, qui se dilue, jamais sur les décisions, qui se comptent : un arbitrage supprimé pour tenir dans un chiffre est une décision qui ne sera pas prise. Et ce qui déborde du récit vient presque toujours d'une information dite deux fois — une puce « ce que j'ai fait » que la confrontation aux attendus recoche juste après. |
 | Santé d'un update | **une ligne** : le verdict, puis le fait qui le porte | C'est le champ que le fil d'activité affiche, et souvent le seul lu. La lecture alternative, quand la santé n'est pas tranchable, n'est pas une explication mais un arbitrage : elle descend dans la section qui demande des décisions. |
 | Temps de production d'un update de cycle | **10 minutes** pour un update de fin de cycle, **3 minutes** pour un point d'étape, aller-retour de validation compris | C'est le critère de réussite de `slash:cycle-update`, pas un vœu : au-delà, le rituel se fait sauter — il l'a déjà été sur deux updates sur trois. Ce qui se coupe alors est la collecte, jamais la validation. Un point d'étape qui dépasse ses 3 minutes ne se paye plus : il devait faire baisser le coût de la fin de cycle, pas s'y ajouter. |
 
-Les 150 à 250 mots se comptent hors script de recettage, et ne montent pas avec
-le diff : une PR qui livre une fonctionnalité entière se décrit dans les mêmes
-250 mots qu'un correctif, parce qu'elle doit dire le POURQUOI et non l'inventaire. Ils
-n'ont pas monté quand la section « Contexte » s'est ajoutée aux trois autres :
-ce qui situait le lecteur était déjà écrit, il a seulement changé de section.
+Ces budgets ne montent pas avec le diff : une PR qui livre une fonctionnalité
+entière se décrit dans les mêmes soixante mots qu'un correctif, parce qu'elle doit
+dire le POURQUOI et non l'inventaire. Ce qui aide le relecteur sans tenir dedans
+va dans « Pour la review », replié.
 
 ## La taille d'une pull request
 
@@ -46,7 +45,7 @@ Ce qui remplace la borne n'est pas un chiffre mais un critère, porté par
 **`slash:pr-scope`** : une PR livre quelque chose de **constatable**, qu'on peut
 mettre devant quelqu'un. Il se tranche à l'analyse, et ne se mesure pas.
 
-Reste le seuil de **`slash-commit`**, dans le dépôt slash-interim : 500 lignes ou
+Reste le seuil de **`slash-create-commit`**, dans le dépôt slash-interim : 500 lignes ou
 10 fichiers, qui découpe en **commits** et non en PR. Il n'a pas bougé, et c'est
 lui qui rend une grosse PR relisible bloc par bloc.
 

@@ -21,7 +21,7 @@ description: >
   est ce projet »** : la question d'entrée du skill lève l'ambiguïté en un clic,
   alors qu'un résumé rendu hors skill n'applique aucune de ses règles.
   Ne PAS utiliser pour écrire la **description** d'un projet Linear, pour rédiger
-  un daily, ni pour traiter un ticket (→ `slash:process-ticket`).
+  un daily, ni pour traiter un ticket (→ `slash-develop-ticket`, ou `/slash:process-ticket`).
 ---
 
 # Les updates de cycle

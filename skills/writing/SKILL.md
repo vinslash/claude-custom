@@ -2,21 +2,14 @@
 name: writing
 description: >
   Cadre de rédaction des écrits destinés à un relecteur humain : descriptions de
-  pull request, commentaires de code review, messages de commit, issues GitHub
-  et tickets Linear, et livrables écrits longs — document de plan, handoff,
-  analyse, dossier de décision. Impose
-  une description courte, en prose et en quatre sections — contexte, problème,
-  correctif, comment tester —, qui dit le POURQUOI que le diff ne dit pas.
-  Impose sur toute PR une section « Comment tester » — le script que le relecteur
-  déroule avant de lire le code, ou la raison qu'il n'y en ait pas —, une
-  section « Screenshots » en avant/après dès que l'UI bouge, et bannit
-  les preuves de test exhaustives, les snippets recopiés du diff et les détails
-  d'outillage sans conséquence pour le relecteur. Sur une issue ou un ticket,
-  impose un encart de tête — Problème, Valeur, Risque, Taille — et replie
-  l'analyse dans des notes pour l'agent. Sur les livrables
-  longs, impose une passe d'élagage avant de rendre — plaidoirie, hors-périmètre
-  et méta-commentaire dehors — et donne un exutoire borné au détail technique
-  coûteux à reproduire : un commentaire Linear ou PR.
+  PR, commentaires de review, messages de commit, issues et tickets Linear, et
+  livrables longs — plan, handoff, analyse. Sur une PR, impose la pyramide de
+  slash-interim — ligne de tête, Description de soixante mots qui dit le
+  POURQUOI, Schéma SVG, Preuve de test avant/après, Impact, « Pour la review »
+  replié —, plus « Comment tester » hors slash-interim ; là où le dépôt a son
+  skill de PR ou de commit, celui-ci fait foi pour la structure. Sur une issue,
+  impose l'encart Problème, Valeur, Risque, Taille. Sur un livrable long,
+  impose une passe d'élagage avant de rendre.
   Use when about to run `gh pr create`, `gh pr edit --body`, `gh pr review`,
   `gh pr comment`, `gh issue create`, `Linear:save_issue`, or `git commit`;
   before drafting a GitHub issue or a Linear ticket; before handing over any long written
@@ -45,104 +38,123 @@ est moins lue.
 
 ## Description de pull request
 
-Vise **150 à 250 mots**. Quatre sections rédigées — ni plus, ni moins —, une
-cinquième dès que l'UI bouge, et sur slash-interim les deux pièces du gabarit
-qui se cochent au lieu de s'écrire :
+### Qui tient la structure
+
+| Dépôt | Structure et mécanique | Ce skill |
+| --- | --- | --- |
+| **slash-interim** | `slash-create-pr`, son template et le hook `pr-body-budget.sh`, qui refuse tout titre en plus | la façon d'écrire, rien d'autre — aucune section ajoutée, pas de « Comment tester » |
+| **wtkit** | son `.github/pull_request_template.md` et son skill `create-pr` | la façon d'écrire |
+| **ailleurs** (slash-web, claude-custom…) | la pyramide ci-dessous | tout |
+
+Partout, c'est la même pyramide : celle de slash-interim, qui a fait ses preuves,
+plus une section « Comment tester » là où aucun sous-ticket de tests ne porte la
+recette.
 
 ```markdown
-Close [SLI-XXXX](lien Linear)
+Close [SLI-XXXX](lien Linear) · 🟢 **Risque faible** · **Commencer par** `chemin/du/fichier`
 
-- [ ] Hotfix                 ← slash-interim : la liste du gabarit, entière,
-- [x] Bug                       avec la ou les cases qui s'appliquent cochées
-- [ ] Feature
-- [ ] Refacto / Tech
+## 📝 Description
+**Bug** · le problème, puis ce que la PR change. Soixante mots au plus.
 
-## 🗺️ Contexte
-2 à 3 phrases, jamais de puces. Où on est : quel module, quel écran, quel
-flux. Le relecteur ne connaît pas forcément la zone, et sans ce point d'appui
-tout ce qui suit flotte.
+## 🗺️ Schéma
+<div align="center">
 
-## 🐛 Le problème
-2 à 4 phrases. Ce qui ne marchait pas, et la cause réelle — pas les symptômes.
-Un lien vers un exemple reproductible si tu en as un. Sur une feature, c'est
-« ## ✨ Le besoin », et il dit ce qui manque, jamais la solution.
+![Ce que la PR modifie](schema.svg)
 
-## 🔧 Le correctif
-2 à 4 phrases. L'approche retenue et pourquoi elle est la bonne. Si elle
-s'appuie sur un helper ou un pattern déjà en place ailleurs, dis-le : ça
-rassure plus que n'importe quelle preuve.
+</div>
 
-## 📸 Screenshot
-Seulement si l'UI bouge — et alors obligatoire. Un avant/après cadré sur la
-zone qui change.
+## ✅ Preuve de test
+| Avant | Après |
+| :---: | :---: |
+| ![Avant](avant.png) | ![Après](apres.png) |
+
+<sub>**Non testé** : ce qui n'a pas été vérifié, ou « rien ».</sub>
 
 ## 🧪 Comment tester
-Les étapes que le relecteur déroule avant d'ouvrir le diff, avec l'attendu à
-chacune. Ou la phrase qui dit pourquoi il n'y en a pas.
+1. L'étape → l'attendu. Cinq étapes au plus.
 
-## ✅ Checklist              ← slash-interim : celle du gabarit, entière aussi
+## 🎯 Impact
+- **Ce qui peut casser** — en mots, soixante au plus.
+
+<details>
+<summary><b>Pour la review</b></summary>
+
+Ce qu'un relecteur doit savoir et qu'il ne déduira pas du diff.
+
+</details>
 ```
 
-Tous les titres au même niveau, `##`, et un emoji par section — celui du
-problème suit la nature de la PR, 🐛 ou ✨.
+**La ligne de tête**, seule avant la Description : le lien qui referme le ticket
+(`Close`, ou `Part of` / `Ref` quand la PR ne le referme pas seule ; `Closes #N`
+pour une issue GitHub, mot-clé anglais obligatoire), le risque en couleur — 🟢
+faible, 🟠 moyen, 🔴 élevé —, et le fichier par lequel le relecteur commence.
 
-Écris en **prose**. Des phrases, pas une avalanche de puces. Trois paragraphes
-courts se lisent plus vite qu'une liste de douze items.
-
-Des puces dans « Le correctif » seulement quand les changements sont
-**réellement disjoints** — trois chantiers indépendants dans une même PR,
-chacun sa puce. Un raisonnement continu débité en puces perd ses liens
-logiques, qui étaient précisément tout ce qu'il restait à apporter.
-
-Ces 150 à 250 mots comptent les trois sections de prose, contexte compris : le
-plafond ne monte pas parce qu'une section s'ajoute. Une partie de ce qu'on
-écrivait sous « Le problème » servait à situer le lecteur, et remonte
-simplement d'un cran. Le script de recettage se compte à part, en étapes : cinq
-au plus.
-
-Ces bornes valent **par PR**, et ne montent pas avec le diff : une PR qui livre
-une fonctionnalité entière se décrit dans les mêmes 250 mots qu'un correctif,
+**La Description** s'ouvre sur la nature en gras — `**Hotfix**`, `**Bug**`,
+`**Feature**`, `**Tech**`, ou `**Doc**` pour un diff de documentation seule —,
+puis dit le problème et ce que la PR change, en prose. **Soixante mots** : ce
+que le ticket et le diff ne disent pas déjà, et rien d'autre. Une PR qui livre
+une fonctionnalité entière tient dans les mêmes soixante mots qu'un correctif,
 parce que ce qu'elle doit dire est le POURQUOI, pas l'inventaire.
+
+**Le Schéma** est une image SVG de ce que la PR modifie — un avant/après, un
+flux dont le trajet modifié est en couleur, une règle de décision —, jamais un
+inventaire de fichiers, **jamais du Mermaid**. Pour une interface, une capture
+ou un GIF le remplace. La charte est dans `references/schema.md`.
+
+**La Preuve de test** montre un état, pas un déroulé : l'avant et l'après, en
+images dès que possible — capture d'écran pour une UI, test rouge sur la base et
+vert sur HEAD pour un bug, requête et réponse pour une API. Sans image possible,
+une phrase à la place du tableau, quarante mots au plus. La ligne **Non testé**
+est obligatoire. Une PR `Doc` n'a pas de Preuve de test.
+
+**Comment tester**, hors slash-interim seulement, est le script que le relecteur
+déroule avant d'ouvrir le diff. Dans slash-interim, la recette vit dans le
+sous-ticket de tests (`slash-create-test-scenarios`), et le template n'a pas de
+place pour elle.
+
+**L'Impact** dit, en mots, ce que la PR peut casser et pourquoi ça ne se
+produit pas : jamais de code, de chemin ni de nom de symbole. Sur slash-interim,
+une puce par label posé, puis les labels écartés.
+
+**Pour la review**, replié, reçoit ce qui aide le relecteur sans tenir dans les
+budgets : le détail technique, les décisions discutables, ce qui a été laissé
+de côté et pourquoi. Replier n'est pas une dispense d'élagage.
+
+Aucun autre titre, à aucun niveau.
 
 ### Ne pas écraser ce qui est déjà là
 
 Une description se régénère souvent sur une PR déjà ouverte. Avant tout
 `gh pr edit --body`, relire le corps en place et reporter dans le nouveau :
 
-- la **ligne de liaison Linear** en tête — `Close` en règle générale, `Ref`
-  quand la PR ne referme pas le ticket à elle seule ;
+- la **ligne de liaison** en tête ;
 - ce que l'auteur a **écrit à la main** et que le diff ne redonne pas : captures
-  d'écran, lien de déploiement, note de rollout. Sous son titre d'origine.
+  d'écran, lien de déploiement, note de rollout.
 
 Une description régénérée qui perd la capture de l'auteur est une régression,
 pas une amélioration.
 
 ### Avant de rédiger, lire la référence
 
-`references/pull-request.md` porte ce qui ne tient pas ici : ce qu'on garde du
-gabarit de slash-interim et ce qu'on en retire, le cadrage des captures et leur
-avant/après, et les deux formes de « Comment tester » avec leurs exemples. **À
-lire avant d'écrire le texte**, comme `livrables-longs.md` avant de rendre un
-plan.
+`references/pull-request.md` porte ce qui ne tient pas ici : la pose des images,
+et les deux formes de « Comment tester » avec leurs exemples. **À lire avant
+d'écrire le texte**, comme `livrables-longs.md` avant de rendre un plan.
 
 Trois règles ne se délèguent pas à une lecture, et valent même si la référence
 n'a pas été ouverte :
 
-- **« Comment tester » est toujours présente**, sous l'une de ses deux formes —
-  le script, ou la phrase qui dit pourquoi il n'y en a pas. Jamais absente,
-  jamais un « N/A ». Et **une seule** section, jamais un découpage « Tests
+- **Hors slash-interim, « Comment tester » est toujours présente**, sous l'une
+  de ses deux formes — le script, ou la phrase qui dit pourquoi il n'y en a pas.
+  Jamais un « N/A ». Et **une seule** section, jamais un découpage « Tests
   automatisés » / « Recette manuelle » : le bloc « automatisé » est une cachette,
   où le script manuel devient la garniture facultative.
-- **« Screenshot » existe dès que le diff touche quelque chose de visible** — un
-  écran, un composant, un mail, un PDF, un export mis en forme. Un changement de
-  CSS compte ; un renommage de variable non. Et **les images se posent, elles ne
-  se demandent pas** : charger `slash:github-screenshots`, qui porte le geste, au
-  lieu de rendre la main avec des chemins de scratchpad. Ça vaut aussi pour un
-  commentaire ou une review illustrés.
-- **Le gabarit du dépôt ne s'épouse pas** : on garde sa substance — la case de
-  nature, les captures, les tests, la checklist — et nos titres, tous au niveau
-  `##`. Ses deux étiquettes sans contenu propre, `# 🎯 Description` et
-  `### Explication`, disparaissent.
+- **Dès que le diff touche quelque chose de visible** — un écran, un composant,
+  un mail, un PDF, un export mis en forme —, la Preuve de test porte une capture
+  avant/après. Un changement de CSS compte ; un renommage de variable non.
+- **Les images se posent, elles ne se demandent pas.** `gh` les joint avec
+  `--attach` depuis sa version 2.99 ; `slash:github-screenshots` reste le repli
+  quand `gh` ne le peut pas. Rendre la main avec des chemins de scratchpad n'est
+  pas une option.
 
 ## Un paragraphe, une seule ligne
 
@@ -166,10 +178,10 @@ rien : sujet et corps restent wrappés à 72 colonnes.
 
 À bannir, sans exception :
 
-- **la preuve de test exhaustive** — valeurs testées, avant/après ligne à ligne,
-  IDs des fixtures. Ça, c'est ton rapport à celui qui t'a demandé le travail, pas
-  la PR. Le « Comment tester » dit au relecteur **ce qu'il a à faire**, il ne lui
-  prouve pas que tu l'as fait ;
+- **la preuve de test exhaustive** — valeurs testées, tours de recette,
+  historique de CI, compteurs de tests que la CI affiche déjà. La Preuve de test
+  montre un état, l'avant et l'après ; le reste est ton rapport à celui qui t'a
+  demandé le travail, pas la PR ;
 - **le snippet recopié du diff** — le relecteur a le diff, en mieux et en couleur ;
 - **la liste des fichiers touchés** — GitHub l'affiche déjà ;
 - **les détails d'outillage sans conséquence** — `msgfmt`, la commande docker, le
@@ -179,6 +191,8 @@ rien : sujet et corps restent wrappés à 72 colonnes.
   elles sont le prérequis du script ;
 - **les sections vides** remplies pour respecter un gabarit — « Comment
   tester » comprise : une section sans attendu ne vaut pas mieux qu'une section absente ;
+- **le Mermaid**, nulle part dans une PR : GitHub en calcule la mise en page, et
+  aucune charte ne s'y applique. Le Schéma est un SVG ;
 - **l'auto-satisfaction** — « correctif propre et robuste », « refactoring
   élégant ». Le relecteur jugera.
 
@@ -199,7 +213,7 @@ Celle-là va dans un **commentaire**, jamais dans le corps du livrable :
 | Ça explique… | Commentaire sur… |
 | --- | --- |
 | le problème — cause racine, données observées, analyse d'origine du ticket | le **ticket Linear** : ça survit à la PR, et c'est là qu'on le cherchera |
-| la solution — pourquoi cette approche, ce qui a été écarté | la **PR** : le relecteur le lit sur place |
+| la solution — pourquoi cette approche, ce qui a été écarté | le bloc **« Pour la review »** de la PR, ou un commentaire de la PR s'il dépasse ce qu'un relecteur lira |
 
 **250 mots, un seul commentaire, jamais une série.** Au-delà, ce n'est plus un
 commentaire mais un document : s'il le mérite, c'est un fichier dans le dépôt ;
@@ -266,9 +280,13 @@ existante à compléter.
 
 ## Messages de commit
 
-Reprends la convention du dépôt (dans slash-web : `:emoji: SLI-XXXX: sujet à
-l'infinitif`). Le sujet dit *quoi*, le corps dit **pourquoi c'était nécessaire** —
-pas comment, le diff s'en charge.
+**Dans slash-interim, `slash-create-commit` fait foi** : titre seul, sans corps
+ni `Co-Authored-By`. Ce skill n'a rien à y ajouter. **Dans wtkit**, c'est la
+section « Commits & PR » de son `CLAUDE.md`.
+
+Ailleurs, reprends la convention du dépôt (dans slash-web : `:emoji: SLI-XXXX:
+sujet à l'infinitif`). Le sujet dit *quoi*, le corps dit **pourquoi c'était
+nécessaire** — pas comment, le diff s'en charge.
 
 Un corps de commit peut être plus détaillé qu'une description de PR : il est lu
 plus tard, par quelqu'un qui fait un `git blame` sans aucun contexte.
@@ -302,6 +320,7 @@ Trois choses qui tombent toujours :
 Et une conversion qui gagne sur les deux tableaux : **la prose qui compare
 devient un tableau, la prose qui énumère des acteurs devient un schéma
 mermaid.** Plus court et plus clair du même geste, jamais l'un contre l'autre.
+Dans un document ou un ticket seulement : dans une PR, le schéma est un SVG.
 
 ## Exemples
 

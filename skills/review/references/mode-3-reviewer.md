@@ -5,13 +5,14 @@ comptent plus que les autres ici : **on ne modifie jamais le code d'une PR qu'on
 relit**, et **rien ne part sans arbitrage**.
 
 **Commencer par recetter, pas par lire le diff.** Le worktree porte déjà sa
-branche : dérouler le script « Comment tester » **en entier**, et noter à chaque
+branche : dérouler le script de recette **en entier** — la section « Comment
+tester », ou dans slash-interim le sous-ticket de tests et la « Preuve de test », et noter à chaque
 étape l'écart entre l'attendu annoncé et ce qu'on voit. Un écart est une remarque
 en soi, et la plus solide de toutes — elle ne se discute pas. Le navigateur est
 celui du serveur MCP `chrome` : charger `slash:chrome-isolation` avant la
 première action.
 
-Absence de « Comment tester », ou script qui ne se déroule pas : c'est la
+Absence de script de recette, ou script qui ne se déroule pas : c'est la
 première remarque, elle est bloquante, et elle se pose **tout de suite** plutôt
 qu'à la fin. On ne relit pas le code d'une PR dont personne ne peut vérifier
 l'effet, et l'auteur peut réparer ça pendant qu'on lit.

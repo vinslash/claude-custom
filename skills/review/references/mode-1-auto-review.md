@@ -18,8 +18,8 @@ demander. Les invariants du `SKILL.md` s'appliquent, celui-ci ne les répète pa
    d'acceptation non couvert, un cas limite du ticket oublié, un effet de bord
    hors périmètre qui a été livré quand même.
 
-3. **Vérifier que la PR est relisible** : le script « Comment tester » est jouable
-   par un tiers — prérequis, jeu de données, point d'entrée, attendu à chaque
+3. **Vérifier que la PR est relisible** : le script de recette — « Comment tester »,
+   ou dans slash-interim le sous-ticket de tests — est jouable par un tiers — prérequis, jeu de données, point d'entrée, attendu à chaque
    étape —, les captures avant/après sont là si l'UI bouge, le lien Linear
    referme le ticket. C'est `slash:writing` qui porte ces trois exigences ; une
    PR qui les rate se fera retoquer avant même la lecture du code. Si la PR n'est

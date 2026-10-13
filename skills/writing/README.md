@@ -13,7 +13,8 @@ change pas cette décision n'a rien à faire dans le document.
 | Fichier | Rôle |
 |---|---|
 | `SKILL.md` | Les règles. Chargé à la demande par Claude Code. |
-| `references/pull-request.md` | Rédiger une description : ce qu'on garde du gabarit du dépôt, la mécanique des captures, les deux formes de « Comment tester ». Lu avant toute description. |
+| `references/pull-request.md` | Rédiger une description : d'où vient la pyramide, la Preuve de test et la pose des images, les deux formes de « Comment tester ». Lu avant toute description. |
+| `references/schema.md` | La charte du Schéma SVG d'une PR, reprise de `slash-create-pr` pour les dépôts qui ne l'ont pas. |
 | `references/exemples.md` | Paires avant/après tirées de vraies PR, annotées. |
 | `references/livrables-longs.md` | La passe d'élagage : le geste, les quatre défauts et à quoi on les reconnaît, le levier tableau/mermaid. Lu seulement quand le livrable est long. |
 | `AMORCE.md` | Quelques lignes à importer dans `CLAUDE.md` pour garantir le déclenchement. |

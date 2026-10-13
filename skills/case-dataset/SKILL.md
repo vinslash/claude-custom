@@ -15,9 +15,9 @@ description: >
   corriger », « peuple la base pour ce ticket », « baseline avant implémentation »,
   or `/slash:case-dataset SLI-XXXX`. À proposer aussi de manière proactive au
   démarrage d'un ticket dont la recette dépend de données absentes de la base
-  clonée. Ne PAS utiliser pour écrire des tests automatisés (→ `slash-e2e-generate`,
-  tests Jest) ni pour rédiger des scénarios de test fonctionnels (→
-  `slash-functional-test-scenarios`).
+  clonée. Ne PAS utiliser pour écrire des tests automatisés (Playwright, Jest) ni
+  pour rédiger des scénarios de test fonctionnels (→
+  `slash-create-test-scenarios`).
 ---
 
 # Jeu de données de recette scopé au ticket

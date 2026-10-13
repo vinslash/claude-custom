@@ -1,26 +1,22 @@
 ---
 name: process-ticket
+disable-model-invocation: true
 description: >
-  Parcours complet de traitement d'un ticket Linear SLI dans un worktree
-  slash-interim ou slash-web, du worktree déjà créé jusqu'à la PR ouverte. Impose
+  Parcours **optionnel**, lancé seulement à la main, de traitement d'un ticket
+  Linear SLI dans un worktree slash-interim ou slash-web, du worktree déjà créé
+  jusqu'à la PR ouverte. Dans slash-interim, le parcours par défaut est
+  `slash-develop-ticket`, du dépôt : celui-ci n'en est que l'alternative
+  accompagnée, pour un ticket qu'on veut constater et défendre soi-même. Impose
   l'ordre qui compte : faire CONSTATER le problème à l'utilisateur avant
   d'écrire une ligne, faire arbitrer le plan, implémenter, faire constater la
-  résolution,
-  committer, remettre la branche à jour sur `develop`, puis ouvrir la PR. Deux
-  points d'arrêt bloquants — la validation du plan, passée par le mode plan, et la
-  validation de la résolution. Impose l'appel explicite de la commande
-  `/slash-rebase` avant toute PR, seul endroit où l'ordre des migrations TypeORM
-  est contrôlé — un CI rouge qui ne se voit pas dans le diff. Délègue la
-  compréhension et le constat à `slash:observe`, le jeu de données à
-  `slash:case-dataset`, les commits et la PR aux skills du dépôt slash-interim
-  (`slash-commit`, `slash-create-pr`), ce que la PR doit livrer de constatable à
-  `slash:pr-scope`, et le contenu rédigé des écrits GitHub à
-  `slash:writing`.
-  Use when the user says « mission : traiter ce ticket », « traite le ticket »,
-  « on attaque SLI-XXXX », « je viens de créer le worktree », or
-  `/slash:process-ticket SLI-XXXX`. Ne PAS utiliser pour reprendre une PR déjà ouverte
-  (→ `slash:writing`), pour une review, ni pour un travail sans ticket
-  Linear — exploration, question, correctif ponctuel demandé dans le chat.
+  résolution, committer, remettre la branche à jour sur `develop`, puis ouvrir
+  la PR. Deux points d'arrêt bloquants — la validation du plan, passée par le
+  mode plan, et la validation de la résolution. Délègue la compréhension et le
+  constat à `slash:observe`, le jeu de données à `slash:case-dataset`, les
+  commits, la remise à jour et la PR aux outils du dépôt slash-interim
+  (`slash-create-commit`, `/slash-rebase-branch`, `slash-create-pr`), et le
+  contenu rédigé des écrits GitHub à `slash:writing`.
+  Invoked only through `/slash:process-ticket SLI-XXXX`.
 ---
 
 # Traitement d'un ticket Linear, du worktree à la PR
@@ -138,11 +134,10 @@ que personne ne conteste, et le hors-périmètre réduit à une ligne de renvoi.
 L'analyse coûteuse qui n'entre pas dans le plan ne se perd pas pour autant : elle
 part en commentaire du ticket Linear, dans les 250 mots.
 
-**Charger `slash-ddd-backend` avant de rédiger**, dès que le ticket touche
-`backend/src/` : ports, mappers, entité ou value-object se décident dans le plan,
-et à l'étape 3 c'est figé. Nominalement auto-déclenché, il ne part pas tout seul
-au milieu d'une étape de dizaines d'appels d'outils — même raison qu'à l'étape 6
-pour `/slash-rebase`, d'où le nommage en dur.
+**Charger `slash-guideline-backend-ddd` avant de rédiger**, dès que le ticket
+touche `backend/src/` : ports, mappers, entité ou value-object se décident dans le
+plan, et à l'étape 3 c'est figé. Nominalement auto-déclenché, il ne part pas tout
+seul au milieu d'une étape de dizaines d'appels d'outils — d'où le nommage en dur.
 
 **Passer par le mode plan** et soumettre via `ExitPlanMode`. C'est une vraie
 porte d'approbation : elle ne se franchit pas sur un « ok » qui répondait à autre
@@ -160,14 +155,15 @@ ou value-object, et **le fichier existant sur lequel chacun est calqué**.
 
 Ce dernier point décide du reste : 62 % des fichiers créés naissent dans un dossier
 qui n'existait pas, donc c'est la référence imitée qui fait la forme — et
-`cooperation/`, que `slash-ddd-backend` donne pour modèle, injecte un repository
+`cooperation/`, que le guide SDDD donne pour modèle, injecte un repository
 service dans son controller, ce que le même skill interdit ailleurs. Nommer le
 modèle rend le choix arbitrable en dix secondes ; le taire le laisse surgir en
 review, sur du code déjà écrit.
 
 ### Ce que la PR va livrer — ça se tranche ici
 
-Charger **`slash:pr-scope`** et faire arbitrer **dans le même plan** que l'approche
+Lire **`../pr-scope/SKILL.md`** (le skill `slash:pr-scope`, qui ne se charge
+qu'à la main : le lire comme un fichier) et faire arbitrer **dans le même plan** que l'approche
 ce que la PR livrera de **constatable** : ce qu'on pourra mettre devant
 quelqu'un, et montrer.
 
@@ -200,17 +196,17 @@ Puis, **depuis la racine du worktree**, le contrôle des red flags SDDD :
 python3 <base-dir-du-skill>/scripts/red-flags-sddd.py
 ```
 
-Il rejoue sur les fichiers back de la branche la table « Red flags » de
-`slash-ddd-backend` et les invariants de `.claude/rules/sddd-structure.md`, et
+Il rejoue sur les fichiers back de la branche la table « Red flags » du guide
+SDDD et les invariants de `.claude/rules/sddd-structure.md`, et
 nomme lui-même ce qu'il trouve. Sortie non nulle : **traiter tout signalement avant
 le rapport d'étape**. Un red flag non traité part en review, où il coûte un
 aller-retour sur une décision de conception, donc sur du code déjà écrit. Il se
 corrige, ou il s'assume en une ligne du rapport — jamais en silence.
 
 Les captures vont dans le scratchpad, avec celle de l'écran fautif prise à
-l'étape 1 : ce sont les deux images de la section « Screenshots » de la PR. Les
-poser sur GitHub demande le navigateur — **`slash:github-screenshots`** porte le
-geste, et le seul point d'arrêt est la connexion GitHub dans cette instance.
+l'étape 1 : ce sont l'avant et l'après de la section « Preuve de test » de la PR.
+`slash-create-pr` les joint avec `gh --attach` (gh ≥ 2.99) ; le navigateur, par
+**`slash:github-screenshots`**, n'est plus que le repli.
 
 **Rapport** : ce qui a été fait, ce qui a résisté, les écarts au plan. Puis la
 question : faut-il remettre le jeu de données en état pour constater la
@@ -230,10 +226,10 @@ Découper les commits **par intention** : le correctif d'un côté, un renommage
 un déplacement de l'autre. Un commit qui mélange les deux est illisible en
 `git blame`.
 
-**Dans slash-interim, passer par `slash-commit`** — gitmoji, référence SLI, mode
-découpage, et il ne stage jamais rien sans demander. Il impose un **titre seul,
-sans corps** : `slash:writing` ne s'applique donc pas aux messages de commit de
-ce dépôt.
+**Dans slash-interim, passer par `slash-create-commit`** — gitmoji, référence SLI,
+découpage des gros diffs, et il ne stage jamais rien sans demander. Il impose un
+**titre seul, sans corps ni `Co-Authored-By`** : `slash:writing` ne s'applique
+donc pas aux messages de commit de ce dépôt.
 
 Ne pas committer les artefacts de recette : scripts de seed jetables, captures,
 fichiers du scratchpad.
@@ -241,97 +237,56 @@ fichiers du scratchpad.
 ## Étape 6 — Remise à jour sur la branche de base
 
 Les commits faits, et **avant toute PR**, remettre la branche à jour sur
-`develop` avec la commande **`/slash-rebase`** du dépôt slash-interim.
+`develop` avec la commande **`/slash-rebase-branch`** du dépôt slash-interim.
 
 C'est une **commande**, pas un skill : elle ne se déclenche jamais toute seule,
 il faut l'appeler. C'est précisément pour ça que cette étape existe en dur dans
 le parcours.
 
-Ce qu'elle apporte et qu'on ne peut pas obtenir autrement : **elle contrôle
-l'ordre des migrations TypeORM.** Quand `develop` a ramené une migration
-au timestamp plus récent que celle de la branche, celle de la branche se retrouve
-avant elle dans l'ordre d'exécution, et la CI sort rouge sur
-`handle-migrations.sh`. **Ce cas ne se voit pas dans le diff** — le fichier de
-migration est intact, seul un ordre relatif a bougé. Ni la self-review, ni le
-relecteur, ni les tests locaux ne l'attrapent.
+Ce qu'elle apporte et qu'un rebase à la main n'a pas : la parade au *racy git*
+en conteneur, le backup préalable, et le **contrôle de l'ordre des migrations
+TypeORM**. Quand `develop` a ramené une migration au timestamp plus récent que
+celle de la branche, celle de la branche n'est plus la dernière exécutée, et un
+`migration:revert` local déroulerait celle de `develop` à sa place. Le
+déploiement ne s'en plaint plus depuis le passage en forward-only ; c'est le
+poste de développement qui casse, et **ça ne se voit pas dans le diff**.
 
-Trois points de vigilance :
+Deux points de vigilance :
 
-- **rebaser avant d'ouvrir la PR, jamais après.** `/slash-rebase` finit sur un
-  `git push --force-with-lease` ; un force-push sur une PR déjà relue replie les
-  commentaires ancrés en *outdated* ;
+- **rebaser avant d'ouvrir la PR, jamais après.** La commande s'arrête avant le
+  push et propose un `git push --force-with-lease` ; un force-push sur une PR
+  déjà relue replie les commentaires ancrés en *outdated* ;
 - **si le rebase ramène un changement de `develop` dans la zone touchée**, le
   constat de résolution validé à l'étape 4 ne vaut plus tout à fait. Le dire, et
   rejouer le script d'observation si le conflit était réel — pas si le rebase
   s'est déroulé sans toucher au périmètre.
 
-`/slash-rebase` s'arrête d'elle-même avant le push et rend la main. Ne pas la
-court-circuiter en rebasant à la main : elle porte la parade au *racy git* en
-conteneur et le backup préalable.
-
 ## Étape 7 — Ouverture de la PR
 
 **Passer par `slash-create-pr`**, jamais un `gh pr create` monté à la main : il
-extrait le SLI de la branche, remplit le template, choisit le magic word Linear
-(`Close`, `Part of`, `Ref`), pousse et ouvre la PR en draft. C'est un skill du
-dépôt slash-interim, et on ne le court-circuite pas.
+extrait le SLI de la branche, calcule tout contre `origin/develop`, fait son
+auto-revue cosmétique, pose les labels, remplit le template en pyramide, le fait
+relire à contexte vierge, et ouvre la PR en draft. Le hook `pr-body-budget.sh`
+du dépôt refuse toute description qui sort du cadre : **sa structure fait foi**,
+`slash:writing` n'y ajoute aucune section.
 
-### La branche de base, et le périmètre qui a tenu
-
-**`slash-create-pr` référence `main` en quatre endroits** — trois `git log` /
-`git diff` à ses étapes 5 à 7, et le `--base main` de son bloc `gh pr create`.
-Or `main` n'existe pas sur slash-interim, ni en local ni sur le remote. Suivi à
-la lettre, le skill n'est donc pas *faux*, il est **inapplicable** : il casse dès
-son étape 5, avant même d'arriver à la PR.
-
-```
-$ git log main..HEAD --oneline
-fatal: ambiguous argument 'main..HEAD': unknown revision or path not in the working tree.
-```
-
-Deux substitutions, donc, à faire en le lançant :
-
-```bash
-BASE=$(git symbolic-ref --short refs/remotes/origin/HEAD | sed 's|^origin/||')
-git fetch origin "$BASE"     # AVANT tout calcul de périmètre
-```
-
-`$BASE` est la valeur à lui donner en lieu et place de `main`. Le `fetch` n'est
-pas une précaution de confort : dans un worktree, `refs/heads/` est partagé avec
-le checkout principal, donc le nom nu `develop` y désigne une ref figée au
-dernier `pull` fait là-bas. Pour un diff, viser `origin/$BASE` et jamais `$BASE`
-seul.
-
-C'est un **bug** du skill d'équipe, pas une préférence : il est décrit dans
-[SLI-8446](https://linear.app/slash-interim/issue/SLI-8446), avec la mesure qui
-l'a révélé — 17 fichiers annoncés contre 2 réels. Cette surcharge vit ici, et
-nulle part ailleurs, jusqu'à ce que le ticket soit traité.
-
-Le périmètre, lui, a été arbitré à l'étape 2 et ne se rejoue pas ici. La seule
-chose à vérifier est qu'il a tenu : si le lot n'a finalement rien de
-constatable, le dire à l'utilisateur plutôt que de rattraper d'autorité sur une
-branche déjà écrite.
+Le périmètre a été arbitré à l'étape 2 et ne se rejoue pas ici. La seule chose à
+vérifier est qu'il a tenu : si le lot n'a finalement rien de constatable, le dire
+à l'utilisateur plutôt que de rattraper d'autorité sur une branche déjà écrite.
 
 **La description part du fichier d'observation**, pas du diff. Les cinq lignes de
-POURQUOI écrites à l'étape 1, avec ses mots, sont très exactement ce que
-`slash:writing` réclame et que personne ne sait reconstituer deux jours plus
-tard en relisant un diff. Charger `slash:writing` **avant** de rédiger.
+POURQUOI écrites à l'étape 1, avec ses mots, sont la matière de la section
+« Description », qui en garde soixante mots : ce que le ticket et le diff ne
+disent pas. Charger `slash:writing` **avant** de rédiger, pour la façon d'écrire.
 
-Le **script de rejeu** du même fichier, celui que l'étape 4 vient de dérouler,
-est la section **Comment tester** de la description — obligatoire sur toute PR, parce
-que le relecteur assigné recette avant de relire le code. Le recopier, pas le
-réinventer. Une PR qui ne change rien de perceptible porte à la place la phrase
-qui le dit, et ce qui la couvre.
-
-Là où les deux se croisent, `slash-create-pr` donne la structure et la mécanique,
-`slash:writing` la façon d'écrire — une description qui remplit
-consciencieusement le template en recopiant le diff n'est pas conforme pour
-autant. En particulier, l'étape 6 de `slash-create-pr`, qui réclame un diagramme
-mermaid et une description « aussi claire et informative que possible », **ne
-s'applique pas** : c'est `slash:writing` qui tranche, 150 à 250 mots en prose.
+Le **script de rejeu** du même fichier n'a pas de section dans le template de
+slash-interim : la recette y vit dans le sous-ticket de tests, que
+`slash-create-test-scenarios` rédige. Le lui donner comme matière plutôt que de
+le laisser repartir du ticket. Les captures de l'étape 3 vont dans « Preuve de
+test ».
 
 Dans slash-web, qui n'a pas ces skills de dépôt, la PR se crée à la main et
-`slash:writing` gouverne seul.
+`slash:writing` gouverne seul, section « Comment tester » comprise.
 
-Enfin, vérifier que la référence Linear figure bien dans la description — c'est ce
-qui referme le ticket.
+Proposer ensuite `/slash-review-code <n>` : c'est la revue du dépôt, par des
+modèles tiers.
