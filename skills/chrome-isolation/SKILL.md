@@ -12,7 +12,9 @@ description: >
   taking a screenshot, reading the console — and BEFORE the first browser action,
   not after. Also when the user says « ouvre le navigateur », « va voir la page »,
   « constate dans Chrome », « prends une capture », or mentions several parallel
-  sessions. Ne PAS utiliser pour `WebFetch` / `WebSearch`,
+  sessions. Also when a repository skill — `slash-review-code` first of all —
+  tells an agent to use `claude-in-chrome` or another browser: this skill
+  prevails, and the browser stays the `chrome` MCP server. Ne PAS utiliser pour `WebFetch` / `WebSearch`,
   qui ne touchent pas au navigateur.
 ---
 
@@ -125,22 +127,39 @@ worktree, jamais une autre, et jamais son Chrome personnel.
 demandent `slash:observe` et `slash:process-ticket` : le navigateur est là pour
 qu'il manipule lui-même, pas seulement pour produire des captures.
 
-## Quand un skill du dépôt impose un autre navigateur
+## Quand un skill du dépôt désigne un autre navigateur
 
-Dans slash-interim, `slash-review-code` fait piloter Chrome à ses revues par
-l'extension **`claude-in-chrome`**, et demande à l'utilisateur d'y ouvrir la
-session de recette. Dans le parcours de ce skill-là, **c'est lui qui fait foi** :
-ne pas réécrire ses briefs vers le serveur `chrome`, ni lui refuser le navigateur
-qu'il attend.
+**Ce skill passe devant les skills des dépôts.** Un skill de dépôt qui fait
+piloter Chrome par un autre outil — l'extension `claude-in-chrome`, un serveur
+`chrome-devtools` sur un port, un Chrome lancé à la main — est suivi en tout
+**sauf** sur ce point : le navigateur reste celui du serveur MCP `chrome`, outils
+`mcp__chrome__*`. C'est le seul qui soit isolé par worktree ; l'extension pilote
+le Chrome personnel, que deux sessions parallèles se partageraient sans que rien
+ne le signale.
 
-Le prix est connu et se dit à l'utilisateur au moment où la revue réclame une
-session : l'extension pilote son Chrome personnel, pas une instance du worktree.
-Deux revues qui tournent en même temps sur deux worktrees y partagent donc les
-mêmes onglets, et une capture peut venir de la mauvaise stack. Une revue à la
-fois, ou vérifier l'URL de l'onglet avant toute capture qui sert de preuve.
+Le cas courant est `slash-review-code`, dans slash-interim : son brief de revue
+fonctionnelle dit `mcp__claude-in-chrome__*`, et il demande à l'utilisateur
+d'ouvrir sa session de recette dans un onglet de l'extension. Ce qui change :
 
-Partout ailleurs — `slash:observe`, `slash:case-dataset`, une recette demandée
-dans le chat — les règles ci-dessus s'appliquent sans exception.
+- **Le brief du sous-agent.** Il ne lit pas ce skill. Ajouter en toutes lettres
+  au prompt de tout agent qui touchera au navigateur : « Navigateur : outils
+  `mcp__chrome__*` (les charger en un seul `ToolSearch`), jamais
+  `mcp__claude-in-chrome__*` ni un Chrome lancé à la main ; ouvre ta propre page
+  par `new_page` et vérifie son URL avant toute capture. » Le reste du brief
+  reste celui du dépôt.
+- **La connexion.** Ouvrir l'application dans l'instance du worktree
+  (`navigate_page`), puis demander à l'utilisateur de s'y connecter — Dashlane y
+  est — et de dire avec quel compte. L'agent n'entre jamais d'identifiants : ça,
+  le skill du dépôt le dit aussi.
+- **Les captures.** Si le serveur refuse le répertoire de travail de la revue,
+  comme il refuse le scratchpad pour un téléversement, capturer dans un dossier
+  gitignoré du worktree — `screenshots/` sur slash-interim —, puis déplacer le
+  fichier là où le skill du dépôt l'attend.
+
+Les agents d'une même session partagent la même instance : une page chacun,
+jamais celle d'un autre. Et si le serveur `chrome` est indisponible, le dire à
+l'utilisateur et mettre le parcours navigateur en « non testé » plutôt que de
+se rabattre sur l'extension.
 
 ## Ce qu'il faut savoir en pratique
 

@@ -94,7 +94,7 @@ flowchart TD
 </tr>
 <tr>
 <td nowrap><samp>/slash:chrome-isolation</samp></td>
-<td>Règles de pilotage du navigateur quand plusieurs sessions tournent en parallèle.</td>
+<td>Règles de pilotage du navigateur quand plusieurs sessions tournent en parallèle. Seul de nos skills à passer devant ceux des dépôts : un skill qui désigne <code>claude-in-chrome</code>, comme <code>slash-review-code</code>, garde le serveur <code>chrome</code> du worktree.</td>
 </tr>
 <tr>
 <td nowrap><samp>/slash:force-update</samp></td>
