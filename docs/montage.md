@@ -26,7 +26,7 @@ effet, [`propagation.md`](propagation.md).
 | `bin/chrome-propagate.sh` | Recopie les sessions Dashlane (stockage de l'extension) et GitHub (cookies `github.com`) du modèle dans les profils de worktree déjà nés, sans toucher au reste du profil. Saute et nomme ceux dont le Chrome tourne : le relancer seul une fois leur session fermée. `--dry-run` pour compter, des noms de profil pour cibler. |
 | `bin/statusline.sh` | La status line : modèle, remplissage du contexte, coût en euros, tokens consommés sur la session sous-agents compris, durée, dossier et branche. `settings.json` vise ce fichier dans le clone, donc elle suit les mises à jour. Écrit son seul cache — le taux USD→EUR du jour — dans `~/.claude/cache/`, jamais dans le clone. |
 | `install.sh` | Pose le clone installé, l'import `CLAUDE.md`, les alias du shell, l'agent launchd, et neutralise ce qui entre en conflit. Idempotent. |
-| `shell/aliases.sh` | Les commandes de poste sous le préfixe `cl-` — `cl-chrome`, `cl-propagate`, `cl-update`. Sourcé par `~/.zshrc` depuis le clone, donc à jour sans réinstaller. Une commande de plus s'y range, sous le même préfixe. |
+| `shell/aliases.sh` | Les commandes de poste sous le préfixe `cl-` — `cl-chrome`, `cl-propagate`, `cl-update`, `cl-install`. Sourcé par `~/.zshrc` depuis le clone, donc à jour sans réinstaller. Une commande de plus s'y range, sous le même préfixe. |
 | `hooks-retired/` | Hooks retirés de `settings.json`, conservés pour pouvoir les recoller. |
 | `settings.snippet.json` | Le peu qui doit vivre dans `settings.json`, et pourquoi. |
 | `claude-custom.code-workspace` | Espace de travail VS Code, versionné volontairement — le `.gitignore` l'exclut de l'exclusion des éditeurs. |

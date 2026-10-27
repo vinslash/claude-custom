@@ -21,3 +21,9 @@ alias cl-propagate="bash '${_cl_bin}/chrome-propagate.sh'"
 # Tirer le clone installé sans attendre launchd ; `cl-update --from-dev` pour
 # éprouver un commit pas encore poussé.
 alias cl-update="bash '${_cl_bin}/update.sh'"
+
+# Reposer le montage : après un renommage de script, sur une machine neuve, ou
+# quand `/slash:` ne répond plus. Lancé depuis le dépôt de DEV, pas depuis le
+# clone : `install.sh` écrit dans son propre dossier (RTK.md versé, sauvegardes
+# récupérées), et une seule écriture dans le clone gèlerait les mises à jour.
+alias cl-install="bash '${HOME}/Development/claude-custom/install.sh'"

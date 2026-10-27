@@ -128,8 +128,8 @@ le navigateur est fourni par le serveur MCP `chrome`.
 | Notification « mise à jour bloquée », ou `clone sali` | Un fichier a été édité dans le clone installé | `git -C ~/.claude/skills/slash status --short` pour voir quoi. Si c'est à jeter : `git -C ~/.claude/skills/slash checkout -- .`. Sinon, le reporter dans le dépôt de développement d'abord. |
 | Un skill modifié n'a aucun effet | `hooks.json` ou `.mcp.json` a bougé : le câblage vit dans la mémoire du process | `/reload-plugins` dans le terminal ; dans l'extension VSCode, qui n'expose pas la commande, ouvrir une **nouvelle session**. |
 | `/reload-plugins` répond « isn't available in this environment » | Vous êtes dans l'extension VSCode | Nouvelle session. |
-| Rien du dépôt n'est chargé, sans erreur | Un import `@` qui ne résout pas échoue **en silence** | Relancer `./install.sh` : il vérifie chaque référence et nomme celles qui manquent. |
-| La mise à jour automatique s'est arrêtée après une mise à jour du dépôt | Le plist code le chemin **absolu** du script ; si le dépôt l'a renommé, l'agent tire dans le vide — visible seulement dans `launchd-erreurs.log` | Relancer `./install.sh`, qui réécrit le plist. C'est le geste à faire sur toute machine installée avant un renommage. |
+| Rien du dépôt n'est chargé, sans erreur | Un import `@` qui ne résout pas échoue **en silence** | Relancer `cl-install` : il vérifie chaque référence et nomme celles qui manquent. |
+| La mise à jour automatique s'est arrêtée après une mise à jour du dépôt | Le plist code le chemin **absolu** du script ; si le dépôt l'a renommé, l'agent tire dans le vide — visible seulement dans `launchd-erreurs.log` | Relancer `cl-install`, qui réécrit le plist. C'est le geste à faire sur toute machine installée avant un renommage. |
 | `source injoignable` dans le journal | Pas d'accès SSH à GitHub, ou le réseau | `git -C ~/.claude/skills/slash ls-remote origin` pour voir l'erreur réelle. |
 | L'agent launchd a été refusé au chargement | Politique de la machine | `launchctl bootstrap gui/$(id -u) ~/Library/LaunchAgents/com.slash.claude-custom.update.plist` |
 
