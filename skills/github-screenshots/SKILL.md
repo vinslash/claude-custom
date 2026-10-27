@@ -49,12 +49,13 @@ Le profil d'un worktree est cloné depuis `~/.cache/chrome-mcp/_modele` à sa
 **naissance**. Une session GitHub ouverte dans le modèle est donc héritée par
 tous les worktrees créés ensuite — c'est déjà comme ça que Dashlane arrive.
 
-Le bon geste, une seule fois : quitter Chrome entièrement (Cmd+Q, sinon le
-script refuse de partir), lancer `bin/chrome-template.sh`, se connecter à GitHub
-dans l'onglet qu'il ouvre, puis quitter par Cmd+Q — Chrome n'écrit ses cookies
-qu'en sortant. Le script contrôle lui-même que la session a été enregistrée. Les worktrees déjà nés
-n'en profitent pas — le clonage a eu lieu —, il faut s'y connecter une fois
-chacun. C'est aussi le cas quand la session héritée a expiré.
+Le bon geste : quitter le Chrome personnel (Cmd+Q, sinon le script refuse de
+partir), lancer `bin/chrome-template.sh`, se connecter à GitHub dans l'onglet
+qu'il ouvre, puis quitter par Cmd+Q — Chrome n'écrit ses cookies qu'en sortant.
+Le script contrôle lui-même que la session a été enregistrée, puis la recopie
+dans les profils de worktree déjà nés, sauf ceux dont le Chrome tourne. Un
+worktree dont la session a expiré se rattrape donc par ce même geste, et non en
+s'y connectant à la main.
 
 **Une page de connexion est un point d'arrêt, pas un obstacle à contourner.**
 Rendre la fenêtre et demander la connexion. Ne pas saisir d'identifiant, ne pas

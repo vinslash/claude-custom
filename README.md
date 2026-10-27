@@ -196,7 +196,8 @@ session dans l'extension VSCode, qui n'expose pas cette commande.
 Qui se servira du navigateur — captures sur une PR, constat dans l'application —
 a une étape à faire, puis à refaire quand le début de session le demande :
 `bash ~/.claude/skills/slash/bin/chrome-template.sh`, pour installer Dashlane et se
-connecter à GitHub dans le profil dont chaque worktree clonera le sien.
+connecter à GitHub dans le profil dont chaque worktree clonera le sien. Ces deux
+sessions sont recopiées au passage dans les profils de worktree déjà créés.
 
 Le clone installé ne doit **jamais** être édité. Un seul fichier modifié dedans et
 le `merge --ff-only` échoue : les mises à jour s'arrêteraient, et en silence.

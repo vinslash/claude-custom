@@ -73,19 +73,18 @@ fi
 
 # ------------------------------------------------- profil Chrome modèle périmé --
 # Le profil du worktree naît d'un clone du modèle, sessions GitHub et Dashlane
-# comprises. Mais elles ne durent que 14 jours, et le modèle, qu'on n'ouvre
-# jamais, ne les prolonge pas : passé ce délai, chaque profil neuf hérite de
-# sessions mortes, et il faut tout ressaisir sans que rien ne dise pourquoi.
+# comprises, et `chrome-propagate.sh` recopie ces sessions dans les profils déjà
+# nés à chaque rafraîchissement. Tous les profils expirent donc avec le modèle :
+# 14 jours, que le modèle, qu'on n'ouvre jamais, ne prolonge pas. Passé ce délai,
+# chaque fenêtre ouvre un Dashlane déconnecté sans que rien ne dise pourquoi.
 #
-# On ne prévient donc que là où ça se paie : un worktree dont le profil n'est
-# pas encore né, et un modèle à moins de trois jours de l'échéance. L'échéance se
-# lit sur le cookie `user_session` de GitHub ; celle de Dashlane n'est lisible
-# nulle part, mais les deux connexions se font dans le même passage de
-# `chrome-template.sh`, donc elles tombent ensemble.
+# On prévient dans tout worktree dès que le modèle est à moins de trois jours de
+# l'échéance. L'échéance se lit sur le cookie `user_session` de GitHub ; celle
+# de Dashlane n'est lisible nulle part, mais les deux connexions se font dans le
+# même passage de `chrome-template.sh`, donc elles tombent ensemble.
 notice=""
 chrome_base="$HOME/.cache/chrome-mcp"
-profile="$chrome_base/$(basename "${root:-$PWD}")"
-if [ -d "$chrome_base/_modele" ] && [ ! -d "$profile" ]; then
+if [ -d "$chrome_base/_modele" ]; then
   expiry=""
   for cookies in "$chrome_base/_modele/Default/Cookies" "$chrome_base/_modele/Default/Network/Cookies"; do
     [ -f "$cookies" ] || continue
@@ -105,7 +104,7 @@ if [ -d "$chrome_base/_modele" ] && [ ! -d "$profile" ]; then
     when=""
   fi
   if [ -n "$when" ]; then
-    notice="Profil Chrome modèle : ses sessions GitHub et Dashlane $when. Ce worktree en héritera, et il faudra s'y reconnecter. Pour rafraîchir le modèle : quitter Chrome (Cmd+Q), puis bash ~/.claude/skills/slash/bin/chrome-template.sh."
+    notice="Profil Chrome modèle : ses sessions GitHub et Dashlane $when, et avec elles celles de tous les worktrees. Pour les rafraîchir toutes d'un coup : quitter Chrome (Cmd+Q), puis bash ~/.claude/skills/slash/bin/chrome-template.sh."
   fi
 fi
 

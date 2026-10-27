@@ -10,7 +10,8 @@
 # le Chrome Web Store et s'y connecter, ET se connecter à GitHub — c'est ce qui
 # dispense les worktrees à naître du point d'arrêt de `slash:github-screenshots`.
 # Puis fermer la fenêtre. Tout profil de worktree créé ensuite partira de cet
-# état.
+# état, et les profils déjà nés reçoivent ces deux sessions par
+# `chrome-propagate.sh`, appelé à la fin.
 #
 # Pas d'`exec` : le script reste vivant derrière Chrome pour vérifier le profil
 # une fois la fenêtre fermée, et le dire. Sans ça, on ne sait pas si le modèle
@@ -35,7 +36,20 @@ fi
 # main basse sur celle-ci : `--user-data-dir` est ignoré, la fenêtre qui s'ouvre
 # est celle du profil personnel, et rien ne le signale. On croit avoir préparé le
 # modèle, on a saisi ses identifiants dans son navigateur de tous les jours.
-if pgrep -x "Google Chrome" >/dev/null 2>&1; then
+#
+# Seul le Chrome personnel compte : ceux des sessions Claude, lancés chacun sur
+# son profil de `~/.cache/chrome-mcp/`, cohabitent avec lui chaque jour sans
+# rien absorber. Les exiger fermés rendait le rafraîchissement impossible tant
+# qu'une session gardait son navigateur ouvert.
+personal=""
+for pid in $(pgrep -x "Google Chrome" 2>/dev/null); do
+  case "$(ps -o command= -p "$pid" 2>/dev/null)" in
+    *"--user-data-dir=${HOME}/.cache/chrome-mcp/"*) ;;
+    "") ;;
+    *) personal=1 ;;
+  esac
+done
+if [ -n "$personal" ]; then
   echo "Chrome tourne déjà : quitter TOUTES ses fenêtres (Cmd+Q) avant de" >&2
   echo "relancer ce script. Sinon le lancement serait absorbé par l'instance" >&2
   echo "en cours, le profil modèle ne serait pas touché, et la connexion" >&2
@@ -59,8 +73,8 @@ echo
 echo "Ces sessions durent 14 jours, et le modèle ne les prolonge pas : le rouvrir"
 echo "avant l'échéance. Le début de session prévient quand elle approche."
 echo
-echo "Les profils de worktree DÉJÀ créés ne changent pas. Pour qu'un ticket en"
-echo "cours reparte du modèle, supprimer son dossier dans ~/.cache/chrome-mcp/."
+echo "À la fermeture, les deux sessions sont recopiées dans les profils de"
+echo "worktree déjà créés, sauf ceux dont le Chrome tourne à ce moment-là."
 echo
 
 "$chrome" --user-data-dir="$template" --no-first-run --no-default-browser-check \
@@ -94,9 +108,10 @@ done
 [ "$expiry" -gt "$(date +%s)" ] || missing="$missing GitHub"
 
 if [ -z "$missing" ]; then
-  echo "Modèle prêt : Dashlane installé, session GitHub enregistrée."
-  echo "Les prochains worktrees en hériteront jusqu'au $(date -r "$expiry" '+%d/%m') ;"
-  echo "rouvrir le modèle avant."
+  echo "Modèle prêt : Dashlane installé, session GitHub enregistrée, valables"
+  echo "jusqu'au $(date -r "$expiry" '+%d/%m') ; rouvrir le modèle avant."
+  echo
+  sh "$(dirname "$0")/chrome-propagate.sh"
 else
   echo "Attention, il manque :$missing — relancer ce script."
   echo "Si c'est GitHub : Chrome n'écrit ses cookies qu'en quittant par Cmd+Q."

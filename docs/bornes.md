@@ -64,8 +64,8 @@ de **14 à 27** chacune.
 
 | Borne | Valeur | Au-delà |
 | --- | --- | --- |
-| Durée des sessions GitHub et Dashlane héritées du modèle | **14 jours** depuis le passage de `chrome-template.sh` — délai fixé par GitHub et par Dashlane, pas par nous. Porté par `chrome-isolation` | Chaque worktree neuf naît avec des sessions mortes, et tout est à ressaisir sans rien qui dise pourquoi. |
-| Préavis du début de session | **3 jours** avant l'échéance, et seulement dans un worktree dont le profil n'est pas encore né — `hooks/handlers/session-start.sh` | Prévenir partout ferait un message de plus dans chaque session, pour un geste qui n'en concerne qu'une ; prévenir le jour même ne laisse pas le temps de rouvrir le modèle. |
+| Durée des sessions GitHub et Dashlane du modèle, recopiées dans tous les profils de worktree | **14 jours** depuis le passage de `chrome-template.sh` — délai fixé par GitHub et par Dashlane, pas par nous. Porté par `chrome-isolation` | Chaque fenêtre ouvre un Dashlane déconnecté et une page de connexion GitHub, sans rien qui dise pourquoi. |
+| Préavis du début de session | **3 jours** avant l'échéance, dans tout worktree — `hooks/handlers/session-start.sh` | Tous les profils expirent ensemble depuis que `chrome-propagate.sh` leur recopie les sessions du modèle : le geste les concerne tous, donc chaque session peut le rappeler. Prévenir le jour même ne laisse pas le temps de rouvrir le modèle. |
 
 ## Les portes anti-overkill
 

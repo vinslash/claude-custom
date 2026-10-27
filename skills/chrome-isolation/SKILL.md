@@ -48,11 +48,16 @@ tous les worktrees nés ensuite l'héritent, et poser les captures d'une PR ne
 demande plus de connexion — voir `slash:github-screenshots`.
 
 **Ces sessions expirent au bout de 14 jours**, GitHub comme Dashlane, et le
-modèle ne les prolonge pas puisque personne ne l'ouvre. Un profil de worktree,
-lui, prolonge les siennes en s'en servant. Passé l'échéance, chaque worktree neuf
-hérite donc de sessions mortes, et tout est à ressaisir. Le début de session
-prévient quand c'est le cas ; le geste est de relancer `bin/chrome-template.sh`.
-Le contrôle tient en une commande, qui ne lit qu'une date :
+modèle ne les prolonge pas puisque personne ne l'ouvre. Le geste est de relancer
+`bin/chrome-template.sh` : il rafraîchit le modèle, puis `bin/chrome-propagate.sh`
+recopie les deux sessions dans **tous** les profils de worktree déjà nés — le
+stockage de l'extension Dashlane et les cookies `github.com`, rien d'autre, donc
+la session applicative du ticket reste intacte. Tous les profils partagent ainsi
+l'échéance du modèle, et le début de session prévient dans chacun quand elle
+approche. Un profil dont le Chrome tournait pendant le passage est sauté et
+nommé ; `chrome-propagate.sh`, relancé seul une fois sa session fermée, le
+rattrape. Le contrôle de l'échéance tient en une commande, qui ne lit qu'une
+date :
 
 ```bash
 sqlite3 "file:$HOME/.cache/chrome-mcp/_modele/Default/Cookies?immutable=1" \
@@ -102,12 +107,13 @@ profil modèle pour y installer une extension et s'y connecter à GitHub. Il
 n'ouvre aucun port de debug, donc aucune session ne peut se tromper et venir
 piloter cette fenêtre-là. C'est un geste d'utilisateur, pas un geste de session.
 
-**Il exige que Chrome soit entièrement quitté** — Cmd+Q, toutes fenêtres. Sur
-macOS, lancer le binaire quand une instance tourne déjà fait main basse sur
-celle-ci : `--user-data-dir` est ignoré, la fenêtre qui s'ouvre est celle du
-profil personnel, et rien ne le signale. Le script refuse désormais de partir
-dans ce cas, parce que le symptôme est invisible : on croit avoir préparé le
-modèle, on a saisi ses identifiants dans son navigateur de tous les jours.
+**Il exige que le Chrome personnel soit entièrement quitté** — Cmd+Q, toutes
+fenêtres. Sur macOS, lancer le binaire quand il tourne déjà fait main basse sur
+lui : `--user-data-dir` est ignoré, la fenêtre qui s'ouvre est celle du profil
+personnel, et rien ne le signale. Le script refuse de partir dans ce cas, parce
+que le symptôme est invisible : on croit avoir préparé le modèle, on a saisi ses
+identifiants dans son navigateur de tous les jours. Les Chrome des sessions
+Claude, eux, ne gênent pas : chacun tient son propre profil.
 
 **Ne jamais se connecter par un port.** Une configuration en `--browserUrl` vise
 un endpoint unique que toutes les sessions partagent. Celle que déclare le dépôt
@@ -219,7 +225,9 @@ session, vérifier qu'il ne reste ni `chrome-devtools-mcp` ni Chrome sur ce
 **Le clonage n'a lieu qu'à la naissance du profil.** Une extension installée dans
 le modèle aujourd'hui n'apparaîtra pas dans un worktree ouvert hier. Pour qu'un
 ticket en cours reparte du modèle, il faut supprimer son dossier dans
-`~/.cache/chrome-mcp/` — au prix de sa session applicative.
+`~/.cache/chrome-mcp/` — au prix de sa session applicative. Les sessions
+Dashlane et GitHub font exception : `chrome-propagate.sh` les recopie sans
+recloner.
 
 **Le modèle doit être fermé quand un profil en est cloné.** Sa session Dashlane
 vit dans une base leveldb ; copiée pendant que Chrome écrit dedans, elle arrive

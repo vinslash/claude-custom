@@ -111,8 +111,11 @@ s'arrêtera sur une connexion GitHub à faire à la main.
 
 Ce n'est pas un geste unique : les deux sessions expirent, et le modèle, qu'on
 n'ouvre jamais, ne les prolonge pas — délai dans [`bornes.md`](bornes.md). Le
-script annonce l'échéance en sortant, et le début de session prévient quand un
-worktree va naître d'un modèle périmé : relancer alors le même script.
+script annonce l'échéance en sortant, et le début de session prévient quand elle
+approche : relancer alors le même script. Il recopie les deux sessions dans tous
+les profils de worktree déjà nés, donc un seul passage reconnecte tout le monde.
+Ceux dont le Chrome tournait sont nommés à la sortie ; une fois leur session
+fermée, `bash ~/.claude/skills/slash/bin/chrome-propagate.sh` les rattrape.
 
 C'est le seul lancement de Chrome à la main qui soit permis : partout ailleurs,
 le navigateur est fourni par le serveur MCP `chrome`.
