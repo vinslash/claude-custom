@@ -253,6 +253,20 @@ else
   warn "pas de settings.json — voir settings.snippet.json pour ce qu'il doit contenir."
 fi
 
+# --------------------------------------------------------------- alias shell --
+# Une ligne dans ~/.zshrc, qui source `shell/aliases.sh` DANS le clone : les
+# alias `cl-*` suivent ensuite les mises à jour sans repasser par ici. Le test
+# d'existence garde le shell utilisable si le clone disparaît.
+step "Alias du shell (cl-*)"
+zshrc="$HOME/.zshrc"
+alias_line='[ -f ~/.claude/skills/slash/shell/aliases.sh ] && . ~/.claude/skills/slash/shell/aliases.sh'
+if grep -qxF "$alias_line" "$zshrc" 2>/dev/null; then
+  ok "~/.zshrc source déjà les alias."
+else
+  printf '\n# Alias cl-* du plugin slash\n%s\n' "$alias_line" >> "$zshrc"
+  ok "~/.zshrc source les alias — ouvrir un nouveau terminal pour en profiter."
+fi
+
 # --------------------------------------------------------- mise à jour auto --
 # L'agent pointe sur la copie du script DANS le clone, pas dans le dépôt de dev :
 # le script se met donc à jour lui-même, et launchd relit le fichier à chaque

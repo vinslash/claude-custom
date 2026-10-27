@@ -185,7 +185,8 @@ est idempotent et ne supprime jamais un fichier sans l'avoir sauvegardé.
 *au-dessus* d'un `~/.claude/CLAUDE.md` existant, dont le contenu est conservé ; dans
 `settings.json`, seules deux entrées sont touchées — la neutralisation d'un
 serveur MCP inutilisable sur l'hôte, et la status line, posée seulement s'il n'y
-en a pas déjà une ; et vos skills personnels, vos hooks et vos autres
+en a pas déjà une ; `~/.zshrc` reçoit une ligne, qui charge les commandes `cl-*` ;
+et vos skills personnels, vos hooks et vos autres
 plugins ne sont pas touchés. Cas par cas dans
 [`docs/installation.md`](docs/installation.md).
 
@@ -195,7 +196,7 @@ session dans l'extension VSCode, qui n'expose pas cette commande.
 
 Qui se servira du navigateur — captures sur une PR, constat dans l'application —
 a une étape à faire, puis à refaire quand le début de session le demande :
-`bash ~/.claude/skills/slash/bin/chrome-template.sh`, pour installer Dashlane et se
+`cl-chrome` dans un terminal, pour installer Dashlane et se
 connecter à GitHub dans le profil dont chaque worktree clonera le sien. Ces deux
 sessions sont recopiées au passage dans les profils de worktree déjà créés.
 

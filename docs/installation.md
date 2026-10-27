@@ -40,6 +40,7 @@ l'avoir sauvegardé à côté sous `.bak-<horodatage>`.
 | Une `statusLine` déjà déclarée | **La laisse**, et donne la commande à poser pour prendre celle du dépôt. Seule exception : l'ancienne copie autonome `~/.claude/statusline.sh`, remplacée par le script du clone. |
 | `~/.claude/slash-etat/` — l'état sous son ancien nom | Déplace son contenu vers `slash-state/` **sans jamais écraser** ce qui s'y trouve déjà, puis ne retire l'ancien dossier que s'il finit vide, et le dit s'il reste quelque chose. |
 | Un agent launchd sous l'ancien label `…​.maj` | L'évince et supprime son plist **avant** de charger le nouveau. Sans ça, deux agents tourneraient, dont un pointant sur un script qui n'existe plus. |
+| `~/.zshrc` | Ajoute, une fois, la ligne qui source `shell/aliases.sh` du clone : les commandes `cl-*`, disponibles dans tout nouveau terminal. |
 | L'agent launchd | Écrit `~/Library/LaunchAgents/com.slash.claude-custom.update.plist` et le charge. |
 
 Il finit par des vérifications : manifeste de plugin valide, import en place,
@@ -101,7 +102,7 @@ Seulement pour qui se servira du navigateur — captures d'écran sur une PR,
 constat dans l'application.
 
 ```bash
-bash ~/.claude/skills/slash/bin/chrome-template.sh
+cl-chrome    # alias de bash ~/.claude/skills/slash/bin/chrome-template.sh
 ```
 
 Chrome s'ouvre sur le profil dont chaque profil de worktree sera cloné. Y faire
@@ -115,7 +116,7 @@ script annonce l'échéance en sortant, et le début de session prévient quand 
 approche : relancer alors le même script. Il recopie les deux sessions dans tous
 les profils de worktree déjà nés, donc un seul passage reconnecte tout le monde.
 Ceux dont le Chrome tournait sont nommés à la sortie ; une fois leur session
-fermée, `bash ~/.claude/skills/slash/bin/chrome-propagate.sh` les rattrape.
+fermée, `cl-propagate` les rattrape.
 
 C'est le seul lancement de Chrome à la main qui soit permis : partout ailleurs,
 le navigateur est fourni par le serveur MCP `chrome`.
@@ -144,7 +145,9 @@ Reste à retirer à la main la ligne `@~/.claude/skills/slash/CLAUDE.md` en têt
 `~/.claude/CLAUDE.md` — le contenu qui suit est le vôtre, et les sauvegardes
 `~/.claude/CLAUDE.md.bak-*` sont toujours là. Et dans `settings.json`, la clé
 `statusLine` — elle viserait un script disparu — et, si elle vous gêne, l'entrée
-`disabledMcpjsonServers`.
+`disabledMcpjsonServers`. Dans `~/.zshrc`, la ligne qui source
+`~/.claude/skills/slash/shell/aliases.sh` — inerte une fois le clone parti, elle
+ne casse rien.
 
 Le dépôt de développement, lui, n'a jamais été modifié par l'installation : il
 suffit de le supprimer.

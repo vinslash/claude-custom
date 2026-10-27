@@ -49,7 +49,7 @@ demande plus de connexion — voir `slash:github-screenshots`.
 
 **Ces sessions expirent au bout de 14 jours**, GitHub comme Dashlane, et le
 modèle ne les prolonge pas puisque personne ne l'ouvre. Le geste est de relancer
-`bin/chrome-template.sh` : il rafraîchit le modèle, puis `bin/chrome-propagate.sh`
+`bin/chrome-template.sh` — `cl-chrome` dans le terminal de l'utilisateur : il rafraîchit le modèle, puis `bin/chrome-propagate.sh`
 recopie les deux sessions dans **tous** les profils de worktree déjà nés — le
 stockage de l'extension Dashlane et les cookies `github.com`, rien d'autre, donc
 la session applicative du ticket reste intacte. Tous les profils partagent ainsi

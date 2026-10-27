@@ -104,7 +104,7 @@ if [ -d "$chrome_base/_modele" ]; then
     when=""
   fi
   if [ -n "$when" ]; then
-    notice="Profil Chrome modèle : ses sessions GitHub et Dashlane $when, et avec elles celles de tous les worktrees. Pour les rafraîchir toutes d'un coup : quitter Chrome (Cmd+Q), puis bash ~/.claude/skills/slash/bin/chrome-template.sh."
+    notice="Profil Chrome modèle : ses sessions GitHub et Dashlane $when, et avec elles celles de tous les worktrees. Pour les rafraîchir toutes d'un coup : quitter son Chrome personnel (Cmd+Q), puis cl-chrome dans un terminal."
   fi
 fi
 
