@@ -1,27 +1,20 @@
 ---
 name: cycle-update
 description: >
-  Les updates d'un projet Linear au fil du cycle : le **point d'étape** qui donne
-  au produit sa vision d'ensemble, et l'**update de fin de cycle** qui le
-  contient et y ajoute la passation, pour que le suivant reprenne le rôle sans
-  repartir de zéro. Deux formes selon le **rôle** tenu — relevé de rôle sur le
-  projet Run, project update sur le projet lui-même pour les rôles de Build. Le
-  travail n'est pas d'écrire mais de **rassembler** : GitHub, #daily, Linear,
-  incidents et releases. Confronte le réalisé aux **attendus** de la fiche du
-  rôle plutôt que d'énumérer, et rédige la passation contre la checklist de prise
-  de poste du suivant. Rien n'est posté sans validation explicite.
-  **« sprint » vaut « cycle » partout** : l'équipe dit les deux.
+  Les updates d'un projet Linear au fil du cycle : le **point d'étape** pour le
+  produit, et l'**update de fin de cycle** qui y ajoute la passation du rôle.
+  Forme selon le rôle — relevé de rôle sur le projet Run, project update sur le
+  projet pour le Build. Rassemble GitHub, #daily, Linear, incidents et releases,
+  et confronte le réalisé aux attendus de la fiche du rôle. Rien n'est posté sans
+  validation. « sprint » vaut « cycle ».
   Use when the user says « update de fin de cycle », « point d'étape », « project
-  update », « fais le point sur le projet », « je veux faire le point sur mon
-  projet », « j'ai le lead sur ce projet ce cycle », « je passe la main sur le
-  rôle », « la passation du rôle », « qu'est-ce que j'ai fait ce cycle ou ce
-  sprint », « laisser une trace de où on en est », or `/slash:cycle-update`; and
-  whenever someone who holds a cycle role or leads a project wants to report on
-  it. Se déclencher **même si la demande se lit aussi comme « explique-moi où en
-  est ce projet »** : la question d'entrée du skill lève l'ambiguïté en un clic,
-  alors qu'un résumé rendu hors skill n'applique aucune de ses règles.
-  Ne PAS utiliser pour écrire la **description** d'un projet Linear, pour rédiger
-  un daily, ni pour traiter un ticket (→ `slash-develop-ticket`, ou `/slash:process-ticket`).
+  update », « fais le point sur le projet », « j'ai le lead sur ce projet ce
+  cycle », « je passe la main sur le rôle », « passation du rôle », « qu'est-ce
+  que j'ai fait ce cycle ou ce sprint », or `/cycle-update`; and whenever someone
+  holding a cycle role or leading a project wants to report on it — même si la
+  demande se lit comme « explique-moi où en est ce projet ».
+  Ne PAS utiliser pour la description d'un projet Linear, un daily, ni pour
+  traiter un ticket.
 ---
 
 # Les updates de cycle
@@ -246,7 +239,7 @@ il part une fois.
   rien trouvé sur X », jamais une phrase de remplissage. Un update qui brode est
   pire qu'un update absent.
 - **Rien n'est posté sans validation explicite** — vaut pour tout `save_*`.
-- **Le texte part sur Linear**, donc `slash:writing` s'applique : un paragraphe
+- **Le texte part sur Linear**, qui rend le Markdown : un paragraphe
   s'écrit sur une seule ligne, et c'est le rendu qui décide où couper.
 - **Un cycle sans rien à signaler existe.** Le dire en deux lignes est un update
   valable ; sur un point d'étape, c'est même une raison de ne pas en poster.

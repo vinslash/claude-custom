@@ -77,10 +77,6 @@ flowchart TD
 <td>Manuel. Les quatre situations de review d'une PR, où l'utilisateur arbitre chaque remarque. L'alternative à <code>slash-review-code</code> et <code>slash-apply-pr-review</code>, les parcours du dépôt, qui restent ceux par défaut. Le recettage précède la lecture du code, et une seconde passe ne juge que ce que la première a demandé.</td>
 </tr>
 <tr>
-<td nowrap><samp>/slash:cycle-update</samp></td>
-<td>Les updates d'un projet Linear au fil du cycle : le <strong>point d'étape</strong> pour le produit, et l'<strong>update de fin de cycle</strong> qui le contient et y ajoute la passation. La forme se déduit du <strong>rôle</strong> tenu, et le réalisé se <strong>confronte aux attendus</strong> de sa fiche au lieu de s'énumérer. Le travail n'est pas d'écrire mais de rassembler.</td>
-</tr>
-<tr>
 <td nowrap><samp>/slash:case-dataset</samp></td>
 <td>Jeu de données de recette scopé à un ticket SLI, pour constater un bug avant correction puis prouver sa résolution.</td>
 </tr>
@@ -115,7 +111,6 @@ flowchart TD
     sc["/slash:pr-scope"]
     cg["/slash:github-screenshots"]
     ca["/slash:chrome-isolation"]
-    cu["/slash:cycle-update"]
 
     pt --> co
     pt --> re
@@ -126,14 +121,11 @@ flowchart TD
     co --> ca
     re --> cg
     cg --> ca
-    cu --> re
 ```
 
 `process-ticket` et `review` sont les deux points d'entrée du parcours d'un
 ticket : personne ne les appelle, et ils se succèdent sans se charger — le
-premier s'arrête à la PR ouverte, le second reprend à la review. `cycle-update`
-est un troisième point d'entrée, hors parcours : il part à la fin du cycle, pas
-sur un ticket.
+premier s'arrête à la PR ouverte, le second reprend à la review.
 `chrome-isolation` est à l'autre bout, chargé par trois skills — application de la
 règle du fait général qui vit dans le skill général
 ([`docs/contribuer.md`](docs/contribuer.md)). `force-update` n'y figure pas : il
@@ -155,6 +147,28 @@ commande. Les parcours du dépôt slash-interim qui couvrent les mêmes situatio
 passent ainsi devant sans arbitrage du modèle, et ces trois-là ne coûtent plus
 rien au contexte des sessions. Conséquence : `process-ticket` ne peut pas
 *charger* `pr-scope`, il le lit comme un fichier.
+
+## Les skills partagés à l'organisation
+
+Un skill qui ne touche pas au code n'a pas sa place dans slash-interim, et n'a
+pas besoin de ce montage pour servir à l'équipe : il se publie dans la
+bibliothèque de l'organisation sur claude.ai, d'où chacun l'active en un clic et
+le reçoit dans Claude Code par la synchronisation — sous le préfixe
+`anthropic-skills:`, que Claude Code donne à tout skill venu de claude.ai.
+
+`partage/` en garde la source, **hors de `skills/`** : le plugin ne le charge
+pas, sans quoi on aurait chez soi deux skills qui partent sur les mêmes phrases.
+Ce qui est ici est ce qui est publié — on y écrit d'abord, on republie ensuite.
+
+| Skill | Invocation | Rôle |
+| --- | --- | --- |
+| [`cycle-update`](partage/cycle-update/SKILL.md) | <samp>/anthropic-skills:cycle-update</samp> | Les updates d'un projet Linear au fil du cycle : le **point d'étape** pour le produit, et l'**update de fin de cycle** qui le contient et y ajoute la passation. La forme se déduit du **rôle** tenu, et le réalisé se **confronte aux attendus** de sa fiche au lieu de s'énumérer. |
+
+Un skill de `partage/` ne renvoie à rien de ce dépôt — ni `slash:writing`, ni un
+chemin `~/.claude/skills/slash` — puisque les collègues ne l'ont pas. Sa
+description tient en **1024 caractères**, au-delà de quoi claude.ai le refuse.
+Pour republier : zipper le dossier du skill, et le téléverser à la place de
+l'ancien dans les paramètres de claude.ai.
 
 ## Installation
 
