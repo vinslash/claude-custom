@@ -132,6 +132,7 @@ le navigateur est fourni par le serveur MCP `chrome`.
 | La mise à jour automatique s'est arrêtée après une mise à jour du dépôt | Le plist code le chemin **absolu** du script ; si le dépôt l'a renommé, l'agent tire dans le vide — visible seulement dans `launchd-erreurs.log` | Relancer `cl-install`, qui réécrit le plist. C'est le geste à faire sur toute machine installée avant un renommage. |
 | `source injoignable` dans le journal | Pas d'accès SSH à GitHub, ou le réseau | `git -C ~/.claude/skills/slash ls-remote origin` pour voir l'erreur réelle. |
 | L'agent launchd a été refusé au chargement | Politique de la machine | `launchctl bootstrap gui/$(id -u) ~/Library/LaunchAgents/com.slash.claude-custom.update.plist` |
+| Fenêtre Chrome sans groupe jaune, ou déconnectée de Dashlane et GitHub | Repère refusé, ou profil pris dans le mauvais dossier : le profil suit le dossier où la session a **démarré** | `~/Library/Logs/chrome-mcp/<profil>.log` dit quel dossier a servi et si le repère a pris — voir `skills/chrome-isolation/references/entretien.md`. Ouvrir la session d'un ticket dans son worktree. |
 
 ## Désinstaller
 

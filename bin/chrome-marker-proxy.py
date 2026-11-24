@@ -8,8 +8,12 @@ Or Chrome 142 a retiré `--load-extension`, et une extension posée par le CDP
 profil n'en garde aucune trace. Il faut donc la reposer à chaque fois.
 
 D'où ce relais, glissé entre Claude Code et `chrome-devtools-mcp` : il laisse
-passer tout le trafic MCP sans y toucher, sauf trois gestes.
+passer tout le trafic MCP sans y toucher, sauf quatre gestes.
 
+  - Au premier appel d'outil, il fait amorcer le profil du worktree s'il
+    n'existe pas encore (`chrome-profile-seed.sh`). Pas avant : le serveur
+    démarre avec chaque session, y compris celles qui n'ouvriront jamais de
+    navigateur, et chacune laissait un profil cloné derrière elle.
   - Au premier appel d'outil de la session — donc au moment où le navigateur
     s'ouvre vraiment, jamais avant —, il intercale son propre
     `install_extension` puis relaie l'appel d'origine. Et il recommence à
@@ -22,13 +26,17 @@ passer tout le trafic MCP sans y toucher, sauf trois gestes.
     chacun coûterait du contexte à chaque session.
 
 En cas de pépin, on relaie sans rien faire : mieux vaut un navigateur anonyme
-qu'un navigateur cassé.
+qu'un navigateur cassé. Mais on le note dans `CHROME_MCP_LOG` : un repère qui
+manque ne se voit qu'à l'écran, et le stderr du relais n'est conservé nulle
+part.
 """
 
 import json
+import os
 import subprocess
 import sys
 import threading
+import time
 
 MARKER_DIR = sys.argv[1]
 COMMAND = sys.argv[2:]
@@ -40,10 +48,37 @@ HIDDEN_TOOLS = {
 BOOTSTRAP_ID = 'repere-amorce'
 RESTART_SIGNAL = 'the browser was restarted'
 
+PROFILE = os.environ.get('CHROME_MCP_PROFILE', '')
+SEED = os.environ.get('CHROME_MCP_SEED', '')
+LOG = os.environ.get('CHROME_MCP_LOG', '')
+LOG_MAX = 256 * 1024   # au-delà, le journal passe en `.1` et repart de zéro
+log_lock = threading.Lock()
+
+
+def journal(texte):
+    """Une ligne horodatée dans le journal du profil, et sur stderr."""
+    ligne = '%s [%d] %s' % (time.strftime('%Y-%m-%d %H:%M:%S'), os.getpid(), texte)
+    print('repère : ' + texte, file=sys.stderr)
+    if not LOG:
+        return
+    try:
+        with log_lock:
+            os.makedirs(os.path.dirname(LOG), exist_ok=True)
+            if os.path.exists(LOG) and os.path.getsize(LOG) > LOG_MAX:
+                os.replace(LOG, LOG + '.1')
+            with open(LOG, 'a') as f:
+                f.write(ligne + '\n')
+    except OSError:
+        pass
+
 server = subprocess.Popen(
     COMMAND, stdin=subprocess.PIPE, stdout=subprocess.PIPE,
     text=True, bufsize=1,
 )
+journal('démarrage — dossier %s, profil %s, repère « %s », serveur %s' % (
+    os.getcwd(), PROFILE or '?', os.environ.get('CHROME_MCP_LABEL', '?'),
+    next((a for a in COMMAND if a.startswith('chrome-devtools-mcp')), '?')))
+seeded = False
 
 # Où en est l'extension sur le navigateur courant. Seule une réponse réussie la
 # fait passer à POSEE : un premier appel qui échoue — profil tenu par le Chrome
@@ -92,7 +127,7 @@ def lancer_amorce():
     try:
         demande_amorce()
     except Exception as erreur:
-        print('repère : amorce impossible (%s)' % erreur, file=sys.stderr)
+        journal('amorce impossible (%s)' % erreur)
         with state_lock:
             state = ABSENTE
         return False
@@ -105,9 +140,10 @@ def noter_reponse(message):
     result = message.get('result') or {}
     failed = 'error' in message or result.get('isError')
     if failed:
-        print('repère : install_extension a échoué, nouvel essai au prochain appel (%s)'
-              % json.dumps(message.get('error') or result.get('content')),
-              file=sys.stderr)
+        journal('install_extension a échoué, nouvel essai au prochain appel (%s)'
+                % json.dumps(message.get('error') or result.get('content'))[:500])
+    else:
+        journal('repère posé')
     with state_lock:
         state = ABSENTE if failed else POSEE
 
@@ -135,6 +171,7 @@ def lire_serveur():
         # fil-ci, qui l'avalera au tour suivant. Une fois posée, l'extension
         # range aussi l'onglet que l'appel de relance vient d'ouvrir.
         if RESTART_SIGNAL in json.dumps(message.get('result', {})):
+            journal('navigateur redémarré, repère à reposer')
             with state_lock:
                 if state == POSEE:
                     state = ABSENTE
@@ -160,9 +197,25 @@ def amorcer():
     # même, sans navigateur elle ne fait plus rien. Une réponse arrivée trop
     # tard sera quand même notée par le fil de lecture.
     if not answered.wait(timeout=60):
+        journal('install_extension sans réponse après 60 s')
         with state_lock:
             if state == EN_COURS:
                 state = ABSENTE
+
+
+def amorcer_profil():
+    """Clone le modèle dans le profil du worktree, une fois, avant Chrome."""
+    global seeded
+    seeded = True
+    if not (PROFILE and SEED):
+        return
+    try:
+        sortie = subprocess.run(
+            ['sh', SEED, PROFILE], capture_output=True, text=True, timeout=120)
+        journal('profil : %s' % (sortie.stdout.strip() or sortie.stderr.strip()
+                                 or 'code %d' % sortie.returncode))
+    except Exception as erreur:
+        journal('profil : amorçage impossible (%s)' % erreur)
 
 
 threading.Thread(target=lire_serveur, daemon=True).start()
@@ -177,8 +230,11 @@ for line in sys.stdin:
     # Tant que l'extension n'est pas posée, chaque appel d'outil retente : un
     # échec qui dure ne coûte qu'un appel refusé de plus, un échec passager
     # rattrapé à l'appel suivant rend son repère à la fenêtre.
-    if message.get('method') == 'tools/call' and state == ABSENTE:
-        amorcer()
+    if message.get('method') == 'tools/call':
+        if not seeded:
+            amorcer_profil()
+        if state == ABSENTE:
+            amorcer()
 
     vers_serveur(message)
 

@@ -5,8 +5,9 @@
 #
 #   - dériver le profil du worktree courant, pour que deux sessions parallèles
 #     n'aient jamais le même navigateur ;
-#   - amorcer un profil neuf en clonant le profil modèle, pour que les
-#     extensions y soient déjà installées et connectées — Dashlane en tête ;
+#   - faire amorcer un profil neuf, au premier appel d'outil, en clonant le
+#     profil modèle, pour que les extensions y soient déjà installées et
+#     connectées — Dashlane en tête ;
 #   - préparer l'extension qui range les onglets dans un groupe au nom du
 #     ticket, pour qu'on sache de loin à quel worktree une fenêtre appartient ;
 #   - retirer le `--disable-extensions` que Puppeteer pose par défaut, sans
@@ -20,36 +21,13 @@
 set -eu
 
 base_dir="${HOME}/.cache/chrome-mcp"
-template="${base_dir}/_modele"
 
 workspace_root=$(git rev-parse --show-toplevel 2>/dev/null || pwd)
 profile="${base_dir}/$(basename "$workspace_root")"
 
-if [ ! -d "$profile" ] && [ -d "$template" ]; then
-  # Passer par un dossier temporaire : un clone interrompu ne doit pas laisser
-  # derrière lui un profil à moitié rempli, que le lancement suivant prendrait
-  # pour un profil valide et n'amorcerait donc jamais.
-  workdir="${profile}.workdir.$$"
-  rm -rf "$workdir"
-
-  # -c demande un clone APFS : instantané, et le disque n'est payé qu'au fur et
-  # à mesure que le profil diverge du modèle. Le repli couvre les volumes qui
-  # ne savent pas cloner.
-  cp -Rc "$template" "$workdir" 2>/dev/null || cp -R "$template" "$workdir"
-
-  # Les verrous d'instance sont des liens symboliques vers le Chrome qui tenait
-  # le modèle. Recopiés tels quels, ils feraient croire au profil neuf qu'il est
-  # déjà ouvert ailleurs, et Chrome refuserait de démarrer.
-  rm -rf "$workdir/SingletonLock" "$workdir/SingletonCookie" "$workdir/SingletonSocket"
-
-  # Caches : reconstruits seuls, et ils pèsent l'essentiel du profil.
-  rm -rf "$workdir/Default/Cache" "$workdir/Default/Code Cache" \
-         "$workdir/Default/GPUCache" "$workdir/Default/DawnGraphiteCache" \
-         "$workdir/Default/DawnWebGPUCache" "$workdir/GraphiteDawnCache" \
-         "$workdir/GPUPersistentCache"
-
-  mv "$workdir" "$profile"
-fi
+# Le profil n'est PAS cloné ici : le serveur démarre avec chaque session, y
+# compris les `claude` éphémères qui n'ouvriront jamais de navigateur. Le relais
+# l'amorce au premier appel d'outil, par `chrome-profile-seed.sh`.
 
 # Le repère. Une dizaine de sessions en parallèle, donc une dizaine de fenêtres
 # Chrome identiques, et plus rien qui dise laquelle sert quel ticket. Les places
@@ -131,8 +109,22 @@ fi
 # du vrai trousseau, comme le Chrome personnel. Il n'accède pas pour autant à son
 # profil, qui vit ailleurs. C'est le prix d'une session Dashlane utilisable, qui
 # est précisément ce qu'on cherche.
+#
+# La version est épinglée. `@latest` faisait changer le serveur sous nos pieds
+# sans que rien ne le dise, alors que le relais dépend de sa prose : c'est la
+# phrase « the browser was restarted » qui déclenche la repose du repère. Pour
+# monter de version, vérifier que cette phrase existe toujours (`grep -r` dans
+# le paquet), puis changer le numéro ici.
+#
+# Le journal vit hors de `~/.cache/chrome-mcp`, où `chrome-propagate.sh`
+# prendrait tout dossier pour un profil. Il est la seule trace d'un repère qui
+# n'a pas été posé : le stderr du relais n'est conservé nulle part.
+export CHROME_MCP_PROFILE="$profile"
+export CHROME_MCP_LABEL="$label"
+export CHROME_MCP_SEED="$here/chrome-profile-seed.sh"
+export CHROME_MCP_LOG="${HOME}/Library/Logs/chrome-mcp/$(basename "$profile").log"
 exec python3 "$here/chrome-marker-proxy.py" "$marker_dir" \
-  npx -y chrome-devtools-mcp@latest \
+  npx -y chrome-devtools-mcp@1.13.0 \
   --userDataDir="$profile" \
   --viewport 1440x820 \
   --categoryExtensions \
