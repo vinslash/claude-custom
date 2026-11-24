@@ -29,6 +29,16 @@ profile="${base_dir}/$(basename "$workspace_root")"
 # compris les `claude` éphémères qui n'ouvriront jamais de navigateur. Le relais
 # l'amorce au premier appel d'outil, par `chrome-profile-seed.sh`.
 
+# Le ménage, en revanche, part d'ici, en arrière-plan et sans rien écrire sur la
+# sortie : stdout est le canal JSON-RPC du serveur. Chaque session qui démarre
+# retire ainsi les profils dont le worktree a disparu depuis.
+here=$(cd "$(dirname "$0")" && pwd)
+if [ -d "$profile" ]; then
+  grep -qxF "$workspace_root" "$profile/.worktree" 2>/dev/null \
+    || printf '%s\n' "$workspace_root" >> "$profile/.worktree"
+fi
+( sh "$here/chrome-sweep.sh" >/dev/null 2>&1 & ) </dev/null
+
 # Le repère. Une dizaine de sessions en parallèle, donc une dizaine de fenêtres
 # Chrome identiques, et plus rien qui dise laquelle sert quel ticket. Les places
 # du chrome de la fenêtre ont été essayées et mesurées : le nom de profil ne
@@ -54,7 +64,6 @@ profile="${base_dir}/$(basename "$workspace_root")"
 # `install_extension` refuse tout chemin hors des roots MCP — vérifié, y compris
 # avec `--allowUnrestrictedPaths`, qui ne couvre que le cas où le client n'en
 # déclare aucune. Or une session Claude déclare toujours son worktree.
-here=$(cd "$(dirname "$0")" && pwd)
 marker_dir="${workspace_root}/.chrome-marker"
 
 label=$(basename "$workspace_root")
@@ -120,6 +129,7 @@ fi
 # prendrait tout dossier pour un profil. Il est la seule trace d'un repère qui
 # n'a pas été posé : le stderr du relais n'est conservé nulle part.
 export CHROME_MCP_PROFILE="$profile"
+export CHROME_MCP_WORKTREE="$workspace_root"
 export CHROME_MCP_LABEL="$label"
 export CHROME_MCP_SEED="$here/chrome-profile-seed.sh"
 export CHROME_MCP_LOG="${HOME}/Library/Logs/chrome-mcp/$(basename "$profile").log"

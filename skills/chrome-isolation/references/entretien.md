@@ -89,6 +89,13 @@ supprimer ensuite.
 **Le profil n'est pas jetable.** Il évite de se reconnecter à chaque fois. Ne
 pas le supprimer par réflexe de nettoyage, et jamais `_modele`.
 
+**Le ménage se fait seul.** Chaque profil note dans `.worktree` le chemin des
+worktrees qui l'ont ouvert ; `bin/chrome-sweep.sh`, lancé en arrière-plan à
+chaque démarrage de session, supprime ceux dont plus aucun chemin n'existe et
+qu'aucun Chrome ne tient. Ce qu'il a fait est dans
+`~/Library/Logs/chrome-mcp/_menage.log` ; `--dry-run` dit ce qu'il ferait. Un
+profil sans `.worktree` n'est jamais touché.
+
 ## Divers
 
 `list_pages` montre une section « Extension Service Workers » : le moteur du

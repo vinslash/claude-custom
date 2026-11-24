@@ -64,8 +64,9 @@ de **14 à 27** chacune.
 
 | Borne | Valeur | Au-delà |
 | --- | --- | --- |
-| Durée des sessions GitHub et Dashlane du modèle, recopiées dans tous les profils de worktree | **14 jours** depuis le passage de `chrome-template.sh` — délai fixé par GitHub et par Dashlane, pas par nous. Porté par `chrome-isolation` | Chaque fenêtre ouvre un Dashlane déconnecté et une page de connexion GitHub, sans rien qui dise pourquoi. |
+| Durée des sessions GitHub et Dashlane du modèle, recopiées dans tous les profils de worktree | **14 jours** depuis le passage de `chrome-template.sh` — délai fixé par GitHub et par Dashlane, pas par nous. Porté par `chrome-isolation/references/entretien.md` | Chaque fenêtre ouvre un Dashlane déconnecté et une page de connexion GitHub, sans rien qui dise pourquoi. |
 | Préavis du début de session | **3 jours** avant l'échéance, dans tout worktree — `hooks/handlers/session-start.sh` | Tous les profils expirent ensemble depuis que `chrome-propagate.sh` leur recopie les sessions du modèle : le geste les concerne tous, donc chaque session peut le rappeler. Prévenir le jour même ne laisse pas le temps de rouvrir le modèle. |
+| Vie d'un profil de worktree après la suppression du worktree | **Jusqu'au démarrage de session suivant** — `bin/chrome-sweep.sh`, lancé par `chrome-mcp.sh`. Gardé tant qu'un Chrome le tient | Chaque profil pèse 250 à 750 Mo. Sans ménage, `~/.cache/chrome-mcp` comptait 215 profils orphelins au 24/11/2026, 21 Go réels. |
 
 ## Les portes anti-overkill
 

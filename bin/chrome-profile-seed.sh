@@ -1,7 +1,7 @@
 #!/bin/sh
 # Amorce un profil de worktree en le clonant depuis le profil modèle.
 #
-#   chrome-profile-seed.sh <dossier-du-profil>
+#   chrome-profile-seed.sh <dossier-du-profil> [<worktree>]
 #
 # Appelé par `chrome-marker-proxy.py` au premier appel d'outil, et non plus au
 # démarrage du serveur : un `claude` éphémère lancé dans un scratchpad démarre
@@ -10,18 +10,32 @@
 # `T`… — dans `~/.cache/chrome-mcp/`. Mesuré le 24/11/2026 : quinze profils sur
 # quarante n'appartenaient à aucun worktree.
 #
-# Ne fait rien si le profil existe déjà ou si le modèle manque : sort 0 dans les
-# deux cas, et dit sur stdout ce qu'il a fait, pour le journal.
+# Ne clone rien si le profil existe déjà ou si le modèle manque : sort 0 dans
+# les deux cas, et dit sur stdout ce qu'il a fait, pour le journal.
+#
+# Dans tous les cas, inscrit le worktree dans `<profil>/.worktree` : c'est ce
+# que lit `chrome-sweep.sh` pour savoir quand le profil n'a plus de raison
+# d'être.
 set -eu
 
 profile=$1
+worktree=${2:-}
 template="${HOME}/.cache/chrome-mcp/_modele"
 
+inscrire() {
+  [ -n "$worktree" ] || return 0
+  grep -qxF "$worktree" "$profile/.worktree" 2>/dev/null \
+    || printf '%s\n' "$worktree" >> "$profile/.worktree"
+}
+
 if [ -d "$profile" ]; then
+  inscrire
   echo "profil existant"
   exit 0
 fi
 if [ ! -d "$template" ]; then
+  mkdir -p "$profile"
+  inscrire
   echo "profil neuf, sans modèle à cloner"
   exit 0
 fi
@@ -49,4 +63,6 @@ rm -rf "$workdir/Default/Cache" "$workdir/Default/Code Cache" \
        "$workdir/GPUPersistentCache"
 
 mv "$workdir" "$profile"
+rm -f "$profile/.worktree"   # celui du modèle, s'il en avait un
+inscrire
 echo "profil cloné depuis _modele"

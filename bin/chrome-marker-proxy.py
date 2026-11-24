@@ -211,7 +211,8 @@ def amorcer_profil():
         return
     try:
         sortie = subprocess.run(
-            ['sh', SEED, PROFILE], capture_output=True, text=True, timeout=120)
+            ['sh', SEED, PROFILE, os.environ.get('CHROME_MCP_WORKTREE', '')],
+            capture_output=True, text=True, timeout=120)
         journal('profil : %s' % (sortie.stdout.strip() or sortie.stderr.strip()
                                  or 'code %d' % sortie.returncode))
     except Exception as erreur:
