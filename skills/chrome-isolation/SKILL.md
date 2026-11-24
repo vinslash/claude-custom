@@ -20,218 +20,91 @@ description: >
 
 # Piloter son propre navigateur, jamais celui d'un autre
 
-## Pourquoi ce skill existe
-
-Le dégât n'est pas un crash, c'est un **faux constat**. Une session lit la page
-d'un autre worktree et rapporte que le bug est corrigé alors qu'elle regardait
-ailleurs. Une capture prise dans le mauvais navigateur est pire qu'une absence de
-capture : elle a l'air d'une preuve.
-
-Ce n'est pas théorique. Un Chrome lancé à la main par une session a tenu le port
-de debug pendant deux jours après la mort de cette session ; pendant ce temps,
-une session travaillant sur SLI-8534 pilotait le navigateur — et le profil — de
-SLI-8298, sans que rien ne le signale.
+Le dégât visé n'est pas un crash, c'est un **faux constat** : une session lit la
+page d'un autre worktree et rapporte un bug corrigé alors qu'elle regardait
+ailleurs. C'est arrivé — un Chrome lancé à la main a tenu le port de debug deux
+jours après la mort de sa session, et la session de SLI-8534 a piloté le
+navigateur de SLI-8298 sans que rien ne le signale.
 
 ## D'où vient l'isolation
 
-Du serveur MCP **`chrome`** déclaré par ce plugin. Il ne se connecte pas à un
-navigateur existant : il **lance le sien**, avec un profil dérivé du worktree
-(`~/.cache/chrome-mcp/<nom-du-worktree>`) et un viewport de 1440×820.
+Du serveur MCP **`chrome`** de ce plugin, outils `mcp__chrome__*`. Il **lance son
+propre Chrome**, avec un profil par worktree (`~/.cache/chrome-mcp/<worktree>`)
+cloné d'un modèle qui porte Dashlane et une session GitHub. Chaque fenêtre range
+ses onglets dans un **groupe jaune** au nom du ticket, `SLI-8422` : c'est le
+repère qui dit à qui elle appartient. Tout est automatique.
 
-Le lancement passe par `bin/chrome-mcp.sh`, qui fait une chose de plus : quand le
-profil du worktree n'existe pas encore, il le **clone depuis un profil modèle**,
-`~/.cache/chrome-mcp/_modele`. C'est de là que viennent les extensions — Dashlane
-au premier chef — et leur session déjà ouverte.
+Le profil suit le dossier où la session a **démarré** : piloter un ticket depuis
+la session ouverte dans son worktree. Les sessions démarrées sur le checkout
+principal partagent toutes le même profil.
 
-C'est aussi le bon endroit pour une session **GitHub** : ouverte dans le modèle,
-tous les worktrees nés ensuite l'héritent, et poser les captures d'une PR ne
-demande plus de connexion — voir `slash:github-screenshots`.
-
-**Ces sessions expirent au bout de 14 jours**, GitHub comme Dashlane, et le
-modèle ne les prolonge pas puisque personne ne l'ouvre. Le geste est de relancer
-`bin/chrome-template.sh` — `cl-chrome` dans le terminal de l'utilisateur : il rafraîchit le modèle, puis `bin/chrome-propagate.sh`
-recopie les deux sessions dans **tous** les profils de worktree déjà nés — le
-stockage de l'extension Dashlane et les cookies `github.com`, rien d'autre, donc
-la session applicative du ticket reste intacte. Tous les profils partagent ainsi
-l'échéance du modèle, et le début de session prévient dans chacun quand elle
-approche. Un profil dont le Chrome tournait pendant le passage est sauté et
-nommé ; `chrome-propagate.sh`, relancé seul une fois sa session fermée, le
-rattrape. Le contrôle de l'échéance tient en une commande, qui ne lit qu'une
-date :
-
-```bash
-sqlite3 "file:$HOME/.cache/chrome-mcp/_modele/Default/Cookies?immutable=1" \
-  "select datetime(expires_utc/1000000 - 11644473600, 'unixepoch') from cookies
-   where host_key = 'github.com' and name = 'user_session';"
-```
-
-Elle doit rendre une date à venir. Une date passée, c'est le modèle à rafraîchir ;
-rien du tout, la connexion n'a pas été faite ou pas enregistrée — Chrome écrit
-ses cookies à la fermeture, donc fermer le modèle avant de vérifier.
-
-Chaque fenêtre porte enfin le nom de son ticket, dans la barre d'onglets : une
-petite extension range **tous** ses onglets dans un groupe jaune intitulé
-`SLI-8422`. Tous, et pas seulement le premier — un groupe meurt avec son dernier
-onglet, donc en fermer un ne peut pas effacer le repère. Tout est automatique :
-le lanceur grave l'étiquette et repose l'extension à chaque ouverture — elle ne
-survit pas au navigateur — sans qu'aucune session ait à s'en occuper.
-
-**Un second compte connecté en parallèle passe par `127.0.0.1`, pas par
-`isolatedContext`.** Le navigateur sépare cookies et stockage par nom d'hôte :
-`http://127.0.0.1:<port>` est une autre origine que `http://localhost:<port>`,
-donc une autre session applicative, dans la même fenêtre. Ouvrir sa première
-page avec le nom du compte en fragment — `new_page` sur
-`http://127.0.0.1:<port>/#repere=superadmin` —, et ses onglets se rangent dans un
-second groupe, violet, intitulé `SLI-8422 · superadmin`. Le nom est retenu même
-quand l'application retire le fragment.
-
-`isolatedContext`, lui, ouvre une fenêtre que l'extension ne voit pas : sans
-repère, elle redevient indiscernable de celle d'un autre worktree. N'y recourir
-que si `127.0.0.1` est refusé — CORS du backend, ou connexion Google ou SSO, que
-Firebase n'accepte que sur ses domaines autorisés —, et dire alors à
-l'utilisateur quelle fenêtre porte quel compte.
-
-Conséquence : deux sessions sur deux worktrees ont deux navigateurs, deux
-profils, deux jeux de cookies. Il n'y a plus de port partagé, donc plus de
-collision possible — à condition de ne pas recréer le problème à la main.
+**Un second compte en parallèle passe par `127.0.0.1`.** Une autre origine que
+`localhost`, donc une autre session applicative dans la même fenêtre. Ouvrir sa
+première page avec le compte en fragment — `new_page` sur
+`http://127.0.0.1:<port>/#repere=superadmin` — et ses onglets se rangent dans un
+groupe violet `SLI-8422 · superadmin`. `isolatedContext` ouvre une fenêtre sans
+repère : seulement si `127.0.0.1` est refusé (CORS, SSO, Firebase), en disant
+alors à l'utilisateur quelle fenêtre porte quel compte.
 
 ## Les règles
 
-**Ne jamais lancer Chrome soi-même.** Pas de `open -na "Google Chrome"`, pas de
-`--remote-debugging-port`, pas de profil posé dans le scratchpad. C'est
-exactement le geste qui a produit l'incident ci-dessus. Le navigateur appartient
-au serveur MCP, et à lui seul.
-
-Une seule exception, et elle est bornée : `bin/chrome-template.sh`, qui ouvre le
-profil modèle pour y installer une extension et s'y connecter à GitHub. Il
-n'ouvre aucun port de debug, donc aucune session ne peut se tromper et venir
-piloter cette fenêtre-là. C'est un geste d'utilisateur, pas un geste de session.
-
-**Il exige que le Chrome personnel soit entièrement quitté** — Cmd+Q, toutes
-fenêtres. Sur macOS, lancer le binaire quand il tourne déjà fait main basse sur
-lui : `--user-data-dir` est ignoré, la fenêtre qui s'ouvre est celle du profil
-personnel, et rien ne le signale. Le script refuse de partir dans ce cas, parce
-que le symptôme est invisible : on croit avoir préparé le modèle, on a saisi ses
-identifiants dans son navigateur de tous les jours. Les Chrome des sessions
-Claude, eux, ne gênent pas : chacun tient son propre profil.
-
-**Ne jamais se connecter par un port.** Une configuration en `--browserUrl` vise
-un endpoint unique que toutes les sessions partagent. Celle que déclare le dépôt
-slash-interim est neutralisée côté utilisateur (`disabledMcpjsonServers`) : ne
-pas la réactiver, ne pas en improviser une autre.
-
-**Vérifier avant toute action qui compte.** Avant un clic, une capture, la
-lecture d'un état dont dépend un constat : confirmer que la page est bien celle
-attendue — l'URL, et un repère visible dans la page. Si ça ne correspond pas,
-**s'arrêter et le dire** plutôt que de « rattraper » en naviguant.
-
-**Ne fermer que ce qu'on possède.** Si une instance survit à sa session, elle
-s'identifie par son `--user-data-dir`. On ne tue que celle de son propre
-worktree, jamais une autre, et jamais son Chrome personnel.
-
-**Laisser la fenêtre ouverte quand l'utilisateur doit constater.** C'est ce que
-demandent `slash:observe` et `slash:process-ticket` : le navigateur est là pour
-qu'il manipule lui-même, pas seulement pour produire des captures.
+- **Ne jamais lancer Chrome soi-même** : ni `open -na "Google Chrome"`, ni
+  `--remote-debugging-port`, ni profil dans le scratchpad. Seule exception,
+  `bin/chrome-template.sh`, geste d'utilisateur.
+- **Ne jamais se connecter par un port.** Le serveur `chrome-devtools` de
+  slash-interim est neutralisé (`disabledMcpjsonServers`) : ne pas le réactiver.
+- **Vérifier avant toute action qui compte** — clic, capture, lecture d'un état
+  dont dépend un constat : l'URL, et un repère visible dans la page. Si ça ne
+  correspond pas, **s'arrêter et le dire** plutôt que rattraper en naviguant.
+- **Ne fermer que ce qu'on possède** : l'instance de son `--user-data-dir`,
+  jamais une autre, jamais le Chrome personnel.
+- **Laisser la fenêtre ouverte quand l'utilisateur doit constater**
+  (`slash:observe`, `slash:process-ticket`).
+- **Vérifier par le texte, pas par l'image.** `take_snapshot` rend l'arbre
+  d'accessibilité, qui suffit à confirmer une page, un libellé, un état. Une
+  capture ne se prend que si elle est un livrable — preuve de PR, constat montré
+  à l'utilisateur — et ne se relit pas par `Read` sauf besoin réel : chaque
+  image reste dans le contexte et se repaie à chaque tour.
 
 ## Quand un skill du dépôt désigne un autre navigateur
 
-**Ce skill passe devant les skills des dépôts.** Un skill de dépôt qui fait
-piloter Chrome par un autre outil — l'extension `claude-in-chrome`, un serveur
-`chrome-devtools` sur un port, un Chrome lancé à la main — est suivi en tout
-**sauf** sur ce point : le navigateur reste celui du serveur MCP `chrome`, outils
-`mcp__chrome__*`. C'est le seul qui soit isolé par worktree ; l'extension pilote
-le Chrome personnel, que deux sessions parallèles se partageraient sans que rien
-ne le signale.
+**Ce skill passe devant.** Un skill de dépôt qui fait piloter `claude-in-chrome`,
+un serveur sur un port ou un Chrome lancé à la main est suivi en tout **sauf** le
+navigateur, qui reste `mcp__chrome__*` : l'extension pilote le Chrome personnel,
+que deux sessions se partageraient en silence. Cas courant : `slash-review-code`.
 
-Le cas courant est `slash-review-code`, dans slash-interim : son brief de revue
-fonctionnelle dit `mcp__claude-in-chrome__*`, et il demande à l'utilisateur
-d'ouvrir sa session de recette dans un onglet de l'extension. Ce qui change :
-
-- **Le brief du sous-agent.** Il ne lit pas ce skill. Ajouter en toutes lettres
+- **Le brief du sous-agent** — il ne lit pas ce skill. Ajouter en toutes lettres
   au prompt de tout agent qui touchera au navigateur : « Navigateur : outils
   `mcp__chrome__*` (les charger en un seul `ToolSearch`), jamais
   `mcp__claude-in-chrome__*` ni un Chrome lancé à la main ; ouvre ta propre page
-  par `new_page` et vérifie son URL avant toute capture. » Le reste du brief
-  reste celui du dépôt.
-- **La connexion.** Ouvrir l'application dans l'instance du worktree
-  (`navigate_page`), puis demander à l'utilisateur de s'y connecter — Dashlane y
-  est — et de dire avec quel compte. L'agent n'entre jamais d'identifiants : ça,
-  le skill du dépôt le dit aussi.
-- **Les captures.** Si le serveur refuse le répertoire de travail de la revue,
-  comme il refuse le scratchpad pour un téléversement, capturer dans un dossier
-  gitignoré du worktree — `screenshots/` sur slash-interim —, puis déplacer le
-  fichier là où le skill du dépôt l'attend.
+  par `new_page` et vérifie son URL avant toute capture. »
+- **La connexion** : ouvrir l'application dans l'instance du worktree, puis
+  demander à l'utilisateur de s'y connecter (Dashlane y est) et avec quel compte.
+  L'agent n'entre jamais d'identifiants.
+- **Les captures** : si le dossier de la revue est refusé, capturer dans un
+  dossier gitignoré du worktree — `screenshots/` sur slash-interim — puis
+  déplacer.
 
-Les agents d'une même session partagent la même instance : une page chacun,
-jamais celle d'un autre. Et si le serveur `chrome` est indisponible, le dire à
-l'utilisateur et mettre le parcours navigateur en « non testé » plutôt que de
+Les agents d'une session partagent une instance : une page chacun. Si le serveur
+`chrome` est indisponible, le dire et mettre le parcours en « non testé », sans
 se rabattre sur l'extension.
 
-## Ce qu'il faut savoir en pratique
+## En pratique
 
-**Le profil est par worktree, pas par session.** Première conséquence : la
-première utilisation sur un ticket demande de se connecter à l'application, puis
-la session est persistante pour ce ticket. Deuxième conséquence : deux sessions
-Claude sur le **même** worktree se disputent le même profil, et Chrome refusera
-d'en ouvrir un second. L'échec est bruyant — c'est voulu, il vaut mieux qu'un
-partage silencieux. Dans ce cas, une seule des deux sessions pilote le navigateur.
+**Deux sessions sur le même worktree** se disputent le profil, et Chrome refuse
+d'ouvrir le second. L'échec est bruyant, c'est voulu : une seule pilote.
 
-**Téléverser un fichier exige qu'il soit dans le workspace root.** Le serveur
-refuse tout chemin en dehors — `Access denied: … is not within any of the
-configured workspace roots` —, et « local à la machine du navigateur » ne suffit
-donc pas : le scratchpad de session est rejeté. Copier le fichier dans un dossier
-gitignoré du dépôt — sur slash-interim, `screenshots/` l'est déjà — puis l'y
-supprimer. Vaut pour n'importe quel téléversement, pas seulement les captures
-d'une PR.
+**Téléverser exige un fichier dans le workspace root** — `Access denied: … not
+within any of the configured workspace roots`, le scratchpad compris. Copier
+dans un dossier gitignoré du dépôt, puis l'y supprimer.
 
-**Un `input[type=file]` caché reste un `input[type=file]`.** Beaucoup
-d'applications modernes le masquent derrière un bouton stylé : il n'apparaît
-alors pas dans le snapshot a11y, donc pas de `uid` à donner à `upload_file`, et
-le clic sur le bouton n'ouvre pas de sélecteur. Le chercher d'abord
-(`document.querySelectorAll('input[type=file]')`), le démasquer par un
-`evaluate_script` — `removeAttribute('hidden')`, `display:block`, un `aria-label`
-reconnaissable —, reprendre un `take_snapshot`, puis téléverser dessus. Plusieurs
-fichiers passent d'un seul appel.
+**Un `input[type=file]` caché reste un `input[type=file]`.** Absent du snapshot,
+donc sans `uid` : le chercher (`document.querySelectorAll('input[type=file]')`),
+le démasquer par `evaluate_script` — `removeAttribute('hidden')`,
+`display:block`, un `aria-label` —, reprendre un `take_snapshot`, puis
+`upload_file`. Plusieurs fichiers passent d'un appel. Le `drop` synthétique en
+base64 (snippet dans `slash:github-screenshots`) n'est qu'un recours : des
+dizaines de milliers de tokens la capture.
 
-Quand la recherche ne rend vraiment rien, le recours est un `drop` synthétique
-avec un `DataTransfer`, en `evaluate_script` ; `slash:github-screenshots` en porte le
-snippet éprouvé. C'est bien un recours : il fait transiter le fichier en base64
-dans l'appel d'outil, à des dizaines de milliers de tokens la capture.
-
-**`list_pages` montre une section « Extension Service Workers ».** C'est le
-moteur du repère, et celui de Dashlane. Ce ne sont pas des pages à piloter, et
-leur absence ne veut rien dire : un service worker qui n'a rien à faire s'endort.
-
-**Le profil n'est pas jetable.** Il vit dans `~/.cache/chrome-mcp/`, il survit aux
-sessions et c'est ce qui évite de se reconnecter à chaque fois. Ne pas le
-supprimer par réflexe de nettoyage. Et surtout pas `_modele`, dont tous les
-profils à venir descendent.
-
-**Un profil qui a perdu Dashlane est mort, pas réparable.** Rien ne le
-réinstallera : le navigateur est lancé sans réseau de fond, donc sans mise à jour
-d'extensions. Le constat se fait en une commande —
-`ls ~/.cache/chrome-mcp/<worktree>/Default/Extensions`, qui doit lister
-`fdjamakpfbbddfjaooikfcpapjohcfmg`. S'il manque, supprimer le dossier du profil
-pour qu'il soit recloné au prochain lancement, en sachant qu'on y perd la session
-applicative.
-
-**Arrêter la session avant de supprimer, jamais l'inverse.** Tant qu'elle vit,
-son serveur MCP relance un Chrome qui recrée le dossier — vide. Et comme le
-clonage n'a lieu qu'au démarrage du serveur, ce profil-là ne repartira jamais du
-modèle : on croit avoir nettoyé, on a fabriqué un profil nu définitif. Fermer la
-session, vérifier qu'il ne reste ni `chrome-devtools-mcp` ni Chrome sur ce
-`--user-data-dir`, supprimer ensuite.
-
-**Le clonage n'a lieu qu'à la naissance du profil.** Une extension installée dans
-le modèle aujourd'hui n'apparaîtra pas dans un worktree ouvert hier. Pour qu'un
-ticket en cours reparte du modèle, il faut supprimer son dossier dans
-`~/.cache/chrome-mcp/` — au prix de sa session applicative. Les sessions
-Dashlane et GitHub font exception : `chrome-propagate.sh` les recopie sans
-recloner.
-
-**Le modèle doit être fermé quand un profil en est cloné.** Sa session Dashlane
-vit dans une base leveldb ; copiée pendant que Chrome écrit dedans, elle arrive
-incohérente dans le clone. Le symptôme serait illisible — un Dashlane déconnecté
-dans un worktree sur deux, sans rien pour le relier à la cause. En pratique le
-modèle n'est ouvert que le jour où l'on y installe quelque chose ; ce jour-là, ne
-pas ouvrir de worktree neuf en même temps.
+**Repère absent, mauvais profil, Dashlane perdu, sessions expirées** : voir
+`references/entretien.md` — journal du serveur, profil modèle, réparation.
