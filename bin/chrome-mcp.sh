@@ -66,16 +66,18 @@ fi
 # déclare aucune. Or une session Claude déclare toujours son worktree.
 marker_dir="${workspace_root}/.chrome-marker"
 
+# Le ticket se lit dans la branche, pas dans le nom du dossier : `wt review`
+# nomme le worktree d'après la PR (`review-1761`) et le laisse sur la branche du
+# ticket (`sli-9920-…`). Même lecture que le hook de démarrage de session.
 label=$(basename "$workspace_root")
-case "$label" in
-  sli-[0-9]*)
-    number=${label#sli-}
-    label="SLI-${number%%-*}"
-    case "$(basename "$workspace_root")" in
-      *-review) label="$label · review" ;;
-    esac
-    ;;
-esac
+branch=$(git -C "$workspace_root" branch --show-current 2>/dev/null || true)
+number=$(printf '%s' "$branch" | grep -oiE 'sli-?[0-9]{3,}' | head -1 | grep -oE '[0-9]{3,}' || true)
+if [ -n "$number" ]; then
+  label="SLI-${number}"
+  case "$(basename "$workspace_root")" in
+    review-*|*-review) label="$label · review" ;;
+  esac
+fi
 
 # Écraser les fichiers un à un plutôt que refaire le dossier : deux sessions sur
 # le même worktree se marcheraient dessus, et Chrome tient l'extension ouverte

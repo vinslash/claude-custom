@@ -31,8 +31,9 @@ navigateur de SLI-8298 sans que rien ne le signale.
 Du serveur MCP **`chrome`** de ce plugin, outils `mcp__chrome__*`. Il **lance son
 propre Chrome**, avec un profil par worktree (`~/.cache/chrome-mcp/<worktree>`)
 cloné d'un modèle qui porte Dashlane et une session GitHub. Chaque fenêtre range
-ses onglets dans un **groupe jaune** au nom du ticket, `SLI-8422` : c'est le
-repère qui dit à qui elle appartient. Tout est automatique.
+ses onglets dans un **groupe jaune** au nom du ticket, `SLI-8422` — lu dans la
+branche, `SLI-8422 · review` dans un worktree `wt review` : c'est le repère qui
+dit à qui elle appartient. Tout est automatique.
 
 Le profil suit le dossier où la session a **démarré** : piloter un ticket depuis
 la session ouverte dans son worktree. Les sessions démarrées sur le checkout
